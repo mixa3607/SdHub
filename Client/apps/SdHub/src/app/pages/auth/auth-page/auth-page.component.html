@@ -1,0 +1,14 @@
+<div class="auth-page-container">
+  <mat-card class="forms-card">
+    <mat-card-title>Auth</mat-card-title>
+    <nav mat-tab-nav-bar [tabPanel]="tabPanel">
+      <a mat-tab-link *ngFor="let tab of navTabs"
+         [routerLink]="tab.link"
+         routerLinkActive="" #rla="routerLinkActive"
+         [active]="rla.isActive"
+         >{{tab.label}}</a>
+    </nav>
+    <mat-tab-nav-panel #tabPanel></mat-tab-nav-panel>
+    <router-outlet></router-outlet>
+  </mat-card>
+</div>

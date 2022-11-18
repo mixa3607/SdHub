@@ -1,0 +1,7 @@
+#docker-compose
+COMPOSE_FILE=./dc/dc.yml:./dc/dc.bind.yml
+
+#service specified
+SDHUB_HOST=diffai.xyz
+SDHUB_PORT=8085
+ASPNETCORE_ENVIRONMENT=Production

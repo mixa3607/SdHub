@@ -1,0 +1,29 @@
+<div [formGroup]="form" class="form-container">
+  <mat-form-field appearance="fill">
+    <mat-label>Login</mat-label>
+    <input formControlName="login"
+           matInput
+           type="text">
+    <mat-error *ngIf="form.get('login')!.invalid">{{getErrorMessage(form.get('login')!)}}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Password</mat-label>
+    <input [type]="hidePassword ? 'password' : 'text'"
+           formControlName="password"
+           matInput
+           placeholder="Password">
+    <button (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hidePassword" mat-icon-button
+            matSuffix>
+      <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+    </button>
+    <mat-error *ngIf="form.get('password')!.invalid">{{getErrorMessage(form.get('password')!)}}</mat-error>
+  </mat-form-field>
+
+  <re-captcha formControlName="recaptcha"
+              style="align-self: center"></re-captcha>
+
+  <button (click)="onSubmit()" [disabled]="form.invalid" color="primary" mat-raised-button>Login</button>
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+</div>

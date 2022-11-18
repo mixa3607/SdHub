@@ -1,0 +1,25 @@
+@import "~@angular/material/prebuilt-themes/deeppurple-amber.css";
+
+// regular style toast
+@import '~ngx-toastr/toastr';
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-size: 14px;
+}
+
+a {
+  text-decoration: none;
+  color: dodgerblue;
+}
+
+mat-icon {
+  min-width: min-content;
+}
+
+mat-form-field.form-no-bottom-padding {
+  .mat-form-field-wrapper {
+    padding-bottom: unset;
+  }
+}

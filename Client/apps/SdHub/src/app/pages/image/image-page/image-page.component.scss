@@ -1,0 +1,120 @@
+.container {
+  padding: .5rem;
+  min-height: 100%;
+}
+
+.grouped-tags-container {
+  gap: .3rem;
+  border: gainsboro solid .05rem;
+  padding: .3rem;
+
+  .grouped-tags {
+    .soft-name {
+      font-size: 1rem;
+      font-weight: bold;
+    }
+
+    .tags {
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+
+      .tag {
+        border-left: #7e7e7e solid 5px;
+        padding-left: 7px;
+
+        .tag-name {
+
+        }
+
+        .tag-value {
+          cursor: pointer;
+          border: gainsboro solid .05rem;
+          padding: .3rem;
+          white-space: pre-wrap;
+        }
+      }
+    }
+  }
+
+  .tags-container {
+
+  }
+}
+
+.uploaded-image-container {
+  max-height: 700px;
+  max-width: 600px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-self: center;
+
+  .uploaded-image {
+    object-fit: contain;
+    max-width: 100%;
+    max-height: 100%;
+  }
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  gap: .5rem;
+  align-items: center;
+}
+
+.link-container {
+  display: flex;
+  flex-direction: row;
+  gap: .3rem;
+  width: max-content;
+  align-items: center;
+  border: gainsboro solid .05rem;
+  padding-left: .3rem;
+
+  .link {
+    padding: .3rem;
+  }
+}
+
+.props-container {
+  display: flex;
+  flex-direction: row;
+  flex-flow: wrap;
+  gap: .6rem;
+
+  .prop-container {
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+    border: gainsboro solid .05rem;
+    padding: .3rem;
+
+    .prop-name {
+      white-space: nowrap;
+      font-weight: bold;
+      color: gray;
+    }
+
+    .prop-value-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: .5rem;
+
+      .prop-value {
+        padding: .2rem;
+        background: #f1f1f1;
+      }
+    }
+  }
+}
+
+
+.content-card {
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}

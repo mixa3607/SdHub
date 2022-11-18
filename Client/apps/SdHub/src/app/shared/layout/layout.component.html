@@ -1,0 +1,62 @@
+<div class="navbar-container">
+  <mat-toolbar class="navbar" color="primary">
+    <button [routerLink]="['/upload']" mat-raised-button>
+      <mat-icon>upload_file</mat-icon>
+      <span fxHide.xs fxShow>
+        Upload
+      </span>
+    </button>
+    <a [routerLink]="['/']" class="navbar-brand" matTooltip="Home">
+      <h1>
+        Stable Diffusion image hub
+      </h1>
+    </a>
+    <span class="navbar-spacer"></span>
+    <button #trigger="cdkOverlayOrigin"
+            (click)="userInfoIsOpen = true"
+            cdkOverlayOrigin
+            mat-button>
+      <mat-icon>{{isAnonymous ? 'no_accounts' : 'person'}}</mat-icon>
+      <span fxHide.xs fxShow>
+        {{userName}}
+      </span>
+    </button>
+    <button [routerLink]="['/about']" mat-icon-button>
+      <mat-icon>help</mat-icon>
+    </button>
+  </mat-toolbar>
+  <div fxFlex style="background: #e5e5e5;">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+
+<ng-template (backdropClick)="userInfoIsOpen = false"
+             (detach)="userInfoIsOpen = false"
+             [cdkConnectedOverlayHasBackdrop]="true"
+             [cdkConnectedOverlayOpen]="userInfoIsOpen"
+             [cdkConnectedOverlayOrigin]="trigger"
+             cdkConnectedOverlay
+             cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop">
+  <div class="user-info-overlay">
+    <ng-container *ngIf="isAnonymous; else authorized">
+      <button [routerLink]="'/auth/login'" mat-raised-button>
+        <mat-icon>login</mat-icon>
+        Log in
+      </button>
+      <button [routerLink]="'/auth/register'" mat-raised-button>
+        <mat-icon>person_add</mat-icon>
+        Register
+      </button>
+    </ng-container>
+    <ng-template #authorized>
+      <div style="border-radius: .3rem; width: 100%; background-color: white;">
+        <div style="margin: .3rem;">Login: {{userName}}</div>
+      </div>
+      <mat-divider></mat-divider>
+      <button (click)="onLogoutClick()" mat-raised-button>
+        <mat-icon>logout</mat-icon>
+        Log out
+      </button>
+    </ng-template>
+  </div>
+</ng-template>

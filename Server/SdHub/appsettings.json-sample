@@ -1,0 +1,35 @@
+{
+  "AllowedHosts": "*",
+  "Serilog": {
+    "ElasticUris": [ "not set" ],
+    "EnableRequestLogging": false
+  },
+  "Mailing": {
+    "From": "diffai@mail.arkprojects.space",
+    "Host": "mail.arkprojects.space",
+    "Username": "diffai@mail.arkprojects.space",
+    "Password": "not set"
+  },
+  "Recaptcha": {
+    "SecretKey": "not set"
+  },
+  "Swagger": {
+    "Enable": false
+  },
+  "WebSecurity": {
+    "EnableHttpsRedirections": true,
+    "Jwt": {
+      "Issuers": [ "SdHub" ],
+      "Audiences": [ "SdHub" ],
+      "Issuer": "SdHub",
+      "JwtLifetime": "00:00:05:00",
+      "LogPii": false
+    },
+    "Cors": {
+      "AllowedHosts": []
+    }
+  },
+  "SdHubSeeder": {
+    "AdminPassword": "not set"
+  }
+}

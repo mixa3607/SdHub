@@ -1,0 +1,13 @@
+﻿using AutoMapper;
+using SdHub.Database.Entities.User;
+using SdHub.Models;
+
+namespace SdHub.Automapper;
+
+public class UserProfile : Profile
+{
+    public UserProfile()
+    {
+        CreateMap<UserEntity, UserModel>(MemberList.Destination);
+    }
+}

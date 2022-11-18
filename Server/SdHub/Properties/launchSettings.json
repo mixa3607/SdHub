@@ -1,0 +1,12 @@
+﻿{
+  "profiles": {
+    "DEV": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "environmentVariables": {
+        "Kestrel__Endpoints__Http__Url": "http://0.0.0.0:5790",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

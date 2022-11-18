@@ -1,0 +1,4 @@
+services:
+  sdhub:
+    ports:
+      - ${SDHUB_PORT-}:80

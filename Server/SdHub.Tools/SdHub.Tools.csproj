@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.S3" Version="3.7.101.9" />
+    <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="12.2.0" />
+    <PackageReference Include="Magick.NET.Core" Version="12.2.0" />
+    <PackageReference Include="Minio" Version="4.0.6" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="files/**/*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="files\grids\raw1\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SdHub.Storage\SdHub.Storage.csproj" />
+    <ProjectReference Include="..\SdHub\SdHub.csproj" />
+  </ItemGroup>
+
+</Project>

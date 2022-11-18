@@ -1,0 +1,11 @@
+services:
+  sdhub:
+    environment:
+      - VIRTUAL_HOST=$SDHUB_HOST
+      - VIRTUAL_PORT=80
+    networks:
+      - nginx
+networks:
+  nginx:
+    name: nginx
+    external: true

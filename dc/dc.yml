@@ -1,0 +1,23 @@
+services:
+  sdhub:
+    image: local/sdhub:latest
+    build:
+      context: ../
+      network: host
+      target: app
+      args:
+        - COMMIT_REF_NAME=${CI_COMMIT_REF_NAME-local}
+        - COMMIT_SHA=${CI_COMMIT_SHA-deadbeef}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=$ASPNETCORE_ENVIRONMENT
+      - ApplicationSettings__AppInfo__GitRefName=${CI_COMMIT_REF_NAME-local}
+      - ApplicationSettings__AppInfo__GitCommitSha=${CI_COMMIT_SHA-deadbeef}
+    volumes:
+      - ./data/wwwroot/cache:/app/wwwroot/cache
+      - ./data/wwwroot/images:/app/wwwroot/images
+    expose: [ 80 ]
+    networks:
+      - default
+    restart: unless-stopped
+networks:
+  default:

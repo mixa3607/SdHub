@@ -1,0 +1,16 @@
+/.ci
+/.git
+/.vs
+**/node_modules
+**/bin
+**/obj
+**/out
+**/CostsWeb.Core/app
+
+/.env*
+/*.yml
+/*.md
+/.gitmodules
+/.gitattributes
+/.gitignore
+/Dockerfile*

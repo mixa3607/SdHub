@@ -2,7 +2,7 @@
 title: Шаблон шапки
 description: 
 published: true
-date: 2022-11-18T23:51:44.600Z
+date: 2022-11-19T11:34:34.484Z
 tags: 
 editor: markdown
 dateCreated: 2022-11-18T23:51:44.600Z
@@ -11,13 +11,15 @@ dateCreated: 2022-11-18T23:51:44.600Z
 ```text
 [b]NovelAI & WaifuDiffusion тред[/b]
 [i]Генерируем тяночек![/i]
-Прошлый тред: https://arhivach.ng/thread/
+Прошлый тред: https://arhivach.ng/thread/ https://t.me/000000
 ----------------------------------
 [b]NAI[/b]
 https://rentry.org/sdg_FAQ
 https://rentry.org/naifunya
 ----------------------------------
-[b]МОДЕЛИ И МИКСЫ:[/b] https://rentry.co/ng5wh
+[b]МОДЕЛИ И МИКСЫ:[/b] 
+200+ моделей и их хэши https://static.nas1.gl.arkprojects.space/stable-diff/
+https://rentry.co/ng5wh
 ----------------------------------
 [b]УСТАНОВКА НА ПК[/b]
 [b]https://rentry.org/nai-speedrun[/b]
@@ -58,5 +60,5 @@ https://www.artstation.com/marketplace/p/VOAyv/stable-diffusion-3d-posable-manek
 Если у вас слабое железо, можно поднять нейронку на гугл коллабе. Google Colab - облако, выделяемое гуглом с мощными CPU и TPU. Можно юзать бесплатно несколько часов каждый день. Обойти ограничение можно, создав второй аккаунт. 
 Список коллабов, можно выбрать любой: https://rentry.org/244wt
 ----------------------------------
-Шаблон шапки для тредов: https://pst.klgrth.io/paste/tjdab
+Шаблон шапки для тредов: https://wiki.diffai.xyz/2ch-template
 ```

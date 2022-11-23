@@ -10,13 +10,16 @@ public class UserEntity
     public long Id { get; set; }
     public Guid Guid { get; set; } = Guid.NewGuid();
     public DateTimeOffset? DeletedAt { get; set; }
+    public DateTimeOffset? EmailConfirmedAt { get; set; }
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.Now;
+    public DateTimeOffset EmailConfirmationLastSend { get; set; }
     public long PlanId { get; set; }
     public UserPlanEntity? Plan { get; set; }
     public List<ImageEntity>? Images { get; set; }
     public bool IsAnonymous { get; set; }
 
     //for registered
+    public string? LoginNormalized { get; set; }
     private string? _login;
     public string? Login
     {
@@ -27,7 +30,17 @@ public class UserEntity
             LoginNormalized = _login?.Normalize().ToUpper();
         }
     }
-    public string? LoginNormalized { get; set; }
+    public string? EmailNormalized { get; set; }
+    private string? _email;
+    public string? Email
+    {
+        get => _email;
+        set
+        {
+            _email = value;
+            EmailNormalized = _email?.Normalize().ToUpper();
+        }
+    }
     public string? PasswordHash { get; set; }
     public List<string> Roles { get; set; } = new List<string>();
     public List<RefreshTokenEntity>? RefreshTokens { get; set; }

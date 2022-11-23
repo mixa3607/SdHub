@@ -14,8 +14,10 @@ public class UserTsConfigurator : ITsConfigurator
         var outFile = Path.Combine(ITsConfigurator.ModelsRoot, "user.models.ts");
         builder.ExportAsInterfaces(new Type[]
             {
-                typeof(ChangePasswordRequest),
-                typeof(ChangePasswordResponse),
+                typeof(SendResetPasswordEmailRequest),
+                typeof(SendResetPasswordEmailResponse),
+                typeof(ResetPasswordRequest),
+                typeof(ResetPasswordResponse),
                 typeof(ConfirmEmailRequest),
                 typeof(ConfirmEmailResponse),
                 typeof(LoginByPasswordRequest),
@@ -23,10 +25,10 @@ public class UserTsConfigurator : ITsConfigurator
                 typeof(LoginResponse),
                 typeof(RegisterRequest),
                 typeof(RegisterResponse),
-                typeof(ResetPasswordRequest),
-                typeof(ResetPasswordResponse),
                 typeof(GetMeRequest),
                 typeof(GetMeResponse),
+                typeof(SendEmailConfirmationEmailRequest),
+                typeof(SendEmailConfirmationEmailResponse),
             }, c => c
                 .SubsDatetimeOffsetToStr()
                 .SubsTimespanToStr()

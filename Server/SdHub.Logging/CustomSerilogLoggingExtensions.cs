@@ -81,6 +81,7 @@ public static class CustomSerilogLoggingExtensions
                 l.MinimumLevel.Verbose()
                     .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Verbose)
                     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                    .MinimumLevel.Override("Hangfire", LogEventLevel.Information)
                     .MinimumLevel.Override("System", LogEventLevel.Verbose);
             }
         });

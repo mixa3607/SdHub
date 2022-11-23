@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SdHub.Database.Entities;
 using SdHub.Database.Entities.Files;
 using SdHub.Database.Entities.Images;
 using SdHub.Database.Entities.User;
@@ -22,6 +23,8 @@ public class SdHubDbContext : DbContext
     public DbSet<ImageUploaderEntity> ImageUploaders { get; set; } = null!;
 
     public DbSet<UserPlanEntity> UserPlans { get; set; } = null!;
+
+    public DbSet<TempCodeEntity> TempCodes { get; set; } = null!;
 
     public SdHubDbContext(DbContextOptions<SdHubDbContext> options) : base(options)
     {

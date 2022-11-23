@@ -9,6 +9,9 @@ import {IUploadResponse} from "../../../models/autogen/upload.models";
 import {httpErrorResponseHandler} from "apps/SdHub/src/app/shared/http-error-handling/handlers";
 import {UploadApi} from "apps/SdHub/src/app/shared/api/upload.api";
 import {bytesToHuman} from "apps/SdHub/src/app/shared/utils/bytes";
+import {AuthService} from "apps/SdHub/src/app/core/services/auth.service";
+import {AuthStateService} from "apps/SdHub/src/app/core/services/auth-state.service";
+import {tap} from "rxjs";
 
 interface IImageForUpload {
     file: File | null,
@@ -30,11 +33,14 @@ interface IImageForUpload {
 })
 export class UploadPageComponent implements OnInit {
     public uploading: boolean = false;
+    public isAuthenticated: boolean = false;
 
     constructor(private sanitizer: DomSanitizer,
                 private clipboard: Clipboard,
                 private toastr: ToastrService,
+                private authState: AuthStateService,
                 private uploadApi: UploadApi) {
+        this.authState.isAuthenticated$.pipe(tap(x => console.log(x))).subscribe(x => this.isAuthenticated = x);
     }
 
     ngOnInit(): void {
@@ -93,7 +99,10 @@ export class UploadPageComponent implements OnInit {
         }
 
         this.toastr.info('Begin upload ' + selectedImages.length + ' images');
-        this.uploadApi.upload(formData)
+        console.log(this.isAuthenticated, 'asasasa');
+        (this.isAuthenticated
+            ? this.uploadApi.uploadAuth(formData)
+            : this.uploadApi.upload(formData))
             .subscribe(data => {
                 console.log(data);
                 for (let i = 0; i < data.files.length; i++) {

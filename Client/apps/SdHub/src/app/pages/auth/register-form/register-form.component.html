@@ -8,6 +8,14 @@
   </mat-form-field>
 
   <mat-form-field appearance="fill">
+    <mat-label>Email</mat-label>
+    <input formControlName="email"
+           matInput
+           type="email">
+    <mat-error *ngIf="form.get('email')!.invalid">{{getErrorMessage(form.get('email')!)}}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
     <mat-label>Password</mat-label>
     <input [type]="hidePassword ? 'password' : 'text'"
            formControlName="password"
@@ -41,5 +49,5 @@
   <re-captcha formControlName="recaptcha"
               style="align-self: center"></re-captcha>
 
-  <button [disabled]="form.invalid" color="primary" mat-raised-button>Register</button>
+  <button [disabled]="form.invalid" color="primary" mat-raised-button (click)="onRegisterClick()">Register</button>
 </div>

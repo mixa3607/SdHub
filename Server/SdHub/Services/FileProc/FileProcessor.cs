@@ -125,11 +125,12 @@ public class FileProcessor : IFileProcessor
 
     public async Task<FileEntity> SaveToDatabaseAsync(FileSaveResult saveResult, CancellationToken ct = default)
     {
-        var existedEntity = await _db.Files
-            .Include(x => x.Storage)
-            .FirstOrDefaultAsync(x => x.Hash == saveResult.Hash, ct);
-        if (existedEntity != null)
-            return existedEntity;
+        //TODO: спорная хрень
+        //var existedEntity = await _db.Files
+        //    .Include(x => x.Storage)
+        //    .FirstOrDefaultAsync(x => x.Hash == saveResult.Hash, ct);
+        //if (existedEntity != null)
+        //    return existedEntity;
 
         var entity = _mapper.Map<FileEntity>(saveResult);
         entity.Storage = await _db.FileStorages.FirstAsync(x => x.Name == entity.StorageName, ct);

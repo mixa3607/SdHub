@@ -5,18 +5,30 @@
 import { CaptchaType } from './misc.models';
 import { IUserModel } from './misc.models';
 
-export interface IChangePasswordRequest
+export interface ISendResetPasswordEmailRequest
 {
-	password: string;
+	login: string;
+	captchaType: CaptchaType;
+	captchaCode: string;
+}
+export interface ISendResetPasswordEmailResponse
+{
+	success: boolean;
+}
+export interface IResetPasswordRequest
+{
+	login: string;
+	code: string;
 	newPassword: string;
 }
-export interface IChangePasswordResponse
+export interface IResetPasswordResponse
 {
 	success: boolean;
 }
 export interface IConfirmEmailRequest
 {
 	code: string;
+	login: string;
 }
 export interface IConfirmEmailResponse
 {
@@ -51,18 +63,6 @@ export interface IRegisterRequest
 export interface IRegisterResponse
 {
 	sendToEmail: string;
-	expiredAt: string;
-}
-export interface IResetPasswordRequest
-{
-	email: string;
-	captchaType: CaptchaType;
-	captchaCode: string;
-}
-export interface IResetPasswordResponse
-{
-	sendToEmail: string;
-	expiredAt: string;
 }
 export interface IGetMeRequest
 {
@@ -70,4 +70,14 @@ export interface IGetMeRequest
 export interface IGetMeResponse
 {
 	user: IUserModel;
+}
+export interface ISendEmailConfirmationEmailRequest
+{
+	login: string;
+	captchaType: CaptchaType;
+	captchaCode: string;
+}
+export interface ISendEmailConfirmationEmailResponse
+{
+	success: boolean;
 }

@@ -1,14 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Threading.Tasks;
+using ArkProjects.YCBot.Telegram.Options;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Hangfire;
+using Hangfire.Dashboard;
+using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -16,9 +22,11 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Npgsql;
+using SdHub.Constants;
 using SdHub.Database;
 using SdHub.Database.Shared;
 using SdHub.Extensions;
+using SdHub.Hangfire.BasicAuth;
 using SdHub.Logging;
 using SdHub.Options;
 using SdHub.Services;
@@ -30,6 +38,7 @@ using SdHub.Services.FileProc.Extractor;
 using SdHub.Services.FileProc.Metadata;
 using SdHub.Services.Mailing;
 using SdHub.Services.Storage;
+using SdHub.Services.Tokens;
 using SdHub.Services.User;
 using SdHub.Services.ValidatorsCheck;
 
@@ -60,9 +69,35 @@ builder.Host
 //misc
 builder.Services
     .AddAndGetOptionsReflex<AppInfoOptions>(builder.Configuration, out var appInfo)
+    .Configure<ApiBehaviorOptions>(opts => { opts.SuppressModelStateInvalidFilter = true; })
     ;
+//hangfire
+builder.Services
+    .AddAndGetOptionsReflex<HangfireOptions>(builder.Configuration, out var hangfireOptions)
+    .AddScoped<IHangfireUsersService, HangfireUsersService>()
+    .AddHangfire(x =>
+    {
+        x.UsePostgreSqlStorage(hangfireOptions.DatabaseConnectionString, new PostgreSqlStorageOptions()
+        {
+            SchemaName = hangfireOptions.DatabaseSchema,
+            PrepareSchemaIfNecessary = true,
+        });
+    });
+if (hangfireOptions.RunServer)
+{
+    builder.Services.AddHangfireServer(x =>
+    {
+        x.ServerTimeout = TimeSpan.FromSeconds(5);
+        x.ServerCheckInterval = TimeSpan.FromSeconds(10);
+        x.CancellationCheckInterval = TimeSpan.FromSeconds(10);
+        x.HeartbeatInterval = TimeSpan.FromSeconds(10);
+        x.ServerName = hangfireOptions.ServerName;
+    });
+}
+
 //users
 builder.Services
+    .AddScoped<ITempCodesService, TempCodesService>()
     .AddScoped<IUserFromTokenService, UserFromTokenService>()
     ;
 //swagger
@@ -123,22 +158,26 @@ builder.Services
     .AddSpaStaticFiles(configuration => { configuration.RootPath = "./spa_dist"; })
     ;
 //mailing
-var mailingOptions = builder.Configuration.GetOptionsReflex<MailingOptions>();
-var smtpClient = new SmtpClient(mailingOptions.Host, mailingOptions.Port);
-smtpClient.DeliveryMethod = mailingOptions.UseMaildir
-    ? SmtpDeliveryMethod.SpecifiedPickupDirectory
-    : SmtpDeliveryMethod.Network;
-smtpClient.EnableSsl = mailingOptions.EnableSsl;
-smtpClient.Credentials = new NetworkCredential(mailingOptions.Username, mailingOptions.Password);
-smtpClient.PickupDirectoryLocation = mailingOptions.PathToMaildir;
 builder.Services
-    .AddSingleton<IMailingService, MailingService>()
+    .AddAndGetOptionsReflex<MailingOptions>(builder.Configuration, out var mailingOptions)
+    .AddScoped<IMailingService, MailingService>()
     .AddSingleton<IEmailCheckerService, EmailCheckerService>()
     .AddFluentEmail(mailingOptions.From).AddLiquidRenderer(c =>
     {
-        c.FileProvider = new PhysicalFileProvider(mailingOptions.TemplatesDir);
+        c.FileProvider = new PhysicalFileProvider(Path.GetFullPath(mailingOptions.TemplatesDir!));
     })
-    .AddSmtpSender(smtpClient)
+    .AddSmtpSender(() =>
+    {
+        var smtpClient = new SmtpClient(mailingOptions.Host, mailingOptions.Port);
+        smtpClient.DeliveryMethod = mailingOptions.UseMaildir
+            ? SmtpDeliveryMethod.SpecifiedPickupDirectory
+            : SmtpDeliveryMethod.Network;
+        smtpClient.EnableSsl = mailingOptions.EnableSsl;
+        smtpClient.UseDefaultCredentials = false;
+        smtpClient.Credentials = new NetworkCredential(mailingOptions.Username, mailingOptions.Password);
+        smtpClient.PickupDirectoryLocation = mailingOptions.PathToMaildir;
+        return smtpClient;
+    })
     ;
 //storage
 builder.Services
@@ -190,6 +229,17 @@ app.UseSpaStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+
+//hangfire
+app.UseHangfireDashboard("/hgf", new DashboardOptions
+{
+    IsReadOnlyFunc = x => x.GetHttpContext().User.IsInRole(UserRoleTypes.HangfireRO),
+    AsyncAuthorization = new[]
+    {
+        new HangfireBasicAuthenticationFilter(false),
+    }
+});
+
 app.UseEndpoints(endpoints => { endpoints.MapControllers().RequireAuthorization(); });
 app.UseMiddleware<OgInjectorMiddleware>();
 app.UseSpa(c =>
@@ -205,10 +255,10 @@ app.UseSpa(c =>
 
 //#########################################################################
 
-
 CheckValidators(app.Services);
 ValidateAutomapper(app.Services);
 await MigrateDbAsync(app.Services);
+JobStorage.Current.GetConnection().RemoveTimedOutServers(new TimeSpan(0, 0, 15));
 
 await app.RunAsync();
 

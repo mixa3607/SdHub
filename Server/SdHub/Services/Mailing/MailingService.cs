@@ -13,26 +13,39 @@ namespace SdHub.Services.Mailing;
 public class MailingService : IMailingService
 {
     private readonly MailingOptions _options;
+    private readonly AppInfoOptions _appInfo;
     private readonly ILogger<MailingService> _logger;
     private readonly IEmailCheckerService _emailChecker;
     private readonly IFluentEmail _fluentEmail;
 
     public MailingService(IOptions<MailingOptions> options,
-        ILogger<MailingService> logger, IEmailCheckerService emailChecker, IFluentEmail fluentEmail)
+        ILogger<MailingService> logger, IEmailCheckerService emailChecker, IFluentEmail fluentEmail,
+        IOptions<AppInfoOptions> appInfo)
     {
         _options = options.Value;
         _logger = logger;
         _emailChecker = emailChecker;
         _fluentEmail = fluentEmail;
+        _appInfo = appInfo.Value;
     }
 
-    public async Task SendConfirmEmailLinkAsync(string to, string code, CancellationToken ct = default)
+    public async Task SendConfirmEmailCodeAsync(string to, string code, CancellationToken ct = default)
     {
-
+        var templatePath = Path.Combine(_options.TemplatesDir!, "SendConfirmEmailLink.liquid");
         await _fluentEmail
             .To(to)
             .Subject("Email confirmation")
-            .UsingTemplate("SendConfirmEmailLink.liquid", new { })
+            .UsingTemplateFromFile(templatePath, new { Code = $"\"{code}\"", SiteUrl = _appInfo.BaseUrl })
+            .SendAsync(ct);
+    }
+
+    public async Task SendResetPasswordCodeAsync(string to, string code, CancellationToken ct = default)
+    {
+        var templatePath = Path.Combine(_options.TemplatesDir!, "SendResetPasswordCode.liquid");
+        await _fluentEmail
+            .To(to)
+            .Subject("Password reset")
+            .UsingTemplateFromFile(templatePath, new { Code = $"\"{code}\"", SiteUrl = _appInfo.BaseUrl })
             .SendAsync(ct);
     }
 

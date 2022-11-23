@@ -18,3 +18,5 @@ export function bytesToHuman(bytes: number = 0, precision: number = 2): string {
 
     return bytes.toFixed(+precision) + ' ' + units[unit];
 }
+
+const nameof = <T>(name: keyof T) => name;

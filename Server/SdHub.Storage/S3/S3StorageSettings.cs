@@ -11,7 +11,7 @@ public class S3StorageSettings : IStorageSettings
     public string? PolicyJson { get; set; }
     public string? BucketName { get; set; }
 
-    public bool Disable { get; set; }
+    public bool Disabled { get; set; }
 
     public string Save() => JsonConvert.SerializeObject(this);
     public void Load(string json) => JsonConvert.PopulateObject(json, this);

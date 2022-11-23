@@ -1,10 +1,10 @@
-<div [formGroup]="form" class="form-container">
+<div *ngIf="!isEmailConfirmationMode" [formGroup]="loginForm" class="form-container">
   <mat-form-field appearance="fill">
-    <mat-label>Login</mat-label>
+    <mat-label>Login/Email</mat-label>
     <input formControlName="login"
            matInput
            type="text">
-    <mat-error *ngIf="form.get('login')!.invalid">{{getErrorMessage(form.get('login')!)}}</mat-error>
+    <mat-error *ngIf="loginForm.get('login')!.invalid">{{getErrorMessage(loginForm.get('login')!)}}</mat-error>
   </mat-form-field>
 
   <mat-form-field appearance="fill">
@@ -18,12 +18,41 @@
             matSuffix>
       <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
     </button>
-    <mat-error *ngIf="form.get('password')!.invalid">{{getErrorMessage(form.get('password')!)}}</mat-error>
+    <mat-error *ngIf="loginForm.get('password')!.invalid">{{getErrorMessage(loginForm.get('password')!)}}</mat-error>
   </mat-form-field>
 
-  <re-captcha formControlName="recaptcha"
+  <re-captcha #captchaElem
+              formControlName="recaptcha"
               style="align-self: center"></re-captcha>
 
-  <button (click)="onSubmit()" [disabled]="form.invalid" color="primary" mat-raised-button>Login</button>
+  <button (click)="onLoginClick()" [disabled]="loginForm.invalid" color="primary"
+          mat-raised-button>{{sendConfirmationCodeRequired ? 'Send email' : 'Login'}}</button>
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+</div>
+
+
+<div *ngIf="isEmailConfirmationMode" [formGroup]="emailConfirmForm" class="form-container">
+  <mat-form-field appearance="fill">
+    <mat-label>Login/Email</mat-label>
+    <input formControlName="login"
+           matInput
+           type="text">
+    <mat-error
+            *ngIf="emailConfirmForm.get('login')!.invalid">{{getErrorMessage(emailConfirmForm.get('login')!)}}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Code from email</mat-label>
+    <input type="text"
+           formControlName="code"
+           matInput
+           placeholder="Code">
+    <mat-error
+            *ngIf="emailConfirmForm.get('code')!.invalid">{{getErrorMessage(emailConfirmForm.get('code')!)}}</mat-error>
+  </mat-form-field>
+
+  <button (click)="onEmailConfirmClick()" [disabled]="emailConfirmForm.invalid" color="primary" mat-raised-button>
+    Confirm
+  </button>
   <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
 </div>

@@ -8,6 +8,8 @@ public static class UserRoleTypes
 {
     public const string User = nameof(User);
     public const string Admin = nameof(Admin);
+    public const string HangfireRW = nameof(HangfireRW);
+    public const string HangfireRO = nameof(HangfireRO);
 
     private static string[]? _allRoles;
 

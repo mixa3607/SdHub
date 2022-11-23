@@ -24,8 +24,6 @@ public class CaptchaValidator : ICaptchaValidator
         var req = new { secret = _options.SecretKey, response = code };
         var respC = await "https://www.google.com/recaptcha/api/siteverify".PostUrlEncodedAsync(req);
         var resp = await respC.GetJsonAsync<ReCaptchaResponse>();
-        if (resp.ChallengeTimestamp > DateTime.Now.AddMinutes(2))
-            return false;
         return resp.Success;
     }
 }

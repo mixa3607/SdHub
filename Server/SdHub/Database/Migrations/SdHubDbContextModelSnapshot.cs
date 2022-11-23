@@ -24,6 +24,41 @@ namespace SdHub.Database.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("SdHub.Database.Entities.Files.DirectoryEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PathOnStorage")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("StorageName")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StorageName");
+
+                    b.HasIndex("PathOnStorage", "StorageName")
+                        .IsUnique();
+
+                    b.ToTable("Dirs");
+                });
+
             modelBuilder.Entity("SdHub.Database.Entities.Files.FileEntity", b =>
                 {
                     b.Property<long>("Id")
@@ -231,6 +266,45 @@ namespace SdHub.Database.Migrations
                     b.ToTable("ImageUploaders");
                 });
 
+            modelBuilder.Entity("SdHub.Database.Entities.TempCodeEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("CodeType")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("CurrAttempts")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("ExpiredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Identifier")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("MaxAttempts")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("Used")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TempCodes");
+                });
+
             modelBuilder.Entity("SdHub.Database.Entities.User.RefreshTokenEntity", b =>
                 {
                     b.Property<long>("Id")
@@ -286,6 +360,18 @@ namespace SdHub.Database.Migrations
 
                     b.Property<DateTimeOffset?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("EmailConfirmationLastSend")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("EmailConfirmedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("EmailNormalized")
+                        .HasColumnType("text");
 
                     b.Property<Guid>("Guid")
                         .HasColumnType("uuid");
@@ -354,6 +440,15 @@ namespace SdHub.Database.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserPlans");
+                });
+
+            modelBuilder.Entity("SdHub.Database.Entities.Files.DirectoryEntity", b =>
+                {
+                    b.HasOne("SdHub.Database.Entities.Files.FileStorageEntity", "Storage")
+                        .WithMany()
+                        .HasForeignKey("StorageName");
+
+                    b.Navigation("Storage");
                 });
 
             modelBuilder.Entity("SdHub.Database.Entities.Files.FileEntity", b =>

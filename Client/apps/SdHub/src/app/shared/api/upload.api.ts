@@ -6,13 +6,17 @@ import {IUploadResponse} from "apps/SdHub/src/app/models/autogen/upload.models";
     providedIn: "root"
 })
 export class UploadApi {
-    public readonly base = "/api/v1/upload"
+    public readonly base = "/api/v1"
 
     public constructor(private http: HttpClient) {
     }
 
     public upload(form: FormData) {
-        return this.http.post<IUploadResponse>(this.base, form);
+        return this.http.post<IUploadResponse>(this.base + '/upload', form);
+    }
+
+    public uploadAuth(form: FormData) {
+        return this.http.post<IUploadResponse>(this.base + '/uploadAuth', form);
     }
 }
 

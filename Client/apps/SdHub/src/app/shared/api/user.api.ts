@@ -1,15 +1,18 @@
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {
-    IChangePasswordRequest,
-    IChangePasswordResponse,
+    IConfirmEmailRequest, IConfirmEmailResponse,
     IGetMeRequest,
     IGetMeResponse,
     ILoginByPasswordRequest,
     ILoginByRefreshTokenRequest,
     ILoginResponse,
     IRegisterRequest,
-    IRegisterResponse
+    IRegisterResponse,
+    IResetPasswordRequest,
+    IResetPasswordResponse, ISendEmailConfirmationEmailRequest, ISendEmailConfirmationEmailResponse,
+    ISendResetPasswordEmailRequest,
+    ISendResetPasswordEmailResponse
 } from "apps/SdHub/src/app/models/autogen/user.models";
 
 @Injectable({
@@ -39,7 +42,19 @@ export class UserApi {
         return this.http.post<ILoginResponse>(this.base + '/loginByRefreshToken', req);
     }
 
-    public changePassword(req: IChangePasswordRequest) {
-        return this.http.post<IChangePasswordResponse>(this.base + '/changePassword', req);
+    public sendEmailConfirmationEmail(req: ISendEmailConfirmationEmailRequest) {
+        return this.http.post<ISendEmailConfirmationEmailResponse>(this.base + '/sendEmailConfirmationEmail', req);
+    }
+
+    public confirmEmail(req: IConfirmEmailRequest) {
+        return this.http.post<IConfirmEmailResponse>(this.base + '/confirmEmail', req);
+    }
+
+    public sendResetPasswordEmail(req: ISendResetPasswordEmailRequest) {
+        return this.http.post<ISendResetPasswordEmailResponse>(this.base + '/sendResetPasswordEmail', req);
+    }
+
+    public resetPassword(req: IResetPasswordRequest) {
+        return this.http.post<IResetPasswordResponse>(this.base + '/resetPassword', req);
     }
 }

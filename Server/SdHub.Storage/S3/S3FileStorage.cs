@@ -107,6 +107,6 @@ public class S3FileStorage : IFileStorage
 
     public Task<bool> IsAvailableAsync(long requiredBytes = 0, CancellationToken ct = default)
     {
-        return Task.FromResult(!_settings.Disable);
+        return Task.FromResult(!_settings.Disabled);
     }
 }

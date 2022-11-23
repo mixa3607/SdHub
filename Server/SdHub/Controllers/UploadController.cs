@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using SdHub.Database;
 using SdHub.Database.Entities.Images;
 using SdHub.Database.Entities.User;
+using SdHub.Database.Extensions;
 using SdHub.Extensions;
 using SdHub.Models;
 using SdHub.Models.Upload;
@@ -21,8 +22,7 @@ using SimpleBase;
 namespace SdHub.Controllers;
 
 [ApiController]
-[Route("api/v1/[controller]")]
-[AllowAnonymous]
+[Route("api/v1/[action]")]
 public class UploadController : ControllerBase
 {
     private readonly SdHubDbContext _db;
@@ -43,59 +43,52 @@ public class UploadController : ControllerBase
 
     [HttpPost]
     [DisableRequestSizeLimit]
+    public async Task<UploadResponse> UploadAuth([FromForm] UploadRequest req, CancellationToken ct = default)
+    {
+        ModelState.ThrowIfNotValid();
+        var uploader = await GetUploaderAsync(ct);
+
+        var jwtUser = _userFromToken.Get();
+        var user = await _db.Users
+            .Include(x => x.Plan)
+            .ApplyFilter(guid: jwtUser!.Guid)
+            .FirstAsync(ct);
+
+        var uploadedLastHour = await _db.Images
+            .Where(x => x.DeletedAt == null
+                        && x.OwnerId == user.Id
+                        && x.CreatedAt > DateTimeOffset.Now.AddHours(-1))
+            .CountAsync(ct);
+
+        return await UploadAsync(req, uploadedLastHour, user, uploader, ct);
+    }
+
+
+    [HttpPost]
+    [DisableRequestSizeLimit]
+    [AllowAnonymous]
     public async Task<UploadResponse> Upload([FromForm] UploadRequest req, CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
+        var uploader = await GetUploaderAsync(ct);
 
+        var user = await _db.Users
+            .Include(x => x.Plan)
+            .ApplyFilter(anonymous: true)
+            .FirstAsync(ct);
+
+        var uploadedLastHour = await _db.Images
+            .Where(x => x.DeletedAt == null
+                        && x.UploaderId == uploader.Id
+                        && x.CreatedAt > DateTimeOffset.Now.AddHours(-1))
+            .CountAsync(ct);
+
+        return await UploadAsync(req, uploadedLastHour, user, uploader, ct);
+    }
+    
+    private async Task<UploadResponse> UploadAsync(UploadRequest req, int uploadedLastHour, UserEntity user, ImageUploaderEntity uploader, CancellationToken ct = default)
+    {
         var ip = HttpContext.Connection.RemoteIpAddress!.ToString();
-        var uploader = await _db.ImageUploaders.FirstOrDefaultAsync(x => x.IpAddress == ip, ct);
-        if (uploader == null)
-        {
-            uploader = new ImageUploaderEntity()
-            {
-                IpAddress = ip
-            };
-            _db.ImageUploaders.Add(uploader);
-            await _db.SaveChangesAsync(CancellationToken.None);
-        }
-
-        UserEntity user;
-
-        var jwtUser = _userFromToken.Get();
-        if (jwtUser != null)
-        {
-            var regUser = await _db.Users
-                .Include(x => x.Plan)
-                .FirstOrDefaultAsync(x => x.DeletedAt == null && x.Guid == jwtUser.Guid && !x.IsAnonymous, ct);
-            if (regUser == null)
-                ModelState.AddError($"User {jwtUser.Login} not found").ThrowIfNotValid();
-            user = regUser!;
-        }
-        else
-        {
-            var anonUser = await _db.Users
-                .Include(x => x.Plan)
-                .FirstOrDefaultAsync(x => x.DeletedAt == null && x.IsAnonymous, ct);
-            user = anonUser!;
-        }
-
-        var uploadedLastHour = 0;
-        if (user.IsAnonymous)
-        {
-            uploadedLastHour = await _db.Images
-                .Where(x => x.DeletedAt == null
-                            && x.OwnerId == user.Id
-                            && x.CreatedAt > DateTimeOffset.Now.AddHours(-1))
-                .CountAsync(ct);
-        }
-        else
-        {
-            uploadedLastHour = await _db.Images
-                .Where(x => x.DeletedAt == null
-                            && x.UploaderId == uploader.Id
-                            && x.CreatedAt > DateTimeOffset.Now.AddHours(-1))
-                .CountAsync(ct);
-        }
 
         var manageToken = $"mg_{Guid.NewGuid():N}";
         var handledFiles = new List<UploadedFileModel>();
@@ -190,6 +183,25 @@ public class UploadController : ControllerBase
         {
             Files = handledFiles
         };
+    }
+
+
+
+    private async Task<ImageUploaderEntity> GetUploaderAsync(CancellationToken ct = default)
+    {
+        var ip = HttpContext.Connection.RemoteIpAddress!.ToString();
+        var uploader = await _db.ImageUploaders.FirstOrDefaultAsync(x => x.IpAddress == ip, ct);
+        if (uploader == null)
+        {
+            uploader = new ImageUploaderEntity()
+            {
+                IpAddress = ip
+            };
+            _db.ImageUploaders.Add(uploader);
+            await _db.SaveChangesAsync(CancellationToken.None);
+        }
+
+        return uploader;
     }
 
     private string GenerateShortToken()

@@ -6,8 +6,8 @@ public class ResetPasswordRequestValidator : AbstractValidator<ResetPasswordRequ
 {
     public ResetPasswordRequestValidator()
     {
-        RuleFor(x => x.CaptchaType).IsInEnum();
-        RuleFor(x => x.CaptchaCode).NotEmpty();
-        RuleFor(x => x.Email).EmailAddress().NotEmpty();
+        RuleFor(x => x.Login).NotEmpty();
+        RuleFor(x => x.Code).NotEmpty();
+        RuleFor(x => x.NewPassword).Matches(@"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$");
     }
 }

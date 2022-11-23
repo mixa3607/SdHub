@@ -1,6 +1,6 @@
 ﻿namespace SdHub.Models.User;
 
-public class ChangePasswordResponse
+public class SendResetPasswordEmailResponse
 {
     public bool Success { get; set; }
 }

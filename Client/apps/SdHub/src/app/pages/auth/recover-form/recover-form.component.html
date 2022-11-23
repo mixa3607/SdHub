@@ -1,1 +1,66 @@
-<p>At this time only send message to <a href="https://t.me/mixa3607">@mixa3607</a> with login</p>
+<div *ngIf="!isSendingCodeMode" [formGroup]="resetForm" class="form-container">
+  <mat-form-field appearance="fill">
+    <mat-label>Login</mat-label>
+    <input formControlName="login"
+           matInput
+           type="text">
+    <mat-error *ngIf="resetForm.get('login')!.invalid">{{getErrorMessage(resetForm.get('login')!)}}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Code</mat-label>
+    <input formControlName="code"
+           matInput
+           type="text">
+    <mat-error *ngIf="resetForm.get('code')!.invalid">{{getErrorMessage(resetForm.get('code')!)}}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Password</mat-label>
+    <input [type]="hidePassword ? 'password' : 'text'"
+           formControlName="password"
+           matInput
+           placeholder="Password">
+    <button (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hidePassword" mat-icon-button
+            matSuffix>
+      <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+    </button>
+    <mat-error *ngIf="resetForm.get('password')!.invalid">{{getErrorMessage(resetForm.get('password')!)}}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Password again</mat-label>
+    <input [type]="hidePassword ? 'password' : 'text'"
+           formControlName="confirmPassword"
+           matInput
+           placeholder="Confirm your password...">
+    <button (click)="hidePassword = !hidePassword"
+            [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hidePassword"
+            mat-icon-button
+            matSuffix>
+      <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+    </button>
+    <mat-error
+            *ngIf="resetForm.get('confirmPassword')!.invalid">{{getErrorMessage(resetForm.get('confirmPassword')!)}}</mat-error>
+  </mat-form-field>
+
+  <button (click)="onResetClick()" [disabled]="resetForm.invalid" color="primary" mat-raised-button>Register</button>
+</div>
+
+
+<div *ngIf="isSendingCodeMode" [formGroup]="sendCodeForm" class="form-container">
+  <mat-form-field appearance="fill">
+    <mat-label>Login</mat-label>
+    <input formControlName="login"
+           matInput
+           type="text">
+    <mat-error *ngIf="sendCodeForm.get('login')!.invalid">{{getErrorMessage(sendCodeForm.get('login')!)}}</mat-error>
+  </mat-form-field>
+
+  <re-captcha formControlName="recaptcha"
+              style="align-self: center"></re-captcha>
+
+  <button [disabled]="sendCodeForm.invalid" color="primary" mat-raised-button (click)="onSendCodeClick()">Register</button>
+</div>

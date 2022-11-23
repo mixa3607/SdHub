@@ -1,11 +1,11 @@
 <div class="navbar-container">
   <mat-toolbar class="navbar" color="primary">
-    <button [routerLink]="['/upload']" mat-raised-button>
+    <!--<button [routerLink]="['/upload']" mat-raised-button>
       <mat-icon>upload_file</mat-icon>
       <span fxHide.xs fxShow>
         Upload
       </span>
-    </button>
+    </button>-->
     <a [routerLink]="['/']" class="navbar-brand" matTooltip="Home">
       <h1>
         Stable Diffusion hub
@@ -21,13 +21,56 @@
         {{userName}}
       </span>
     </button>
-    <button [routerLink]="['/about']" mat-icon-button>
-      <mat-icon>help</mat-icon>
-    </button>
   </mat-toolbar>
-  <div fxFlex style="background: #e5e5e5;">
-    <router-outlet></router-outlet>
-  </div>
+
+
+  <mat-sidenav-container class="navbar-sidenav-container" fxFlex style="background: #e5e5e5;">
+    <!-- Side nav -->
+    <mat-sidenav #snav [opened]="true" [mode]="'side'" fixedTopGap="56" class="sidenav">
+
+      <mat-nav-list>
+        <a mat-list-item [routerLink]="['/upload']" routerLinkActive="active">
+          <mat-icon mat-list-icon>upload_file</mat-icon>
+          <p mat-line>Upload</p>
+        </a>
+
+        <h3 mat-subheader>Images/Albums/...</h3>
+        <a mat-list-item [routerLink]="['/gen/search']" routerLinkActive="active">
+          <mat-icon mat-list-icon>collections</mat-icon>
+          <p mat-line>All</p>
+        </a>
+
+        <h3 mat-subheader>Models/Vae/...</h3>
+        <a mat-list-item [routerLink]="['/bin/search']" routerLinkActive="active">
+          <mat-icon mat-list-icon>folder_zip</mat-icon>
+          <p mat-line>All</p>
+        </a>
+
+        <mat-divider></mat-divider>
+
+        <a mat-list-item [routerLink]="['/u/search']" routerLinkActive="active">
+          <mat-icon mat-list-icon>person</mat-icon>
+          <p mat-line>User</p>
+        </a>
+        <a mat-list-item href="https://wiki.diffai.xyz" target="_blank">
+          <mat-icon mat-list-icon>auto_stories</mat-icon>
+          <p mat-line>Wiki</p>
+        </a>
+        <a id="push-bottom" mat-list-item [routerLink]="['/about']" routerLinkActive="active">
+          <mat-icon mat-list-icon>info</mat-icon>
+          <p mat-line>About</p>
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <!-- Main content -->
+    <mat-sidenav-content class="sidenav-content">
+
+
+      <router-outlet></router-outlet>
+
+    </mat-sidenav-content>
+  </mat-sidenav-container>
 </div>
 
 <ng-template (backdropClick)="userInfoIsOpen = false"

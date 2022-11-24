@@ -15,6 +15,7 @@ using SdHub.Database;
 using SdHub.Database.Entities.User;
 using SdHub.Database.Extensions;
 using SdHub.Extensions;
+using SdHub.Hangfire.Jobs;
 using SdHub.Models;
 using SdHub.Models.User;
 using SdHub.Services.Captcha;
@@ -102,8 +103,7 @@ public class UserController : ControllerBase
         await _db.SaveChangesAsync(CancellationToken.None);
         
         var code = await _tempCodesService.CreateAsync(user.EmailNormalized!, 10, TimeSpan.FromMinutes(30), TempCodeType.EmailConfirmation, ct);
-        BackgroundJob.Enqueue<IMailingService>(x =>
-            x.SendConfirmEmailCodeAsync(req.Email!, code, CancellationToken.None));
+        BackgroundJob.Enqueue<IMailingRunnerV1>(x => x.SendConfirmEmailCodeAsync(req.Email!, code, default));
 
         return new RegisterResponse()
         {
@@ -224,8 +224,7 @@ public class UserController : ControllerBase
             ModelState.AddError(ModelStateErrors.UserNotFound).ThrowIfNotValid();
 
         var code = await _tempCodesService.CreateAsync(user!.EmailNormalized!, 10, TimeSpan.FromMinutes(30), TempCodeType.PasswordReset, ct);
-        BackgroundJob.Enqueue<IMailingService>(x =>
-            x.SendResetPasswordCodeAsync(user.Email!, code, CancellationToken.None));
+        BackgroundJob.Enqueue<IMailingRunnerV1>(x => x.SendResetPasswordCodeAsync(user.Email!, code, default));
 
         return new SendResetPasswordEmailResponse()
         {
@@ -248,8 +247,7 @@ public class UserController : ControllerBase
             ModelState.AddError(ModelStateErrors.UserNotFound).ThrowIfNotValid();
 
         var code = await _tempCodesService.CreateAsync(user!.EmailNormalized!, 10, TimeSpan.FromMinutes(30), TempCodeType.EmailConfirmation, ct);
-        BackgroundJob.Enqueue<IMailingService>(x =>
-            x.SendConfirmEmailCodeAsync(user.Email!, code, CancellationToken.None));
+        BackgroundJob.Enqueue<IMailingRunnerV1>(x => x.SendConfirmEmailCodeAsync(user.Email!, code, default));
 
         return new SendEmailConfirmationEmailResponse()
         {

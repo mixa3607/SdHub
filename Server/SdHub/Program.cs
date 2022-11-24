@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
@@ -27,11 +28,13 @@ using SdHub.Database;
 using SdHub.Database.Shared;
 using SdHub.Extensions;
 using SdHub.Hangfire.BasicAuth;
+using SdHub.Hangfire.Jobs;
 using SdHub.Logging;
 using SdHub.Options;
 using SdHub.Services;
 using SdHub.Services.Captcha;
 using SdHub.Services.ErrorHandling.Extensions;
+using SdHub.Services.ErrorHandling.Handlers;
 using SdHub.Services.FileProc;
 using SdHub.Services.FileProc.Detectors;
 using SdHub.Services.FileProc.Extractor;
@@ -73,6 +76,7 @@ builder.Services
     ;
 //hangfire
 builder.Services
+    .AddScoped<IImageConvertRunnerV1, ImageConvertRunner>()
     .AddAndGetOptionsReflex<HangfireOptions>(builder.Configuration, out var hangfireOptions)
     .AddScoped<IHangfireUsersService, HangfireUsersService>()
     .AddHangfire(x =>
@@ -82,7 +86,19 @@ builder.Services
             SchemaName = hangfireOptions.DatabaseSchema,
             PrepareSchemaIfNecessary = true,
         });
-    });
+    })
+    .Scan(x => x
+        .FromAssemblyOf<IHangfireBackgroundJobRunner>()
+        .AddClasses(c => c.AssignableTo<IHangfireBackgroundJobRunner>())
+        .AsImplementedInterfaces()
+        .WithScopedLifetime())
+    .Scan(x => x
+        .FromAssemblyOf<IHangfireRecurrentJob>()
+        .AddClasses(c => c.AssignableTo<IHangfireRecurrentJob>())
+        .AsImplementedInterfaces()
+        .WithScopedLifetime())
+    ;
+;
 if (hangfireOptions.RunServer)
 {
     builder.Services.AddHangfireServer(x =>
@@ -95,6 +111,7 @@ if (hangfireOptions.RunServer)
     });
 }
 
+;
 //users
 builder.Services
     .AddScoped<ITempCodesService, TempCodesService>()
@@ -110,7 +127,6 @@ builder.Services
     .AddAndGetOptionsReflex<RecaptchaOptions>(builder.Configuration, out _)
     .AddSingleton<ICaptchaValidator, CaptchaValidator>()
     .AddAndGetOptionsReflex<WebSecurityOptions>(builder.Configuration, out var securityOptions)
-    //.AddCustomCors(securityOptions)
     .AddCustomSecurity(securityOptions)
     ;
 //database
@@ -124,7 +140,11 @@ builder.Services
     ;
 //error handling
 builder.Services
-    .AddCustomErrorHandling(typeof(Program).Assembly)
+    .Scan(x => x
+        .FromAssemblyOf<IServerExceptionHandler>()
+        .AddClasses(c => c.AssignableTo<IServerExceptionHandler>())
+        .As<IServerExceptionHandler>()
+        .WithSingletonLifetime())
     ;
 //controllers
 builder.Services
@@ -257,14 +277,35 @@ app.UseSpa(c =>
 
 CheckValidators(app.Services);
 ValidateAutomapper(app.Services);
+PrepareHangfire(app.Services);
 await MigrateDbAsync(app.Services);
-JobStorage.Current.GetConnection().RemoveTimedOutServers(new TimeSpan(0, 0, 15));
 
 await app.RunAsync();
 
 
 //#########################################################################
 
+
+static void PrepareHangfire(IServiceProvider serviceProvider)
+{
+    JobStorage.Current.GetConnection().RemoveTimedOutServers(new TimeSpan(0, 0, 30));
+    using var scope = serviceProvider.CreateScope();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    var recurrentJobs = scope.ServiceProvider.GetRequiredService<IEnumerable<IHangfireRecurrentJob>>().ToArray();
+    logger.LogInformation("Found {count} recurrent jobs", recurrentJobs.Length);
+    foreach (var recurrentJob in recurrentJobs)
+    {
+        try
+        {
+            logger.LogInformation("Update job {name}", recurrentJob.Name);
+            recurrentJob.UpdateJob();
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, "Cant update job {name}", recurrentJob.Name);
+        }
+    }
+}
 
 static void CheckValidators(IServiceProvider serviceProvider)
 {

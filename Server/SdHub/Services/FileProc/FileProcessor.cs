@@ -46,9 +46,15 @@ public class FileProcessor : IFileProcessor
             Directory.CreateDirectory(_options.CacheDir!);
     }
 
-    public async Task<string> WriteToCacheAsync(Stream bytes, CancellationToken ct = default)
+    public string GetNewTempFilePath()
     {
         var tmpFile = Path.Combine(_options.CacheDir!, Guid.NewGuid().ToString("N"));
+        return tmpFile;
+    }
+
+    public async Task<string> WriteToCacheAsync(Stream bytes, CancellationToken ct = default)
+    {
+        var tmpFile = GetNewTempFilePath();
         await using var tmpFileStream = File.OpenWrite(tmpFile);
         await bytes.CopyToAsync(tmpFileStream, ct);
         return tmpFile;
@@ -118,8 +124,14 @@ public class FileProcessor : IFileProcessor
         CancellationToken ct = default)
     {
         await using var stream = File.OpenRead(tempFile);
-        var storage = await _fileStorageFactory.GetStorageAsync(stream.Length, ct);
-        var saveResult = await storage.SaveAsync(stream, originalName, ct);
+        return await WriteFileToStorageAsync(stream, originalName, ct);
+    }
+
+    public async Task<FileSaveResult> WriteFileToStorageAsync(Stream seekableStream, string originalName,
+        CancellationToken ct = default)
+    {
+        var storage = await _fileStorageFactory.GetStorageAsync(seekableStream.Length, ct);
+        var saveResult = await storage.SaveAsync(seekableStream, originalName, ct);
         return saveResult;
     }
 

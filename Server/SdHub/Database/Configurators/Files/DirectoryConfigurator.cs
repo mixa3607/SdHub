@@ -8,7 +8,7 @@ public class DirectoryConfigurator : IEntityTypeConfiguration<DirectoryEntity>
 {
     public void Configure(EntityTypeBuilder<DirectoryEntity> builder)
     {
-        builder.HasIndex(x => new { x.PathOnStorage, x.StorageName }).IsUnique();
         builder.Property(x => x.PathOnStorage).IsRequired();
+        builder.Navigation(e => e.Storage).AutoInclude();
     }
 }

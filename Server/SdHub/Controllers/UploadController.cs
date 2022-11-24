@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using Hangfire;
+using Hangfire.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +15,7 @@ using SdHub.Database.Entities.Images;
 using SdHub.Database.Entities.User;
 using SdHub.Database.Extensions;
 using SdHub.Extensions;
+using SdHub.Hangfire.Jobs;
 using SdHub.Models;
 using SdHub.Models.Upload;
 using SdHub.Services.FileProc;
@@ -92,6 +95,8 @@ public class UploadController : ControllerBase
 
         var manageToken = $"mg_{Guid.NewGuid():N}";
         var handledFiles = new List<UploadedFileModel>();
+        var savedImages = new List<ImageEntity>();
+
         for (var i = 0; i < req.Files.Count; i++)
         {
             var formFile = req.Files[i];
@@ -164,6 +169,7 @@ public class UploadController : ControllerBase
                 uplFile.Reason = "OK";
                 uplFile.Image = _mapper.Map<ImageModel>(imageEntity);
                 _db.Images.Add(imageEntity);
+                savedImages.Add(imageEntity);
             }
             catch (MetadataExtractor.ImageProcessingException e)
             {
@@ -179,6 +185,11 @@ public class UploadController : ControllerBase
         }
 
         await _db.SaveChangesAsync(CancellationToken.None);
+        foreach (var imgId in savedImages.Select(x => x.Id))
+        {
+            BackgroundJob.Enqueue<IImageConvertRunnerV1>(x => x.GenerateImagesAsync(imgId, default));
+        }
+
         return new UploadResponse()
         {
             Files = handledFiles

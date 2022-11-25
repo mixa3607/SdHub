@@ -2,7 +2,7 @@
 title: Шаблон шапки
 description: 
 published: true
-date: 2022-11-19T11:34:34.484Z
+date: 2022-11-25T19:32:37.814Z
 tags: 
 editor: markdown
 dateCreated: 2022-11-18T23:51:44.600Z
@@ -37,7 +37,7 @@ https://www.youtube.com/watch?v=6MeJKnbv1ts
 Negative prompt:
 >lowres, bad anatomy, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, blurry
 
-[b]Если у тебя чёрные квадраты вместо сгенерированной картинки, пропиши в параметрах webui-user.bat [i]set COMMANDLINE_ARGS= --no-half-vae[/i]
+[b]Если у тебя чёрные квадраты вместо сгенерированной картинки, пропиши в параметрах webui-user.bat [i]set COMMANDLINE_ARGS=--no-half-vae --precision full --no-half[/i] (Для карт старше 16 линейки можно только [i]--no-half-vae[/i])
 Если у тебя мыльные картинки при использовании Highres. fix поставь в настройках галочку Upscale latent space image when doing hires. fix[/b]
 ----------------------------------
 [b]ПОЛЕЗНЫЕ ССЫЛКИ[/b]
@@ -54,7 +54,7 @@ https://app.posemy.art
 https://figurosity.com/figure-drawing-poses
 https://app.justsketch.me
 https://webapp.magicposer.com
-https://www.artstation.com/marketplace/p/VOAyv/stable-diffusion-3d-posable-manekin-doll?utm_source=artstation&utm_medium=referral&utm_campaign=homepage&utm_term=marketplace
+https://www.artstation.com/marketplace/p/VOAyv/stable-diffusion-3d-posable-manekin-doll
 ----------------------------------
 [b]ГУГЛ КОЛЛАБ[/b]
 Если у вас слабое железо, можно поднять нейронку на гугл коллабе. Google Colab - облако, выделяемое гуглом с мощными CPU и TPU. Можно юзать бесплатно несколько часов каждый день. Обойти ограничение можно, создав второй аккаунт. 

@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.IO;
+﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -31,8 +30,7 @@ public class ImageConvertRunner : IImageConvertRunnerV1
         _mapper = mapper;
     }
 
-    [DisplayName("Gen images for {0}")]
-    public async Task GenerateImagesAsync(long imageId, CancellationToken ct = default)
+    public async Task GenerateImagesAsync(long imageId, bool force, CancellationToken ct = default)
     {
         var image = await _db.Images
             .Include(x => x.OriginalImage)
@@ -41,11 +39,18 @@ public class ImageConvertRunner : IImageConvertRunnerV1
             return;
 
         var imageModel = _mapper.Map<ImageModel>(image);
-        if (imageModel.ThumbImage == null)
+        using var srcImgStream = new MemoryStream();
+        if (image.ThumbImageId == null || image.CompressedImageId == null || force)
         {
-            var srcImgStream = await imageModel.OriginalImage!.DirectUrl.GetStreamAsync(ct);
+            var dwnStream = await imageModel.OriginalImage!.DirectUrl.GetStreamAsync(ct);
+            await dwnStream.CopyToAsync(srcImgStream, ct);
+            srcImgStream.Position = 0;
+        }
+
+        if (image.ThumbImageId == null || force)
+        {
             using var srcImage = new MagickImage(srcImgStream);
-            if (srcImage.Width > 512 || srcImage.Height > 512) 
+            if (srcImage.Width > 512 || srcImage.Height > 512)
                 srcImage.Resize(new MagickGeometry("512x512>"));
 
             using var dstImgStream = new MemoryStream();
@@ -55,6 +60,19 @@ public class ImageConvertRunner : IImageConvertRunnerV1
             var result = await _fileProcessor.WriteFileToStorageAsync(dstImgStream, $"{imageId}_thumb.webp", ct);
             var file = await _fileProcessor.SaveToDatabaseAsync(result, CancellationToken.None);
             image.ThumbImage = file;
+            await _db.SaveChangesAsync(CancellationToken.None);
+        }
+
+        if (image.CompressedImageId == null || force)
+        {
+            using var srcImage = new MagickImage(srcImgStream);
+            using var dstImgStream = new MemoryStream();
+            await srcImage.WriteAsync(dstImgStream, MagickFormat.WebP, ct);
+            dstImgStream.Position = 0;
+
+            var result = await _fileProcessor.WriteFileToStorageAsync(dstImgStream, $"{imageId}_compressed.webp", ct);
+            var file = await _fileProcessor.SaveToDatabaseAsync(result, CancellationToken.None);
+            image.CompressedImage = file;
             await _db.SaveChangesAsync(CancellationToken.None);
         }
     }

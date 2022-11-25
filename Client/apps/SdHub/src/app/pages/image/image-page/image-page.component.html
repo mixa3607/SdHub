@@ -50,7 +50,7 @@
             </ng-template>
           </div>
           <div class="uploaded-image-container">
-            <img [src]="imageInfo?.originalImage?.directUrl" class="uploaded-image">
+            <img [src]="imageInfo?.compressedImage?.directUrl ?? imageInfo?.originalImage?.directUrl" class="uploaded-image">
           </div>
 
           <div class="props-container">

@@ -7,6 +7,10 @@ const appRoutes: Routes = [
     loadChildren: () => import('./pages/image/image.module').then(m => m.ImageModule),
   },
   {
+    path: 'gen',
+    loadChildren: () => import('./pages/generated/generated.module').then(m => m.GeneratedModule),
+  },
+  {
     path: 'about',
     loadChildren: () => import('./pages/about/about.module').then(m => m.AboutModule),
   },

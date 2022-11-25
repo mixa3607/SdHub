@@ -24,6 +24,9 @@ public class ImageEntity
     public long? ThumbImageId { get; set; }
     public FileEntity? ThumbImage { get; set; }
 
+    public long? CompressedImageId { get; set; }
+    public FileEntity? CompressedImage { get; set; }
+
     /// <summary>
     /// base58 code
     /// </summary>

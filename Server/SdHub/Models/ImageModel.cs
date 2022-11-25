@@ -10,8 +10,9 @@ public class ImageModel
     public ImageOwnerModel? Owner { get; set; }
     
     public FileModel? OriginalImage { get; set; }
-    
+    public FileModel? CompressedImage { get; set; }
     public FileModel? ThumbImage { get; set; }
+
     public string? ShortUrl { get; set; }
     public string? ShortToken { get; set; }
 

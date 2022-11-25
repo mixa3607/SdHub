@@ -187,7 +187,7 @@ public class UploadController : ControllerBase
         await _db.SaveChangesAsync(CancellationToken.None);
         foreach (var imgId in savedImages.Select(x => x.Id))
         {
-            BackgroundJob.Enqueue<IImageConvertRunnerV1>(x => x.GenerateImagesAsync(imgId, default));
+            BackgroundJob.Enqueue<IImageConvertRunnerV1>(x => x.GenerateImagesAsync(imgId, false, default));
         }
 
         return new UploadResponse()

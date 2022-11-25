@@ -6,7 +6,7 @@
     }
   },
   "sourceRoot": "apps/SdHub/src",
-  "prefix": "app",
+  "prefix": "",
   "targets": {
     "build": {
       "executor": "@angular-devkit/build-angular:browser",

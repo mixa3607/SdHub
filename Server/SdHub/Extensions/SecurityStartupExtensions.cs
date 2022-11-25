@@ -1,5 +1,11 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.Text;
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json;
+using SdHub.ApiTokenAuth;
 using SdHub.Options;
 using SdHub.Services.Tokens;
 
@@ -31,14 +37,15 @@ public static class SecurityStartupExtensions
             .AddScoped<IRefreshTokenService, RefreshTokenService>()
             ;
         services
-            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddAuthentication(o => { o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme; })
             .AddJwtBearer(o =>
             {
                 Microsoft.IdentityModel.Logging.IdentityModelEventSource.ShowPII = options.Jwt.LogPii;
                 o.SaveToken = true;
                 o.RequireHttpsMetadata = options.EnableHttpsRedirections;
                 o.TokenValidationParameters = options.MapToTokenValidationParameters();
-            });
+            })
+            .AddScheme<ApiTokenAuthSchemeOptions, ApiTokenAuthHandler>(ApiTokenDefaults.AuthenticationScheme, o => { });
         return services;
     }
 }

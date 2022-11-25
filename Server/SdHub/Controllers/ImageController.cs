@@ -150,8 +150,9 @@ public class ImageController : ControllerBase
 
         var imageEnt = await _db.Images
             .Include(x => x.ParsedMetadata).ThenInclude(x => x!.Tags)
-            .Include(x => x.OriginalImage).ThenInclude(x => x!.Storage)
-            .Include(x => x.ThumbImage).ThenInclude(x => x!.Storage)
+            .Include(x => x.OriginalImage)
+            .Include(x => x.CompressedImage)
+            .Include(x => x.ThumbImage)
             .Include(x => x.Owner)
             .Where(x => x.DeletedAt == null && x.ShortToken == req.Image!.ShortToken)
             .FirstOrDefaultAsync(ct);

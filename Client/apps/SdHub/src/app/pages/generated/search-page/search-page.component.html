@@ -1,0 +1,32 @@
+<div class="container" fxLayout="row" fxLayoutAlign="center none">
+  <div fxFlex="100%">
+    <mat-card style="display: flex; flex-direction: column; box-sizing: border-box; min-height: 100%" >
+      <mat-card-content style="display: flex; flex-direction: column; flex-grow: 1">
+        <div style="display: flex; gap: .2rem">
+          <mat-form-field appearance="fill" style="flex-grow: 1">
+            <mat-label>Search text</mat-label>
+            <input matInput>
+            <button [attr.aria-label]="'run'" mat-icon-button matSuffix>
+              <mat-icon>search</mat-icon>
+            </button>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>Search in</mat-label>
+            <mat-select [(value)]="selectedSearchType">
+              <mat-option *ngFor="let variant of searchInVariants" [value]="variant.id">
+                {{variant.value}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <ng-container [ngSwitch]="selectedSearchType">
+          <search-in-images *ngSwitchCase="searchInType.Images"></search-in-images>
+          <div *ngSwitchDefault style="display: flex; flex-direction: column; align-items: center; flex-grow: 1; justify-content: center; font-size: 4rem">
+            <div>This search type not supported yet</div>
+            <div>≧ ﹏ ≦</div>
+          </div>
+        </ng-container>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

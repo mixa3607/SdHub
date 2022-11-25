@@ -8,7 +8,7 @@ export interface Task {
 }
 
 @Component({
-    selector: 'app-about-page',
+    selector: 'app-search-page',
     templateUrl: './about-page.component.html',
     styleUrls: ['./about-page.component.scss']
 })

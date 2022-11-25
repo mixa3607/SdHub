@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { LayoutComponent } from '../../shared/layout/layout.component';
-import { SearchPageComponent } from 'apps/SdHub/src/app/pages/generated/about-page/search-page.component';
+import { SearchPageComponent } from 'apps/SdHub/src/app/pages/generated/search-page/search-page.component';
 
 const routes: Routes = [
   {

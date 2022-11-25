@@ -2,7 +2,7 @@
 title: Шаблон шапки
 description: 
 published: true
-date: 2022-11-25T19:32:37.814Z
+date: 2022-11-25T19:47:53.256Z
 tags: 
 editor: markdown
 dateCreated: 2022-11-18T23:51:44.600Z
@@ -37,7 +37,7 @@ https://www.youtube.com/watch?v=6MeJKnbv1ts
 Negative prompt:
 >lowres, bad anatomy, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, blurry
 
-[b]Если у тебя чёрные квадраты вместо сгенерированной картинки, пропиши в параметрах webui-user.bat [i]set COMMANDLINE_ARGS=--no-half-vae --precision full --no-half[/i] (Для карт старше 16 линейки можно только [i]--no-half-vae[/i])
+[b]Если у тебя чёрные квадраты вместо сгенерированной картинки, пропиши в параметрах webui-user.bat [i]set COMMANDLINE_ARGS=--no-half-vae[/i] (Для карт 16 линейки можно [i]--precision full --no-half[/i])
 Если у тебя мыльные картинки при использовании Highres. fix поставь в настройках галочку Upscale latent space image when doing hires. fix[/b]
 ----------------------------------
 [b]ПОЛЕЗНЫЕ ССЫЛКИ[/b]

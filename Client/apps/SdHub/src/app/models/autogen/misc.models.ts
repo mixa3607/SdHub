@@ -52,8 +52,10 @@ export interface IUserModel
 {
 	guid: string;
 	login: string;
+	loginNormalized: string;
 	createdAt: string;
 	roles: string[];
+	about: string;
 }
 export interface IFileModel
 {

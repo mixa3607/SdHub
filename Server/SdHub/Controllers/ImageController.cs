@@ -47,18 +47,6 @@ public class ImageController : ControllerBase
 
         if (!string.IsNullOrWhiteSpace(req.SearchText) && req.Fields.Count > 0)
         {
-            //var searchText = req.SearchText.ToLower();
-            //var byName = req.Fields.Contains(SearchImageInFieldType.Name);
-            //var byDesc = req.Fields.Contains(SearchImageInFieldType.Description);
-            //var byPrompt = req.Fields.Contains(SearchImageInFieldType.Prompt);
-            //var byUser = req.Fields.Contains(SearchImageInFieldType.User);
-            //query = query.Where(x =>
-            //    (byName && EF.Functions.ILike(x.Name!, searchText)) ||
-            //    (byDesc && EF.Functions.ILike(x.Description!, searchText)) ||
-            //    (byUser && EF.Functions.ILike(x.Owner!.Login!, searchText)) ||
-            //    (byPrompt && x.ParsedMetadata!.Tags!.Any(y => EF.Functions.ILike(y.Value!, searchText))) ||
-            //    false
-            //);
             var searchText = req.SearchText;
             if (!searchText.StartsWith('%') && !req.SearchAsRegexp)
                 searchText = "%" + searchText;
@@ -101,7 +89,13 @@ public class ImageController : ControllerBase
             query = query.Where(predicate);
         }
 
-        var str = query.ToQueryString();
+        if (!string.IsNullOrWhiteSpace(req.Owner))
+        {
+            var owner = req.Owner.Normalize().ToUpper();
+            query = query.Where(x => x.Owner!.LoginNormalized! == owner);
+        }
+
+        //var str = query.ToQueryString();
 
         if (req.Softwares.Count > 0)
         {

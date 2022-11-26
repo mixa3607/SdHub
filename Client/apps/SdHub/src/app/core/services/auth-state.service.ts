@@ -12,6 +12,7 @@ export class AuthStateService {
     public user$ = new BehaviorSubject<IUserModel | null>(null);
     public jwtToken$ = new BehaviorSubject<string | null>(null);
     public refreshToken$ = new BehaviorSubject<string | null>(null);
+    public isAuthFinished$ = new BehaviorSubject<boolean>(false);
 
     constructor(private localStorage: LocalStorageService,
                 private logger: NGXLogger) {

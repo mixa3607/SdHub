@@ -76,8 +76,13 @@ const showErrorCode = (errorCode: string, title: string, notificationsService: T
 
 export const httpErrorResponseHandler = (error: IServerErrorResponse | HttpErrorResponse, notificationsService: ToastrService,
                                          handlers: ((httpError: IServerErrorResponse, service: ToastrService) => boolean)[] | null = null): boolean => {
-    if (error instanceof HttpErrorResponse)
-        error = error.error as IServerErrorResponse;
+    if (error instanceof HttpErrorResponse){
+        const srvErr = error.error as IServerErrorResponse ?? {};
+        srvErr.statusCode ??= error.status;
+        srvErr.title ??= error.name;
+        srvErr.message ??= error.message;
+        error = srvErr;
+    }
     if (handlers == null)
         handlers = defaultHandlersPipeline;
     let handled = false;

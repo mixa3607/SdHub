@@ -1,0 +1,35 @@
+<div class="container" fxLayout="row" fxLayoutAlign="center none">
+  <div fxFlex="100%">
+    <mat-card>
+      <mat-card-content style="display: flex; flex-direction: column;">
+        <div style="display: flex; flex-direction: row">
+          <h1>User: {{user?.login}}</h1>
+          <div style="flex-grow: 1"></div>
+          <ng-container *ngIf="!editMode; else editBtns">
+            <button (click)="onEditClick()" mat-icon-button>
+              <mat-icon>edit</mat-icon>
+            </button>
+          </ng-container>
+          <ng-template #editBtns>
+            <button (click)="onSaveClick()" mat-icon-button>
+              <mat-icon>save</mat-icon>
+            </button>
+          </ng-template>
+        </div>
+        <div *ngIf="!editMode; else editDescription" class="props-container">
+          <markdown [data]="user?.about"></markdown>
+        </div>
+        <ng-template #editDescription>
+          <mat-form-field appearance="outline"
+                          class="form-no-bottom-padding"
+                          style="font-size: medium">
+            <mat-label>Description</mat-label>
+            <textarea cdkTextareaAutosize [(ngModel)]="user!.about!" matInput placeholder="About"></textarea>
+          </mat-form-field>
+        </ng-template>
+
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>

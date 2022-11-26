@@ -17,6 +17,7 @@ public class UserEntity
     public UserPlanEntity? Plan { get; set; }
     public List<ImageEntity>? Images { get; set; }
     public bool IsAnonymous { get; set; }
+    public string? About { get; set; }
 
     //for registered
     public string? LoginNormalized { get; set; }

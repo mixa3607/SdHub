@@ -1,9 +1,9 @@
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {
-    IConfirmEmailRequest, IConfirmEmailResponse,
+    IConfirmEmailRequest, IConfirmEmailResponse, IEditUserRequest, IEditUserResponse,
     IGetMeRequest,
-    IGetMeResponse,
+    IGetMeResponse, IGetUserRequest, IGetUserResponse,
     ILoginByPasswordRequest,
     ILoginByRefreshTokenRequest,
     ILoginResponse,
@@ -28,6 +28,16 @@ export class UserApi {
         return this.http.get<IGetMeResponse>(this.base + '/getMe', {
             params: req as any
         });
+    }
+
+    public get(req: IGetUserRequest) {
+        return this.http.get<IGetUserResponse>(this.base + '/get', {
+            params: req as any
+        });
+    }
+
+    public edit(req: IEditUserRequest) {
+        return this.http.post<IEditUserResponse>(this.base + '/edit', req);
     }
 
     public register(req: IRegisterRequest) {

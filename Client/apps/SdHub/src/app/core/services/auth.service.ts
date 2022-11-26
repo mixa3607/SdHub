@@ -22,10 +22,14 @@ export class AuthService {
         const {jwt, refresh} = this.state.getJwtAndRefreshToken();
         this.logger.info('Read jwt and refresh from storage', jwt, refresh);
         if (jwt != null && refresh != null) {
-            this.getMe().subscribe(x => this.state.setUser(x));
+            this.getMe().subscribe(x => {
+                this.state.setUser(x);
+                this.state.isAuthFinished$.next(true);
+            });
             this.state.setJwtAndRefreshToken(jwt, refresh);
         } else {
             this.state.setUser(null);
+            this.state.isAuthFinished$.next(true);
         }
     }
 

@@ -25,7 +25,9 @@
           "apps/SdHub/src/styles.scss",
           "./node_modules/leaflet/dist/leaflet.css"
         ],
-        "scripts": []
+        "scripts": [
+          "node_modules/marked/marked.min.js"
+        ]
       },
       "configurations": {
         "production": {

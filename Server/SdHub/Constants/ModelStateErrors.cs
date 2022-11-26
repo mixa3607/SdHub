@@ -3,6 +3,7 @@
 public static class ModelStateErrors
 {
     public const string UserNotFound = "USER_NOT_FOUND";
+    public const string UserEditNotAllowed = "USER_EDIT_NOT_ALLOWED";
     public const string EmailNotConfirmed = "EMAIL_NOT_CONFIRMED";
     public const string BadCreds = "BAD_CREDS";
     public const string BadConfirmationCode = "BAD_CONFIRMATION_CODE";

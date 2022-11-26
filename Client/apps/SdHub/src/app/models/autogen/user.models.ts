@@ -81,3 +81,20 @@ export interface ISendEmailConfirmationEmailResponse
 {
 	success: boolean;
 }
+export interface IEditUserRequest
+{
+	login: string;
+	about: string;
+}
+export interface IEditUserResponse
+{
+	user: IUserModel;
+}
+export interface IGetUserRequest
+{
+	login: string;
+}
+export interface IGetUserResponse
+{
+	user: IUserModel;
+}

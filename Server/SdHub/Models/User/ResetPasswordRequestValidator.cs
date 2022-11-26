@@ -8,6 +8,6 @@ public class ResetPasswordRequestValidator : AbstractValidator<ResetPasswordRequ
     {
         RuleFor(x => x.Login).NotEmpty();
         RuleFor(x => x.Code).NotEmpty();
-        RuleFor(x => x.NewPassword).Matches(@"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$");
+        RuleFor(x => x.NewPassword).Matches(@"^(.{8,})$").WithMessage("Min 8 chars");
     }
 }

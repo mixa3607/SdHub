@@ -101,8 +101,9 @@ public class UserController : ControllerBase
         };
         _db.Users.Add(user);
         await _db.SaveChangesAsync(CancellationToken.None);
-        
-        var code = await _tempCodesService.CreateAsync(user.EmailNormalized!, 10, TimeSpan.FromMinutes(30), TempCodeType.EmailConfirmation, ct);
+
+        var code = await _tempCodesService.CreateAsync(user.EmailNormalized!, 10, TimeSpan.FromMinutes(30),
+            TempCodeType.EmailConfirmation, ct);
         BackgroundJob.Enqueue<IMailingRunnerV1>(x => x.SendConfirmEmailCodeAsync(req.Email!, code, default));
 
         return new RegisterResponse()
@@ -120,7 +121,7 @@ public class UserController : ControllerBase
 
         if (!await _captchaValidator.ValidateCodeAsync(req.CaptchaCode!, req.CaptchaType))
             ModelState.AddError(ModelStateErrors.InvalidCaptcha).ThrowIfNotValid();
-        
+
         var user = await _db.Users.ApplyFilter(loginOrEmail: req.Login).FirstOrDefaultAsync(ct);
 
         if (user == null)
@@ -211,7 +212,8 @@ public class UserController : ControllerBase
 
     [HttpPost("[action]")]
     [AllowAnonymous]
-    public async Task<SendResetPasswordEmailResponse> SendResetPasswordEmail([FromBody] SendResetPasswordEmailRequest req,
+    public async Task<SendResetPasswordEmailResponse> SendResetPasswordEmail(
+        [FromBody] SendResetPasswordEmailRequest req,
         CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
@@ -223,7 +225,8 @@ public class UserController : ControllerBase
         if (user == null)
             ModelState.AddError(ModelStateErrors.UserNotFound).ThrowIfNotValid();
 
-        var code = await _tempCodesService.CreateAsync(user!.EmailNormalized!, 10, TimeSpan.FromMinutes(30), TempCodeType.PasswordReset, ct);
+        var code = await _tempCodesService.CreateAsync(user!.EmailNormalized!, 10, TimeSpan.FromMinutes(30),
+            TempCodeType.PasswordReset, ct);
         BackgroundJob.Enqueue<IMailingRunnerV1>(x => x.SendResetPasswordCodeAsync(user.Email!, code, default));
 
         return new SendResetPasswordEmailResponse()
@@ -234,7 +237,8 @@ public class UserController : ControllerBase
 
     [HttpPost("[action]")]
     [AllowAnonymous]
-    public async Task<SendEmailConfirmationEmailResponse> SendEmailConfirmationEmail([FromBody] SendEmailConfirmationEmailRequest req,
+    public async Task<SendEmailConfirmationEmailResponse> SendEmailConfirmationEmail(
+        [FromBody] SendEmailConfirmationEmailRequest req,
         CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
@@ -246,7 +250,8 @@ public class UserController : ControllerBase
         if (user == null)
             ModelState.AddError(ModelStateErrors.UserNotFound).ThrowIfNotValid();
 
-        var code = await _tempCodesService.CreateAsync(user!.EmailNormalized!, 10, TimeSpan.FromMinutes(30), TempCodeType.EmailConfirmation, ct);
+        var code = await _tempCodesService.CreateAsync(user!.EmailNormalized!, 10, TimeSpan.FromMinutes(30),
+            TempCodeType.EmailConfirmation, ct);
         BackgroundJob.Enqueue<IMailingRunnerV1>(x => x.SendConfirmEmailCodeAsync(user.Email!, code, default));
 
         return new SendEmailConfirmationEmailResponse()
@@ -278,6 +283,51 @@ public class UserController : ControllerBase
         return new ResetPasswordResponse()
         {
             Success = true
+        };
+    }
+
+    [HttpGet("[action]")]
+    [AllowAnonymous]
+    public async Task<GetUserResponse> Get([FromQuery] GetUserRequest req,
+        CancellationToken ct = default)
+    {
+        ModelState.ThrowIfNotValid();
+        var user = await _db.Users.ApplyFilter(loginOrEmail: req.Login).FirstOrDefaultAsync(ct);
+        if (user == null)
+            ModelState.AddError(ModelStateErrors.UserNotFound).ThrowIfNotValid();
+
+        var model = _mapper.Map<UserModel>(user);
+        return new GetUserResponse()
+        {
+            User = model
+        };
+    }
+
+    [HttpPost("[action]")]
+    public async Task<EditUserResponse> Edit([FromBody] EditUserRequest req,
+        CancellationToken ct = default)
+    {
+        ModelState.ThrowIfNotValid();
+
+        var userJwt = _fromTokenService.Get()!;
+        var user = await _db.Users.ApplyFilter(loginOrEmail: req.Login).FirstOrDefaultAsync(ct);
+
+        if (user == null)
+            ModelState.AddError(ModelStateErrors.UserNotFound).ThrowIfNotValid();
+        if (userJwt.Guid != user!.Guid && !user.Roles.Contains(UserRoleTypes.Admin))
+            ModelState.AddError(ModelStateErrors.UserEditNotAllowed).ThrowIfNotValid();
+
+        if (req.About?.Trim() == "")
+            user.About = null;
+        else if (user.About != req.About)
+            user.About = req.About;
+
+        await _db.SaveChangesAsync(CancellationToken.None);
+
+        var model = _mapper.Map<UserModel>(user);
+        return new EditUserResponse()
+        {
+            User = model
         };
     }
 }

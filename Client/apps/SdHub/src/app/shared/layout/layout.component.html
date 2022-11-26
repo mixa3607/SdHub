@@ -48,7 +48,7 @@
 
         <mat-divider></mat-divider>
 
-        <a mat-list-item [routerLink]="['/u/search']" routerLinkActive="active">
+        <a mat-list-item [disabled]="isAnonymous" [routerLink]="['/user']" routerLinkActive="active">
           <mat-icon mat-list-icon>person</mat-icon>
           <p mat-line>User</p>
         </a>

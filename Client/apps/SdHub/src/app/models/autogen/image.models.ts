@@ -58,6 +58,7 @@ export interface ICheckManageTokenResponse
 export interface ISearchImageRequest
 {
 	searchText: string;
+	owner: string;
 	fields: SearchImageInFieldType[];
 	softwares: string[];
 	alsoFromGrids: boolean;

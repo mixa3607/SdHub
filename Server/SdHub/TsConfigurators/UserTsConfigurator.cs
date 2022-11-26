@@ -29,6 +29,10 @@ public class UserTsConfigurator : ITsConfigurator
                 typeof(GetMeResponse),
                 typeof(SendEmailConfirmationEmailRequest),
                 typeof(SendEmailConfirmationEmailResponse),
+                typeof(EditUserRequest),
+                typeof(EditUserResponse),
+                typeof(GetUserRequest),
+                typeof(GetUserResponse),
             }, c => c
                 .SubsDatetimeOffsetToStr()
                 .SubsTimespanToStr()

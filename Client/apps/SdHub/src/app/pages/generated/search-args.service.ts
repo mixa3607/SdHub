@@ -26,6 +26,7 @@ export class SearchArgsService {
         searchAsRegexp: false,
         skip: 0,
         take: 0,
+        owner: ''
     }
     public readonly searchInImagesArgs$: BehaviorSubject<ISearchImageRequest>;
     public readonly searchPerform$: Subject<PerformType>;

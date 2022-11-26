@@ -93,7 +93,7 @@ public class UploadController : ControllerBase
     {
         var ip = HttpContext.Connection.RemoteIpAddress!.ToString();
 
-        var manageToken = $"mg_{Guid.NewGuid():N}";
+        var manageToken = user.IsAnonymous ? $"mg_{Guid.NewGuid():N}" : null;
         var handledFiles = new List<UploadedFileModel>();
         var savedImages = new List<ImageEntity>();
 

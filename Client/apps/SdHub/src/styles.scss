@@ -22,8 +22,22 @@ mat-form-field.form-no-bottom-padding {
   .mat-form-field-wrapper {
     padding-bottom: unset;
 
-    .mat-form-field-underline{
+    .mat-form-field-underline {
       bottom: 0;
+    }
+  }
+}
+
+.md-fill-space {
+  .mat-dialog-container {
+    padding: 0;
+
+    .mat-dialog-content {
+
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
     }
   }
 }

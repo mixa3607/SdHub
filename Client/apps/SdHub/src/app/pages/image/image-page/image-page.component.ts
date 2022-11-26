@@ -15,6 +15,9 @@ import {
 import {MatDialog} from "@angular/material/dialog";
 import {FormControl, FormControlName} from "@angular/forms";
 import {bytesToHuman} from "apps/SdHub/src/app/shared/utils/bytes";
+import {
+    ImageViewerDialogComponent
+} from "apps/SdHub/src/app/shared/components/image-viewer-dialog/image-viewer-dialog.component";
 
 interface IGroupedTags {
     software: string,
@@ -194,5 +197,9 @@ export class ImagePageComponent implements OnInit {
                 httpErrorResponseHandler(err, this.toastr);
             }
         });
+    }
+
+    public onOpenImageViewerClick(): void {
+        ImageViewerDialogComponent.open({imageInfo: this.imageInfo!}, this.dialog);
     }
 }

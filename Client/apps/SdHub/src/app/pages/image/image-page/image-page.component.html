@@ -50,7 +50,13 @@
             </ng-template>
           </div>
           <div class="uploaded-image-container">
-            <img [src]="imageInfo?.compressedImage?.directUrl ?? imageInfo?.originalImage?.directUrl" class="uploaded-image">
+            <img [src]="imageInfo?.compressedImage?.directUrl ?? imageInfo?.originalImage?.directUrl"
+                 class="uploaded-image">
+            <button mat-icon-button
+                    class="open-image-viewer-btn"
+                    (click)="onOpenImageViewerClick()">
+              <mat-icon inline>fullscreen</mat-icon>
+            </button>
           </div>
 
           <div class="props-container">

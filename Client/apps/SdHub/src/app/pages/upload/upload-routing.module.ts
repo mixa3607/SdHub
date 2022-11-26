@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
 
-import {LayoutComponent} from '../../shared/layout/layout.component';
+import {LayoutComponent} from '../../shared/components/layout/layout.component';
 import {UploadPageComponent} from "./upload-page/upload-page.component";
 
 const routes: Routes = [

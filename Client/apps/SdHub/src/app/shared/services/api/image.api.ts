@@ -48,7 +48,7 @@ export class ImageApi {
         return this.http.post<IEditImageResponse>(this.base + '/edit', req);
     }
 
-    public search(req: ISearchImageRequest) {
+    public search(req: Partial<ISearchImageRequest>) {
         return this.http.post<ISearchImageResponse>(this.base + '/search', req);
     }
 }

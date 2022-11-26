@@ -9,7 +9,7 @@ import {
 import {PerformType, SearchArgsService} from "apps/SdHub/src/app/pages/generated/search-args.service";
 import {first, switchMap, tap} from "rxjs";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
-import {ImageApi} from "apps/SdHub/src/app/shared/api/image.api";
+import {ImageApi} from "apps/SdHub/src/app/shared/services/api/image.api";
 import {HttpErrorResponse} from "@angular/common/http";
 import {httpErrorResponseHandler} from "apps/SdHub/src/app/shared/http-error-handling/handlers";
 import {ToastrService} from "ngx-toastr";

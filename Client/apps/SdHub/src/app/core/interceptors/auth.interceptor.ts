@@ -8,7 +8,7 @@ import {HttpEvent} from '@angular/common/http';
 import {AuthStateService} from "apps/SdHub/src/app/core/services/auth-state.service";
 import {LocalStorageService} from "apps/SdHub/src/app/core/services/local-storage.service";
 import {ILoginByRefreshTokenRequest} from "apps/SdHub/src/app/models/autogen/user.models";
-import {UserApi} from "apps/SdHub/src/app/shared/api/user.api";
+import {UserApi} from "apps/SdHub/src/app/shared/services/api/user.api";
 import {map} from "rxjs/operators";
 
 @Injectable()

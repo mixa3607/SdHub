@@ -7,7 +7,7 @@ import {ToastrService} from "ngx-toastr";
 import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
 import {IUploadResponse} from "../../../models/autogen/upload.models";
 import {httpErrorResponseHandler} from "apps/SdHub/src/app/shared/http-error-handling/handlers";
-import {UploadApi} from "apps/SdHub/src/app/shared/api/upload.api";
+import {UploadApi} from "apps/SdHub/src/app/shared/services/api/upload.api";
 import {bytesToHuman} from "apps/SdHub/src/app/shared/utils/bytes";
 import {AuthService} from "apps/SdHub/src/app/core/services/auth.service";
 import {AuthStateService} from "apps/SdHub/src/app/core/services/auth-state.service";

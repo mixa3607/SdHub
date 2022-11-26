@@ -6,13 +6,11 @@ import { SearchPageComponent } from 'apps/SdHub/src/app/pages/generated/search-p
 import { SharedModule } from '../../shared/shared.module';
 import { SearchInImagesComponent } from './search-in-images/search-in-images.component';
 import { MatChipsModule } from '@angular/material/chips';
-import { SmallImageCardComponent } from './small-image-card/small-image-card.component';
 
 @NgModule({
   declarations: [
     SearchPageComponent,
     SearchInImagesComponent,
-    SmallImageCardComponent,
   ],
   imports: [CommonModule, SharedModule, GeneratedRoutingModule, MatChipsModule],
 })

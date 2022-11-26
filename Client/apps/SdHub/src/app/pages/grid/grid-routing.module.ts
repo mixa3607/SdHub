@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
-import {LayoutComponent} from '../../shared/layout/layout.component';
+import {LayoutComponent} from '../../shared/components/layout/layout.component';
 import {GridPageComponent} from "apps/SdHub/src/app/pages/grid/grid-page/grid-page.component";
 
 const routes: Routes = [

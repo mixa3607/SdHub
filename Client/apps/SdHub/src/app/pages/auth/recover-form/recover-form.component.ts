@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {getErrorMessage} from '../../../shared/form-error-handling/handlers';
-import {UserApi} from "apps/SdHub/src/app/shared/api/user.api";
+import {UserApi} from "apps/SdHub/src/app/shared/services/api/user.api";
 import {ToastrService} from "ngx-toastr";
 import {Router} from "@angular/router";
 import {CustomValidators} from "apps/SdHub/src/app/shared/validators/customValidators";

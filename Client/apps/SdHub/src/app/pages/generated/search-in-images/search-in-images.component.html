@@ -1,5 +1,5 @@
-<div fxFlex style="display: flex; flex-direction: column; flex-grow: 1; gap: .6rem">
-  <div style="display: flex; flex-direction: row; gap: .6rem">
+<div fxFlex class="container">
+  <div class="filters">
     <mat-card style="display: flex; flex-direction: column; gap:.2rem">
       <mat-card-subtitle>Order</mat-card-subtitle>
       <button *ngFor="let btn of orderBy"
@@ -40,19 +40,20 @@
       </mat-checkbox>
     </mat-card>
   </div>
+
   <div *ngIf="(searchResult?.total ?? 0) === 0 && !loading"
-       style="display: flex; flex-direction: column; flex-grow: 1; align-items: center; justify-content: center; font-size: 4rem">
+       class="search-result-placeholder-container">
     <div>Nothing found ＞︿＜</div>
   </div>
   <div *ngIf="loading"
-       style="display: flex; flex-direction: column; flex-grow: 1; align-items: center; justify-content: center; font-size: 4rem">
+       class="search-result-placeholder-container">
     <div style="display: flex; flex-direction: column">
       <div>Search (_　_)。゜zｚＺ</div>
       <mat-progress-bar mode="query"></mat-progress-bar>
     </div>
   </div>
   <div *ngIf="(searchResult?.total ?? 0) > 0 && !loading"
-       style="display: flex; flex-direction: column; flex-grow: 1; font-size: 4rem; gap: .8rem;">
+       class="search-result-container">
     <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: .5rem">
       <small-image-card *ngFor="let img of searchResult?.images ?? []" [imageInfo]="img">
       </small-image-card>
@@ -62,6 +63,5 @@
                [totalPages]="totalPages"
                (pageChange)="onPageChange()"></paginator>
   </div>
-
 
 </div>

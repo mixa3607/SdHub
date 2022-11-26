@@ -4,7 +4,7 @@ import {getErrorMessage} from "../../../shared/form-error-handling/handlers";
 import {ToastrService} from "ngx-toastr";
 import {HttpClient, HttpErrorResponse} from "@angular/common/http";
 import {CustomValidators} from "apps/SdHub/src/app/shared/validators/customValidators";
-import {UserApi} from "apps/SdHub/src/app/shared/api/user.api";
+import {UserApi} from "apps/SdHub/src/app/shared/services/api/user.api";
 import {ILoginByPasswordRequest, IRegisterRequest} from "apps/SdHub/src/app/models/autogen/user.models";
 import {CaptchaType} from "apps/SdHub/src/app/models/autogen/misc.models";
 import {httpErrorResponseHandler} from "apps/SdHub/src/app/shared/http-error-handling/handlers";

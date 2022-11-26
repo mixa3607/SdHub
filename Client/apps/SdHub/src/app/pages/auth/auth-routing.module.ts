@@ -4,7 +4,7 @@ import {AuthPageComponent} from "apps/SdHub/src/app/pages/auth/auth-page/auth-pa
 import {LoginFormComponent} from "apps/SdHub/src/app/pages/auth/login-form/login-form.component";
 import {RegisterFormComponent} from "apps/SdHub/src/app/pages/auth/register-form/register-form.component";
 import {RecoverFormComponent} from "apps/SdHub/src/app/pages/auth/recover-form/recover-form.component";
-import {LayoutComponent} from "apps/SdHub/src/app/shared/layout/layout.component";
+import {LayoutComponent} from "apps/SdHub/src/app/shared/components/layout/layout.component";
 
 const routes: Routes = [
     {

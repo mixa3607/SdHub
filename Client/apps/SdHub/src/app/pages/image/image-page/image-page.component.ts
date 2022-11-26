@@ -7,7 +7,7 @@ import {IGetImageRequest} from "../../../models/autogen/image.models";
 import {IImageModel, IImageParsedMetadataTagModel} from "../../../models/autogen/misc.models";
 import {Clipboard} from "@angular/cdk/clipboard";
 import {ToastrService} from "ngx-toastr";
-import {ImageApi} from "apps/SdHub/src/app/shared/api/image.api";
+import {ImageApi} from "apps/SdHub/src/app/shared/services/api/image.api";
 import {httpErrorResponseHandler} from "apps/SdHub/src/app/shared/http-error-handling/handlers";
 import {
     ManageTokenInputModalComponent

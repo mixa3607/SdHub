@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { LayoutComponent } from '../../shared/layout/layout.component';
+import { LayoutComponent } from '../../shared/components/layout/layout.component';
 import { SearchPageComponent } from 'apps/SdHub/src/app/pages/generated/search-page/search-page.component';
 
 const routes: Routes = [

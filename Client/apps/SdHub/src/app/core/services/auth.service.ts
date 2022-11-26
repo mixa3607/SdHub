@@ -2,7 +2,7 @@ import {Inject, Injectable} from '@angular/core';
 import {delay, map, tap} from 'rxjs/operators';
 import {AuthStateService} from "./auth-state.service";
 import {LocalStorageService} from "./local-storage.service";
-import {UserApi} from "apps/SdHub/src/app/shared/api/user.api";
+import {UserApi} from "apps/SdHub/src/app/shared/services/api/user.api";
 import {ILoginByPasswordRequest} from "apps/SdHub/src/app/models/autogen/user.models";
 import {NGXLogger} from "ngx-logger";
 

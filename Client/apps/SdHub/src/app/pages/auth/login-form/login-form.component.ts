@@ -14,7 +14,7 @@ import {
     httpErrorResponseHandler,
     modelStateContainsError
 } from "apps/SdHub/src/app/shared/http-error-handling/handlers";
-import {UserApi} from "apps/SdHub/src/app/shared/api/user.api";
+import {UserApi} from "apps/SdHub/src/app/shared/services/api/user.api";
 import {RecaptchaComponent} from "ng-recaptcha";
 import * as stream from "stream";
 

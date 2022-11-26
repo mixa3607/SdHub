@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {
     ISearchImageRequest,
     ISearchImageResponse,
@@ -61,6 +61,7 @@ export class SearchInImagesComponent implements OnInit {
         {id: SearchImageInFieldType.Description, value: 'Description', checked: false},
         {id: SearchImageInFieldType.User, value: 'User name', checked: false},
     ];
+    @ViewChild('scrollTo', {read: ElementRef}) scrollTo?: ElementRef;
     public alsoFromGrids = false;
     public onlyFromRegisteredUsers = true;
     public searchAsRegexp = false;
@@ -102,6 +103,9 @@ export class SearchInImagesComponent implements OnInit {
                     this.totalPages = Math.floor(resp.total / this.pageSize) + ((resp.total % this.pageSize) === 0 ? 0 : 1);
                     if (type === PerformType.Search) {
                         this.page = 0;
+                    }
+                    if (type === PerformType.Pagination) {
+                        this.scrollTo?.nativeElement?.scrollIntoView({behavior: "smooth"});
                     }
                 },
                 error: (err: HttpErrorResponse) => {

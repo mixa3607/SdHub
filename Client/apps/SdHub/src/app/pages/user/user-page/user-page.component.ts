@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ElementRef, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {ImageApi} from "apps/SdHub/src/app/shared/services/api/image.api";
 import {Clipboard} from "@angular/cdk/clipboard";
@@ -38,6 +38,7 @@ export class UserPageComponent {
         {name: 'Grids', enable: false, type: 'grid'},
     ];
     public activeTab: SearchTabType = this.tabs.find(x => x.enable)!.type;
+    @ViewChild('scrollTo', {read: ElementRef}) scrollTo?: ElementRef;
 
     public readonly pageSize = 50;
     public loadingImages = false;
@@ -87,6 +88,9 @@ export class UserPageComponent {
                 this.totalPages = Math.floor(resp.total / this.pageSize) + ((resp.total % this.pageSize) === 0 ? 0 : 1);
                 if (type === PerformType.Search) {
                     this.page = 0;
+                }
+                if (type === PerformType.Pagination){
+                    this.scrollTo?.nativeElement?.scrollIntoView({behavior: "smooth"});
                 }
             },
             error: (err: HttpErrorResponse) => {

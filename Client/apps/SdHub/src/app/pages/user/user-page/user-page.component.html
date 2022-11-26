@@ -1,4 +1,4 @@
-<div class="container" fxLayout="row" fxLayoutAlign="center none">
+<div class="container" fxLayout="row" fxLayoutAlign="center none" style="overflow: auto">
   <div fxFlex="100%" style="display: flex; flex-direction: column; gap: .6rem">
     <mat-card>
       <mat-card-content style="display: flex; flex-direction: column;">
@@ -18,14 +18,14 @@
             </ng-template>
           </ng-container>
         </div>
-        <div *ngIf="!editMode; else editDescription" class="props-container">
+        <div *ngIf="!editMode; else editDescription" style="max-height: 30rem; overflow: auto;">
           <markdown [data]="user?.about"></markdown>
         </div>
         <ng-template #editDescription>
           <mat-form-field appearance="outline"
                           class="form-no-bottom-padding"
                           style="font-size: medium">
-            <mat-label>Description</mat-label>
+            <mat-label>About</mat-label>
             <textarea cdkTextareaAutosize [(ngModel)]="user!.about!" matInput placeholder="About"></textarea>
           </mat-form-field>
         </ng-template>
@@ -33,7 +33,7 @@
       </mat-card-content>
     </mat-card>
 
-    <mat-card>
+    <mat-card #scrollTo>
       <nav mat-tab-nav-bar mat-stretch-tabs [tabPanel]="tabPanel">
         <a mat-tab-link *ngFor="let link of tabs"
            [disabled]="!link.enable"

@@ -14,6 +14,7 @@ using Hangfire;
 using Hangfire.Dashboard;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -270,6 +271,12 @@ app.UseSpa(c =>
         Console.WriteLine("Use proxy to frontend!!!");
         c.UseProxyToSpaDevelopmentServer("http://localhost:4200/");
     }
+});
+
+app.Use((HttpContext ctx, RequestDelegate next) =>
+{
+    ctx.Response.StatusCode = 418;
+    return Task.CompletedTask;
 });
 
 

@@ -54,7 +54,7 @@
                 <div class="prop-value">{{file.sizeHuman}}</div>
               </div>
             </div>
-            <div class="prop-container">
+            <div *ngIf="!isAuthenticated" class="prop-container">
               <div class="prop-name">Master code</div>
               <div class="prop-value-container">
                 <mat-icon>save</mat-icon>

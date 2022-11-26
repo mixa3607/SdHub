@@ -53,6 +53,7 @@
     </div>
   </div>
   <div *ngIf="(searchResult?.total ?? 0) > 0 && !loading"
+       #scrollTo
        class="search-result-container">
     <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: .5rem">
       <small-image-card *ngFor="let img of searchResult?.images ?? []" [imageInfo]="img">

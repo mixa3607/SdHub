@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Flurl;
 using System.Text;
+using AutoMapper;
+using SdHub.Models;
 
 namespace SdHub.Services;
 
@@ -20,15 +22,17 @@ public class OgInjectorMiddleware
     private readonly ISpaStaticFileProvider? _spaStaticFileProvider;
     private readonly RequestDelegate _next;
     private readonly AppInfoOptions _options;
+    private readonly IMapper _mapper;
 
     private readonly string? _indexHtml;
 
     public OgInjectorMiddleware(RequestDelegate next, ILogger<OgInjectorMiddleware> logger,
-        IOptions<AppInfoOptions> options, ISpaStaticFileProvider? spaStaticFileProvider)
+        IOptions<AppInfoOptions> options, ISpaStaticFileProvider? spaStaticFileProvider, IMapper mapper)
     {
         _next = next;
         _logger = logger;
         _spaStaticFileProvider = spaStaticFileProvider;
+        _mapper = mapper;
         _options = options.Value;
         if (_spaStaticFileProvider?.FileProvider != null)
         {
@@ -49,7 +53,7 @@ public class OgInjectorMiddleware
     public async Task InvokeAsync(HttpContext context)
     {
         string? imageShortCode = null;
-        if (context.Request.Path.Value?.StartsWith("/i/") == true && context.Request.Path.Value.Length == 8 + 3)
+        if (context.Request.Path.Value?.StartsWith("/i/") == true && context.Request.Path.Value.Length > 3)
             imageShortCode = context.Request.Path.Value!["/i/".Length..];
 
         if (!string.IsNullOrWhiteSpace(_options.FrontDevServer)
@@ -67,15 +71,18 @@ public class OgInjectorMiddleware
             var sp = context.RequestServices;
             var db = sp.GetRequiredService<SdHubDbContext>();
             var image = await db.Images
-                .Include(x => x.OriginalImage).ThenInclude(x => x!.Storage)
-                .Include(x => x.ThumbImage).ThenInclude(x => x!.Storage)
+                .Include(x => x.CompressedImage)
+                .Include(x => x.OriginalImage)
+                .Include(x => x.ThumbImage)
                 .Include(x => x.ParsedMetadata).ThenInclude(x => x!.Tags)
                 .FirstOrDefaultAsync(x => x.DeletedAt == null && x.ShortToken == imageShortCode);
+
             var content = _indexHtml;
             if (image != null)
             {
+                var imageModel = _mapper.Map<ImageModel>(image);
                 var sb = new StringBuilder();
-                foreach (var metadataTag in image.ParsedMetadata!.Tags!)
+                foreach (var metadataTag in imageModel.ParsedMetadata!.Tags!)
                 {
                     sb.Append($"{metadataTag.Software} => {metadataTag.Name}: \n{metadataTag.Value}\n");
                 }
@@ -83,17 +90,17 @@ public class OgInjectorMiddleware
                 var twSite = "@SdHub";
 
                 var title = "SdHub: ";
-                if (!string.IsNullOrWhiteSpace(image.Name))
-                    title += image.Name;
-                else if (!string.IsNullOrWhiteSpace(image.OriginalImage!.Name))
-                    title += image.OriginalImage!.Name;
+                if (!string.IsNullOrWhiteSpace(imageModel.Name))
+                    title += imageModel.Name;
+                else if (!string.IsNullOrWhiteSpace(imageModel.OriginalImage!.Name))
+                    title += imageModel.OriginalImage!.Name;
                 else
                     title += "Image name not set 😖";
 
                 var description = sb.ToString();
                 var url = _options.BaseUrl;
-                var imageFile = image.ThumbImage ?? image.OriginalImage;
-                var imageUrl = imageFile!.Storage!.BaseUrl.AppendPathSegment(imageFile.PathOnStorage).ToString();
+                var imageFile = imageModel.CompressedImage ?? imageModel.ThumbImage ?? imageModel.OriginalImage;
+                var imageUrl = imageFile!.DirectUrl!;
 
                 var injection = @$"
   <meta name=""twitter:card"" content=""summary_large_image"" />

@@ -88,12 +88,13 @@ public class UploadController : ControllerBase
 
         return await UploadAsync(req, uploadedLastHour, user, uploader, ct);
     }
-    
-    private async Task<UploadResponse> UploadAsync(UploadRequest req, int uploadedLastHour, UserEntity user, ImageUploaderEntity uploader, CancellationToken ct = default)
+
+    private async Task<UploadResponse> UploadAsync(UploadRequest req, int uploadedLastHour, UserEntity user,
+        ImageUploaderEntity uploader, CancellationToken ct = default)
     {
         var ip = HttpContext.Connection.RemoteIpAddress!.ToString();
 
-        var manageToken = user.IsAnonymous ? $"mg_{Guid.NewGuid():N}" : null;
+        var manageToken = user.IsAnonymous ? $"mg_{Guid.NewGuid():N}" : "";
         var handledFiles = new List<UploadedFileModel>();
         var savedImages = new List<ImageEntity>();
 
@@ -141,6 +142,17 @@ public class UploadController : ControllerBase
                 }
 
                 var uploadResult = await _fileProcessor.WriteFileToStorageAsync(tmpFile, formFile.FileName, ct);
+                if (await _db.Images.AnyAsync(x =>
+                        x.Owner!.Id == user.Id
+                        && x.OriginalImage!.Hash == uploadResult.Hash
+                        && x.DeletedAt == null, ct))
+                {
+                    uplFile.Uploaded = false;
+                    uplFile.Reason = "Already uploaded by you.";
+                    await _fileProcessor.DeleteTempFileAsync(tmpFile, ct);
+                    continue;
+                }
+
                 await _fileProcessor.DeleteTempFileAsync(tmpFile, ct);
                 var originalFileEntity = await _fileProcessor.SaveToDatabaseAsync(uploadResult, ct);
                 var imageEntity = new ImageEntity()
@@ -195,7 +207,6 @@ public class UploadController : ControllerBase
             Files = handledFiles
         };
     }
-
 
 
     private async Task<ImageUploaderEntity> GetUploaderAsync(CancellationToken ct = default)

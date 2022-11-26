@@ -1,5 +1,5 @@
 #docker-compose
-COMPOSE_FILE=./dc/dc.yml:./dc/dc.bind.yml
+COMPOSE_FILE=./dc/dc.yml:./dc/dc.nginx.yml
 
 #service specified
 SDHUB_HOST=diffai.xyz

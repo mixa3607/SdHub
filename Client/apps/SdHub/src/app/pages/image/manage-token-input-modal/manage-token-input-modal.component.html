@@ -2,15 +2,16 @@
   Enter manage token for image
 </h1>
 
-<mat-form-field appearance="fill">
+<mat-form-field appearance="fill"
+                style="width: 100%">
   <mat-label>Token</mat-label>
-  <input formControlName="token"
-         matInput
+  <input matInput
          placeholder="Token"
-         type="text">
+         type="text"
+         [formControl]="manageToken">
   <mat-error *ngIf="manageToken.invalid">{{getErrorMessage(manageToken)}}</mat-error>
 </mat-form-field>
 
-<div mat-dialog-actions>
+<div mat-dialog-actions [align]="'end'">
   <button (click)="onConfirm()" [disabled]="manageToken.invalid" color="primary" mat-raised-button>Ok</button>
 </div>

@@ -29,7 +29,7 @@ export class ImageApi {
     }
 
     public checkManageToken(req: ICheckManageTokenRequest) {
-        return this.http.get<ICheckManageTokenResponse>(this.base + '/canEdit', {
+        return this.http.get<ICheckManageTokenResponse>(this.base + '/checkManageToken', {
             params: req as any
         });
     }

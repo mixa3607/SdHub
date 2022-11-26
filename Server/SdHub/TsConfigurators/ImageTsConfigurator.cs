@@ -24,6 +24,8 @@ public class ImageTsConfigurator : ITsConfigurator
                 typeof(CanEditResponse),
                 typeof(CheckManageTokenRequest),
                 typeof(CheckManageTokenResponse),
+                typeof(SearchImageRequest),
+                typeof(SearchImageResponse),
             }, c => c
                 .SubsDatetimeOffsetToStr()
                 .SubsTimespanToStr()
@@ -33,6 +35,9 @@ public class ImageTsConfigurator : ITsConfigurator
             ;
         builder.ExportAsEnums(new Type[]
         {
+            typeof(SearchImageInFieldType),
+            typeof(SearchImageOrderByFieldType),
+            typeof(SearchImageOrderByType),
         }, c => c.ExportTo(outFile));
     }
 }

@@ -1,8 +1,26 @@
 ﻿using System;
+using System.Collections.Generic;
 using SdHub.Database.Entities.Files;
 using SdHub.Database.Entities.User;
 
 namespace SdHub.Database.Entities.Images;
+
+/*public class TagForImageEntity
+{
+    public long Id { get; set; }
+    public string? Value { get; set; }
+
+    public List<ImageTagEntity>? ImageTags { get; set; }
+}
+
+public class ImageTagEntity
+{
+    public long ImageId { get; set; }
+    public ImageEntity? Image { get; set; }
+
+    public long TagId { get; set; }
+    public TagForImageEntity? Tag { get; set; }
+}*/
 
 public class ImageEntity
 {
@@ -31,6 +49,7 @@ public class ImageEntity
     /// base58 code
     /// </summary>
     public string? ShortToken { get; set; }
+
     public string? ManageToken { get; set; }
 
     public DateTimeOffset? DeletedAt { get; set; }
@@ -41,4 +60,6 @@ public class ImageEntity
 
     public ImageParsedMetadataEntity? ParsedMetadata { get; set; }
     public ImageRawMetadataEntity? RawMetadata { get; set; }
+
+    //public List<ImageTagEntity>? ImageTags { get; set; }
 }

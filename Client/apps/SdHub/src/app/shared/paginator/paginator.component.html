@@ -1,0 +1,45 @@
+<div class="paginator">
+  <mat-card class="paginator-card">
+    <mat-card-content class="content">
+      <div style="flex-grow: 1"></div>
+      <button mat-icon-button
+              [disabled]="!(page > 0)"
+              (click)="setPage(0)">
+        <mat-icon>first_page</mat-icon>
+      </button>
+      <button mat-icon-button
+              [disabled]="!(page > 0)"
+              (click)="setPage(page-1)">
+        <mat-icon>navigate_before</mat-icon>
+      </button>
+
+      <button *ngFor="let btn of getPageButtons()" mat-icon-button
+              [disabled]="!btn.enable"
+              (click)="setPage(btn.page)">{{btn.page + 1}}
+      </button>
+
+      <button mat-icon-button
+              [disabled]="!(page < totalPages-1)"
+              (click)="setPage(page+1)">
+        <mat-icon>navigate_next</mat-icon>
+      </button>
+      <button mat-icon-button
+              [disabled]="!(page < totalPages-1)"
+              (click)="setPage(totalPages-1)">
+        <mat-icon>last_page</mat-icon>
+      </button>
+
+      <div style="flex-grow: 1"></div>
+      <mat-form-field *ngIf="showPgeSizeChanger"
+                      class="form-no-bottom-padding"
+                      appearance="standard">
+        <mat-label>Results per page</mat-label>
+        <mat-select [(value)]="pageSize">
+          <mat-option *ngFor="let variant of pageSizeVariants" [value]="variant.size">
+            {{variant.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-card-content>
+  </mat-card>
+</div>

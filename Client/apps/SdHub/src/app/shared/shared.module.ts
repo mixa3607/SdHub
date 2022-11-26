@@ -8,27 +8,29 @@ import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.componen
 import { LocalDatePipe } from './pipes/local-date.pipe';
 import { YesNoPipe } from './pipes/yes-no.pipe';
 import { LayoutComponent } from './layout/layout.component';
-import {CustomMaterialModule} from "../custom-material/custom-material.module";
-import {OverlayModule} from "@angular/cdk/overlay";
-import {A11yModule} from "@angular/cdk/a11y";
+import { CustomMaterialModule } from '../custom-material/custom-material.module';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { A11yModule } from '@angular/cdk/a11y';
+import { PaginatorComponent } from './paginator/paginator.component';
 
 @NgModule({
-    imports: [
-        RouterModule,
-        CustomMaterialModule,
-        FormsModule,
-        ReactiveFormsModule,
-        FlexLayoutModule,
-        OverlayModule,
-        A11yModule,
-    ],
-    declarations: [
-        ConfirmDialogComponent,
-        LimitToPipe,
-        LocalDatePipe,
-        YesNoPipe,
-        LayoutComponent
-    ],
+  imports: [
+    RouterModule,
+    CustomMaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
+    FlexLayoutModule,
+    OverlayModule,
+    A11yModule,
+  ],
+  declarations: [
+    ConfirmDialogComponent,
+    LimitToPipe,
+    LocalDatePipe,
+    YesNoPipe,
+    LayoutComponent,
+    PaginatorComponent,
+  ],
     exports: [
         FormsModule,
         ReactiveFormsModule,
@@ -37,7 +39,8 @@ import {A11yModule} from "@angular/cdk/a11y";
         LimitToPipe,
         ConfirmDialogComponent,
         LocalDatePipe,
-        YesNoPipe
-    ]
+        YesNoPipe,
+        PaginatorComponent,
+    ],
 })
-export class SharedModule { }
+export class SharedModule {}

@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {PerformType, SearchArgsService} from "apps/SdHub/src/app/pages/generated/search-args.service";
 
 export enum SearchInType{
     Images,
@@ -19,8 +20,17 @@ export class SearchPageComponent {
     ];
     public readonly searchInType = SearchInType;
     public selectedSearchType: SearchInType = SearchInType.Images;
+    public searchText: string = '';
 
-    constructor() {
+    //separatorKeysCodes: number[] = [ENTER, COMMA];
+    //fruitCtrl = new FormControl('');
+    //fruits: string[] = ['portrait'];
+    //allFruits: string[] = ['Apple', 'Lemon', 'Lime', 'Orange', 'Strawberry'];
+
+    constructor(private argsService: SearchArgsService) {
     }
 
+    public onSearchClick(): void{
+        this.argsService.searchPerform$.next(PerformType.Search);
+    }
 }

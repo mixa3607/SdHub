@@ -1,16 +1,67 @@
-<div fxFlex style="flex-direction: column">
-  <div>Search params</div>
-  <mat-divider></mat-divider>
-  <div style="display: flex; flex-direction: row; gap: .3rem">
-    <mat-card>
+<div fxFlex style="display: flex; flex-direction: column; flex-grow: 1; gap: .6rem">
+  <div style="display: flex; flex-direction: row; gap: .6rem">
+    <mat-card style="display: flex; flex-direction: column; gap:.2rem">
       <mat-card-subtitle>Order</mat-card-subtitle>
-      <button mat-stroked-button>Date</button>
+      <button *ngFor="let btn of orderBy"
+              mat-stroked-button
+              (click)="onOrderBtnClick(btn.field)">
+        <div style="display: flex; align-items: center">
+          <mat-icon>{{btn.icon}}</mat-icon>
+          {{btn.name}}</div>
+      </button>
     </mat-card>
-    <mat-card>
+    <mat-card style="display: flex; flex-direction: column">
       <mat-card-subtitle>Fields</mat-card-subtitle>
-      <mat-chip-list multiple>
-        <mat-chip>1</mat-chip>
-      </mat-chip-list>
+      <mat-checkbox *ngFor="let cb of searchFieldsCheckboxes"
+                    [(ngModel)]="cb.checked"
+                    (ngModelChange)="onFormChange()">
+        {{cb.value}}
+      </mat-checkbox>
+    </mat-card>
+    <mat-card style="display: flex; flex-direction: column">
+      <mat-card-subtitle>Software</mat-card-subtitle>
+      <mat-checkbox *ngFor="let cb of softwareCheckboxes"
+                    [(ngModel)]="cb.checked"
+                    (ngModelChange)="onFormChange()">
+        {{cb.value}}
+      </mat-checkbox>
+    </mat-card>
+    <mat-card style="display: flex; flex-direction: column">
+      <mat-card-subtitle>Misc</mat-card-subtitle>
+      <mat-checkbox [(ngModel)]="alsoFromGrids"
+                    (ngModelChange)="onFormChange()">Also from grids
+      </mat-checkbox>
+      <mat-checkbox [(ngModel)]="searchAsRegexp"
+                    (ngModelChange)="onFormChange()">Is regexp
+      </mat-checkbox>
+      <mat-checkbox disabled
+                    [(ngModel)]="onlyFromRegisteredUsers"
+                    (ngModelChange)="onFormChange()">Only from registered
+      </mat-checkbox>
     </mat-card>
   </div>
+  <div *ngIf="(searchResult?.total ?? 0) === 0 && !loading"
+       style="display: flex; flex-direction: column; flex-grow: 1; align-items: center; justify-content: center; font-size: 4rem">
+    <div>Nothing found ＞︿＜</div>
+  </div>
+  <div *ngIf="loading"
+       style="display: flex; flex-direction: column; flex-grow: 1; align-items: center; justify-content: center; font-size: 4rem">
+    <div style="display: flex; flex-direction: column">
+      <div>Search (_　_)。゜zｚＺ</div>
+      <mat-progress-bar mode="query"></mat-progress-bar>
+    </div>
+  </div>
+  <div *ngIf="(searchResult?.total ?? 0) > 0 && !loading"
+       style="display: flex; flex-direction: column; flex-grow: 1; font-size: 4rem; gap: .8rem;">
+    <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: .5rem">
+      <small-image-card *ngFor="let img of searchResult?.images ?? []" [imageInfo]="img">
+      </small-image-card>
+    </div>
+    <div style="flex-grow: 1"></div>
+    <paginator [(page)]="page"
+               [totalPages]="totalPages"
+               (pageChange)="onPageChange()"></paginator>
+  </div>
+
+
 </div>

@@ -10,4 +10,5 @@ public static class ModelStateErrors
     public const string UserWithLoginExist = "USER_WITH_LOGIN_EXIST";
     public const string InvalidCaptcha = "INVALID_CAPTCHA";
     public const string RefreshTokenNotExist = "REFRESH_TOKEN_NOT_EXIST";
+    public const string ImageNotFound = "IMAGE_NOT_FOUND";
 }

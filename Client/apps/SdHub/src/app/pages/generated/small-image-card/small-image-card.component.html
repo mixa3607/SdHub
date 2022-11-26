@@ -1,0 +1,34 @@
+<mat-card>
+  <mat-card-content style="display: flex; flex-direction: column; gap: .4rem">
+    <div class="uploaded-image-container">
+      <img *ngIf="thumbUrl != ''; else noThumb"
+           [src]="thumbUrl" class="uploaded-image">
+      <ng-template #noThumb>
+        <span style="font-style: italic">Preview not available</span>
+      </ng-template>
+    </div>
+    <mat-divider></mat-divider>
+    <div>
+      Name:
+      <ng-container>
+        <span *ngIf="name != ''; else nameNotSet">{{name}}</span>
+        <ng-template #nameNotSet><span style="font-style: italic">not set</span></ng-template>
+      </ng-container>
+    </div>
+    <div>User: <a [routerLink]="'/user/' + userName">{{userName}}</a></div>
+    <div>Uploaded: <span class="gray-value">{{uploadAt | date:'dd.MM.yyyy hh:mm'}}</span></div>
+    <div>Software: <span class="gray-value">{{software}}</span></div>
+    <div>Dims: <span class="gray-value">{{dims}}</span></div>
+    <div style="display: flex; flex-direction: row; gap: .3rem">
+      <button mat-stroked-button
+              style="flex-grow: 1"
+              [routerLink]="'/i/' + shortToken">Open
+      </button>
+      <a mat-stroked-button
+              [routerLink]="'/i/' + shortToken"
+              target="_blank">
+        <mat-icon>open_in_new</mat-icon>
+      </a>
+    </div>
+  </mat-card-content>
+</mat-card>

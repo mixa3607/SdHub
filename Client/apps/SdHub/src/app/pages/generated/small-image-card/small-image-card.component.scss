@@ -1,0 +1,23 @@
+.uploaded-image-container {
+  width: 10rem;
+  height: 10rem;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-self: center;
+
+  .uploaded-image {
+    object-fit: contain;
+    max-width: 100%;
+    max-height: 100%;
+  }
+}
+
+
+.gray-value{
+  background-color: #ebebeb;
+  padding: 0.2rem;
+  border-radius: 0.4rem;
+  box-sizing: border-box;
+}

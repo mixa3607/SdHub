@@ -10,7 +10,7 @@ import {
     IEditImageRequest,
     IEditImageResponse,
     IGetImageRequest,
-    IGetImageResponse
+    IGetImageResponse, ISearchImageRequest, ISearchImageResponse
 } from "apps/SdHub/src/app/models/autogen/image.models";
 
 @Injectable({
@@ -46,5 +46,9 @@ export class ImageApi {
 
     public edit(req: IEditImageRequest) {
         return this.http.post<IEditImageResponse>(this.base + '/edit', req);
+    }
+
+    public search(req: ISearchImageRequest) {
+        return this.http.post<ISearchImageResponse>(this.base + '/search', req);
     }
 }

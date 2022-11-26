@@ -113,7 +113,7 @@
                 By
               </div>
               <div class="prop-value-container">
-                <a [href]="'/user/' + imageInfo?.owner?.guid"
+                <a [routerLink]="'/user/' + imageInfo?.owner?.login"
                    class="prop-value"
                    style="cursor: pointer">{{imageInfo?.owner?.login ?? ''}}</a>
               </div>

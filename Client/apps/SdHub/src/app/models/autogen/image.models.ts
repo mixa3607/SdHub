@@ -55,3 +55,35 @@ export interface ICheckManageTokenResponse
 	manageToken: string;
 	isValid: boolean;
 }
+export interface ISearchImageRequest
+{
+	searchText: string;
+	fields: SearchImageInFieldType[];
+	softwares: string[];
+	alsoFromGrids: boolean;
+	onlyFromRegisteredUsers: boolean;
+	searchAsRegexp: boolean;
+	orderByField: SearchImageOrderByFieldType;
+	orderBy: SearchImageOrderByType;
+	skip: number;
+	take: number;
+}
+export interface ISearchImageResponse
+{
+	images: IImageModel[];
+	total: number;
+}
+export enum SearchImageInFieldType {
+	Prompt = 0,
+	Name = 1,
+	Description = 2,
+	User = 3
+}
+export enum SearchImageOrderByFieldType {
+	UploadDate = 0,
+	UserName = 1
+}
+export enum SearchImageOrderByType {
+	Asc = 0,
+	Desc = 1
+}

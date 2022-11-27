@@ -223,9 +223,9 @@ if (securityOptions.EnableForwardedHeaders)
     var forwardOptions = new ForwardedHeadersOptions
     {
         ForwardedHeaders = ForwardedHeaders.XForwardedFor |
-                           ForwardedHeaders.XForwardedProto |
-                           ForwardedHeaders.XForwardedHost,
-        RequireHeaderSymmetry = false
+                           ForwardedHeaders.XForwardedProto,
+        ForwardLimit = 5,
+        RequireHeaderSymmetry = false,
     };
     forwardOptions.KnownNetworks.Clear();
     forwardOptions.KnownProxies.Clear();

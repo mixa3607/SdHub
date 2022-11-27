@@ -32,7 +32,7 @@ const appRoutes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'upload',
+    redirectTo: 'gen',
     pathMatch: 'full'
   }
 ];

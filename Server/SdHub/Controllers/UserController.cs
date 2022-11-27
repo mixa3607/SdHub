@@ -292,7 +292,7 @@ public class UserController : ControllerBase
         CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
-        var user = await _db.Users.ApplyFilter(loginOrEmail: req.Login).FirstOrDefaultAsync(ct);
+        var user = await _db.Users.ApplyFilter(loginOrEmail: req.Login, anonymous: null).FirstOrDefaultAsync(ct);
         if (user == null)
             ModelState.AddError(ModelStateErrors.UserNotFound).ThrowIfNotValid();
 

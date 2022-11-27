@@ -1,6 +1,6 @@
 <mat-card>
   <mat-card-content style="display: flex; flex-direction: column; gap: .4rem">
-    <div class="uploaded-image-container">
+    <div class="uploaded-image-container" [routerLink]="'/i/' + shortToken">
       <img *ngIf="thumbUrl != ''; else noThumb"
            [src]="thumbUrl" class="uploaded-image">
       <ng-template #noThumb>

@@ -31,6 +31,7 @@ https://github.com/neonsecret/stable-diffusion/blob/main/GUI_TUTORIAL.md
 https://www.youtube.com/watch?v=6MeJKnbv1ts
 Оптимизация для слабых карт: https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Optimizations
 Гайд для АМД под винду: https://travelneil.com/stable-diffusion-windows-amd.html
+Другой гайд для АМД: https://github.com/averad/OnnxDiffusersUI
 ----------------------------------
 [i]Пример простого, но хорошего запроса[/i]:
 >masterpiece, best quality, 1girl, 1boy, (((pov))), ((cum)), (vaginal:1.4), on back, pussy juice, sweat, by dross

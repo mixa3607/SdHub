@@ -2,7 +2,7 @@
 title: Шаблон шапки
 description: 
 published: true
-date: 2022-11-29T19:53:45.116Z
+date: 2022-11-30T08:46:21.163Z
 tags: 
 editor: markdown
 dateCreated: 2022-11-18T23:51:44.600Z
@@ -51,6 +51,7 @@ https://mage.space/ - Генерация говняка на стандартн�
 https://pst.klgrth.io/paste/qxwtx - Список рисовак и стилей
 https://unideer.notion.site/Clothes-Research-NovelAI-ae4219aebcd742ea89aaa553c00e7b40 - Одежда для NAI
 https://unideer.notion.site/Perspective-Research-NovelAI-9fb472f4faeb492d8e0b095d2efa0796 - Перспектива для NAI
+https://wiki.diffai.xyz/free-tg-bots - Бесплатные телеграм боты
 
 [b]ПОЗЫ ДЛЯ ИМГ2ИМГ[/b]
 https://app.posemy.art

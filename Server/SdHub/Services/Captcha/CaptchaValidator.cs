@@ -18,6 +18,9 @@ public class CaptchaValidator : ICaptchaValidator
 
     public async Task<bool> ValidateCodeAsync(string code, CaptchaType type)
     {
+        if (_options.Bypass)
+            return true;
+
         if (type != CaptchaType.ReCaptchaV2)
             throw new NotImplementedException();
 

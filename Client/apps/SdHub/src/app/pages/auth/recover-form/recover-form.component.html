@@ -59,8 +59,10 @@
     <mat-error *ngIf="sendCodeForm.get('login')!.invalid">{{getErrorMessage(sendCodeForm.get('login')!)}}</mat-error>
   </mat-form-field>
 
-  <re-captcha formControlName="recaptcha"
+  <re-captcha *ngIf="!captchaDisabled"
+              formControlName="recaptcha"
               style="align-self: center"></re-captcha>
 
-  <button [disabled]="sendCodeForm.invalid" color="primary" mat-raised-button (click)="onSendCodeClick()">Register</button>
+  <button [disabled]="sendCodeForm.invalid" color="primary" mat-raised-button (click)="onSendCodeClick()">Register
+  </button>
 </div>

@@ -2,6 +2,12 @@
 //     Changes to this file may cause incorrect behavior and will be lost if
 //     the code is regenerated.
 
+export interface IFrontendSettings
+{
+	recaptchaSiteKey: string;
+	disableUsersRegistration: boolean;
+	disableCaptcha: boolean;
+}
 export interface IEditImageModel
 {
 	shortToken: string;

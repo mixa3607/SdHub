@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Text.Encodings.Web;
+using System.Threading;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,7 @@ using SdHub.Services.Tokens;
 namespace SdHub.Controllers;
 
 [AllowAnonymous]
-[Route("api/v1/jwks")]
+[Route("api/v1/[controller]")]
 [Produces("application/json")]
 public class JwksController : ControllerBase
 {

@@ -12,4 +12,5 @@ public static class ModelStateErrors
     public const string InvalidCaptcha = "INVALID_CAPTCHA";
     public const string RefreshTokenNotExist = "REFRESH_TOKEN_NOT_EXIST";
     public const string ImageNotFound = "IMAGE_NOT_FOUND";
+    public const string UserRegistrationDisabled = "USER_REGISTRATION_DISABLED";
 }

@@ -13,6 +13,7 @@ import {
 import {CaptchaType} from "apps/SdHub/src/app/models/autogen/misc.models";
 import {HttpErrorResponse} from "@angular/common/http";
 import {httpErrorResponseHandler} from "apps/SdHub/src/app/shared/http-error-handling/handlers";
+import {environment} from "apps/SdHub/src/environments/environment";
 
 @Component({
     selector: 'app-recover-form',
@@ -25,6 +26,7 @@ export class RecoverFormComponent implements OnInit {
     public hidePassword = true;
     public loading = false;
     public isSendingCodeMode = true;
+    public captchaDisabled = environment.settings.disableCaptcha;
 
     constructor(private formBuilder: FormBuilder,
                 private userApi: UserApi,
@@ -56,9 +58,10 @@ export class RecoverFormComponent implements OnInit {
                 Validators.minLength(6),
                 Validators.maxLength(30),
             ])],
-            recaptcha: [null, Validators.compose([
-                Validators.required,
-            ])],
+            recaptcha: this.captchaDisabled
+                ? undefined : [null, Validators.compose([
+                    Validators.required,
+                ])],
         });
     }
 

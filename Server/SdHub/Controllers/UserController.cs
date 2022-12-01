@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using SdHub.Constants;
 using SdHub.Database;
@@ -18,6 +19,7 @@ using SdHub.Extensions;
 using SdHub.Hangfire.Jobs;
 using SdHub.Models;
 using SdHub.Models.User;
+using SdHub.Options;
 using SdHub.Services.Captcha;
 using SdHub.Services.Mailing;
 using SdHub.Services.Tokens;
@@ -39,11 +41,12 @@ public class UserController : ControllerBase
     private readonly ICaptchaValidator _captchaValidator;
     private readonly IEmailCheckerService _emailChecker;
     private readonly ITempCodesService _tempCodesService;
+    private readonly AppInfoOptions _appInfo;
 
     public UserController(SdHubDbContext db, IUserFromTokenService fromTokenService, IMapper mapper,
         IJwtGeneratorService jwtGenerator, IUserPasswordService passwordService,
         IRefreshTokenService refreshTokenService, ILogger<UserController> logger, ICaptchaValidator captchaValidator,
-        IEmailCheckerService emailChecker, ITempCodesService tempCodesService)
+        IEmailCheckerService emailChecker, ITempCodesService tempCodesService, IOptions<AppInfoOptions> appInfo)
     {
         _db = db;
         _fromTokenService = fromTokenService;
@@ -55,6 +58,7 @@ public class UserController : ControllerBase
         _captchaValidator = captchaValidator;
         _emailChecker = emailChecker;
         _tempCodesService = tempCodesService;
+        _appInfo = appInfo.Value;
     }
 
     [HttpGet("[action]")]
@@ -79,6 +83,9 @@ public class UserController : ControllerBase
         CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
+
+        if (_appInfo.DisableUsersRegistration)
+            ModelState.AddError(ModelStateErrors.UserRegistrationDisabled).ThrowIfNotValid();
 
         if (await _db.Users.ApplyFilter(email: req.Email).FirstOrDefaultAsync(ct) != null)
             ModelState.AddError(ModelStateErrors.UserWithEmailExist).ThrowIfNotValid();

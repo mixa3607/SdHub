@@ -21,7 +21,7 @@
     <mat-error *ngIf="loginForm.get('password')!.invalid">{{getErrorMessage(loginForm.get('password')!)}}</mat-error>
   </mat-form-field>
 
-  <re-captcha #captchaElem
+  <re-captcha #captchaElem *ngIf="!captchaDisabled"
               formControlName="recaptcha"
               style="align-self: center"></re-captcha>
 

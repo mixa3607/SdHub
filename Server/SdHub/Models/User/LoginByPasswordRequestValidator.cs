@@ -7,7 +7,7 @@ public class LoginByPasswordRequestValidator : AbstractValidator<LoginByPassword
     public LoginByPasswordRequestValidator()
     {
         RuleFor(x => x.CaptchaType).IsInEnum();
-        RuleFor(x => x.CaptchaCode).NotEmpty();
+        //RuleFor(x => x.CaptchaCode).NotEmpty();
         RuleFor(x => x.Login).NotEmpty();
         RuleFor(x => x.Password).NotEmpty();
     }

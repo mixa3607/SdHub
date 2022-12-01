@@ -4,6 +4,7 @@ import {AuthStateService} from "apps/SdHub/src/app/core/services/auth-state.serv
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 import {IUserModel} from "apps/SdHub/src/app/models/autogen/misc.models";
 import {AuthService} from "apps/SdHub/src/app/core/services/auth.service";
+import {environment} from "apps/SdHub/src/environments/environment";
 
 @UntilDestroy()
 @Component({
@@ -16,6 +17,7 @@ export class LayoutComponent implements OnInit {
     public isAnonymous = true;
     public userInfoIsOpen = false;
     public user: IUserModel | null = null;
+    public registrationEnabled = !environment.settings.disableUsersRegistration;
 
     constructor(
         public authService: AuthService,

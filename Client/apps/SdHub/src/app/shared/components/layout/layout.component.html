@@ -86,7 +86,7 @@
         <mat-icon>login</mat-icon>
         Log in
       </button>
-      <button [routerLink]="'/auth/register'" mat-raised-button>
+      <button *ngIf="registrationEnabled" [routerLink]="'/auth/register'" mat-raised-button>
         <mat-icon>person_add</mat-icon>
         Register
       </button>

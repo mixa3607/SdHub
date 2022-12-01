@@ -17,6 +17,7 @@ import {
 import {UserApi} from "apps/SdHub/src/app/shared/services/api/user.api";
 import {RecaptchaComponent} from "ng-recaptcha";
 import * as stream from "stream";
+import {environment} from "apps/SdHub/src/environments/environment";
 
 @Component({
     selector: 'app-login-form',
@@ -30,6 +31,7 @@ export class LoginFormComponent implements OnInit {
     public loading = false;
     public isEmailConfirmationMode = false;
     public sendConfirmationCodeRequired = false;
+    public captchaDisabled = environment.settings.disableCaptcha;
 
     @ViewChild('captchaElem', {static: false}) captchaElem?: RecaptchaComponent;
 
@@ -50,9 +52,10 @@ export class LoginFormComponent implements OnInit {
                 Validators.minLength(8),
                 Validators.maxLength(100)
             ])],
-            recaptcha: [null, Validators.compose([
-                Validators.required,
-            ])],
+            recaptcha: this.captchaDisabled
+                ? undefined : [null, Validators.compose([
+                    Validators.required,
+                ])],
         }, {validators: []});
 
         this.emailConfirmForm = this.formBuilder.group({
@@ -67,13 +70,13 @@ export class LoginFormComponent implements OnInit {
         }, {validators: []});
 
         this.route.queryParams.subscribe(params => {
-           if (typeof params['login'] === 'string'){
-               this.loginForm.controls['login'].setValue(params['login']);
-               this.emailConfirmForm.controls['login'].setValue(params['login']);
-           }
-           if (params['confirm'] === 'true'){
+            if (typeof params['login'] === 'string') {
+                this.loginForm.controls['login'].setValue(params['login']);
+                this.emailConfirmForm.controls['login'].setValue(params['login']);
+            }
+            if (params['confirm'] === 'true') {
                 this.isEmailConfirmationMode = true;
-           }
+            }
         });
     }
 

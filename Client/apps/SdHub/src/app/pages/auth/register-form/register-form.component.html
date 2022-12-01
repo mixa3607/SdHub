@@ -46,7 +46,8 @@
             *ngIf="form.get('confirmPassword')!.invalid">{{getErrorMessage(form.get('confirmPassword')!)}}</mat-error>
   </mat-form-field>
 
-  <re-captcha formControlName="recaptcha"
+  <re-captcha *ngIf="!captchaDisabled"
+              formControlName="recaptcha"
               style="align-self: center"></re-captcha>
 
   <button [disabled]="form.invalid" color="primary" mat-raised-button (click)="onRegisterClick()">Register</button>

@@ -1,12 +1,16 @@
 <mat-card>
   <mat-card-content style="display: flex; flex-direction: column; gap: .4rem">
-    <div class="uploaded-image-container" [routerLink]="'/i/' + shortToken">
-      <img *ngIf="thumbUrl != ''; else noThumb"
-           [src]="thumbUrl" class="uploaded-image">
+    <a class="uploaded-image-container" [routerLink]="'/i/' + shortToken">
+      <a *ngIf="thumbUrl != ''; else noThumb"
+         [href]="compressedUrl">
+        <img class="uploaded-image"
+             [attr.src]="thumbUrl"
+             [attr.data-src]="compressedUrl">
+      </a>
       <ng-template #noThumb>
         <span style="font-style: italic">Preview not available</span>
       </ng-template>
-    </div>
+    </a>
     <mat-divider></mat-divider>
     <div>
       Name:
@@ -25,8 +29,8 @@
               [routerLink]="'/i/' + shortToken">Open
       </button>
       <a mat-stroked-button
-              [routerLink]="'/i/' + shortToken"
-              target="_blank">
+         [routerLink]="'/i/' + shortToken"
+         target="_blank">
         <mat-icon>open_in_new</mat-icon>
       </a>
     </div>

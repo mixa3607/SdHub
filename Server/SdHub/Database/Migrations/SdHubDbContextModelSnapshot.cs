@@ -24,6 +24,290 @@ namespace SdHub.Database.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("SdHub.Database.Entities.Bins.EmbeddingEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("About")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<byte>("SdVersion")
+                        .HasColumnType("smallint");
+
+                    b.Property<string>("Trigger")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Embeddings");
+                });
+
+            modelBuilder.Entity("SdHub.Database.Entities.Bins.EmbeddingVersionEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("About")
+                        .HasColumnType("text");
+
+                    b.Property<long>("EmbeddingId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("FileId")
+                        .HasColumnType("bigint");
+
+                    b.Property<List<string>>("KnownNames")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<string>("SourceLink")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Version")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmbeddingId");
+
+                    b.HasIndex("FileId");
+
+                    b.ToTable("EmbeddingVersions");
+                });
+
+            modelBuilder.Entity("SdHub.Database.Entities.Bins.GenerationSampleEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long?>("EmbeddingVersionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("HypernetVersionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ImageId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("ModelVersionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("VaeVersionId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmbeddingVersionId");
+
+                    b.HasIndex("HypernetVersionId");
+
+                    b.HasIndex("ImageId");
+
+                    b.HasIndex("ModelVersionId");
+
+                    b.HasIndex("VaeVersionId");
+
+                    b.ToTable("GenerationSamples");
+                });
+
+            modelBuilder.Entity("SdHub.Database.Entities.Bins.HypernetEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("About")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<byte>("SdVersion")
+                        .HasColumnType("smallint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Hypernets");
+                });
+
+            modelBuilder.Entity("SdHub.Database.Entities.Bins.HypernetVersionEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("About")
+                        .HasColumnType("text");
+
+                    b.Property<long>("FileId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("HypernetId")
+                        .HasColumnType("bigint");
+
+                    b.Property<List<string>>("KnownNames")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<string>("SourceLink")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Version")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FileId");
+
+                    b.HasIndex("HypernetId");
+
+                    b.ToTable("HypernetVersions");
+                });
+
+            modelBuilder.Entity("SdHub.Database.Entities.Bins.ModelEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("About")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Author")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<byte>("SdVersion")
+                        .HasColumnType("smallint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Models");
+                });
+
+            modelBuilder.Entity("SdHub.Database.Entities.Bins.ModelVersionEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("About")
+                        .HasColumnType("text");
+
+                    b.Property<long>("CkptFileId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("HashV1")
+                        .HasColumnType("text");
+
+                    b.Property<List<string>>("KnownNames")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<long>("ModelId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("SourceLink")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Version")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CkptFileId");
+
+                    b.HasIndex("ModelId");
+
+                    b.ToTable("ModelVersions");
+                });
+
+            modelBuilder.Entity("SdHub.Database.Entities.Bins.VaeEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("About")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<byte>("SdVersion")
+                        .HasColumnType("smallint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Vaes");
+                });
+
+            modelBuilder.Entity("SdHub.Database.Entities.Bins.VaeVersionEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("About")
+                        .HasColumnType("text");
+
+                    b.Property<long>("FileId")
+                        .HasColumnType("bigint");
+
+                    b.Property<List<string>>("KnownNames")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<string>("SourceLink")
+                        .HasColumnType("text");
+
+                    b.Property<long>("VaeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Version")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FileId");
+
+                    b.HasIndex("VaeId");
+
+                    b.ToTable("VaeVersions");
+                });
+
             modelBuilder.Entity("SdHub.Database.Entities.Files.DirectoryEntity", b =>
                 {
                     b.Property<long>("Id")
@@ -444,6 +728,117 @@ namespace SdHub.Database.Migrations
                     b.ToTable("UserPlans");
                 });
 
+            modelBuilder.Entity("SdHub.Database.Entities.Bins.EmbeddingVersionEntity", b =>
+                {
+                    b.HasOne("SdHub.Database.Entities.Bins.EmbeddingEntity", "Embedding")
+                        .WithMany("Versions")
+                        .HasForeignKey("EmbeddingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SdHub.Database.Entities.Files.FileEntity", "File")
+                        .WithMany()
+                        .HasForeignKey("FileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Embedding");
+
+                    b.Navigation("File");
+                });
+
+            modelBuilder.Entity("SdHub.Database.Entities.Bins.GenerationSampleEntity", b =>
+                {
+                    b.HasOne("SdHub.Database.Entities.Bins.EmbeddingVersionEntity", "EmbeddingVersion")
+                        .WithMany()
+                        .HasForeignKey("EmbeddingVersionId");
+
+                    b.HasOne("SdHub.Database.Entities.Bins.HypernetVersionEntity", "HypernetVersion")
+                        .WithMany()
+                        .HasForeignKey("HypernetVersionId");
+
+                    b.HasOne("SdHub.Database.Entities.Images.ImageEntity", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SdHub.Database.Entities.Bins.ModelVersionEntity", "ModelVersion")
+                        .WithMany()
+                        .HasForeignKey("ModelVersionId");
+
+                    b.HasOne("SdHub.Database.Entities.Bins.VaeVersionEntity", "VaeVersion")
+                        .WithMany()
+                        .HasForeignKey("VaeVersionId");
+
+                    b.Navigation("EmbeddingVersion");
+
+                    b.Navigation("HypernetVersion");
+
+                    b.Navigation("Image");
+
+                    b.Navigation("ModelVersion");
+
+                    b.Navigation("VaeVersion");
+                });
+
+            modelBuilder.Entity("SdHub.Database.Entities.Bins.HypernetVersionEntity", b =>
+                {
+                    b.HasOne("SdHub.Database.Entities.Files.FileEntity", "File")
+                        .WithMany()
+                        .HasForeignKey("FileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SdHub.Database.Entities.Bins.HypernetEntity", "Hypernet")
+                        .WithMany("Versions")
+                        .HasForeignKey("HypernetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("File");
+
+                    b.Navigation("Hypernet");
+                });
+
+            modelBuilder.Entity("SdHub.Database.Entities.Bins.ModelVersionEntity", b =>
+                {
+                    b.HasOne("SdHub.Database.Entities.Files.FileEntity", "CkptFile")
+                        .WithMany()
+                        .HasForeignKey("CkptFileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SdHub.Database.Entities.Bins.ModelEntity", "Model")
+                        .WithMany("Versions")
+                        .HasForeignKey("ModelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CkptFile");
+
+                    b.Navigation("Model");
+                });
+
+            modelBuilder.Entity("SdHub.Database.Entities.Bins.VaeVersionEntity", b =>
+                {
+                    b.HasOne("SdHub.Database.Entities.Files.FileEntity", "File")
+                        .WithMany()
+                        .HasForeignKey("FileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SdHub.Database.Entities.Bins.VaeEntity", "Vae")
+                        .WithMany("Versions")
+                        .HasForeignKey("VaeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("File");
+
+                    b.Navigation("Vae");
+                });
+
             modelBuilder.Entity("SdHub.Database.Entities.Files.DirectoryEntity", b =>
                 {
                     b.HasOne("SdHub.Database.Entities.Files.FileStorageEntity", "Storage")
@@ -550,6 +945,26 @@ namespace SdHub.Database.Migrations
                         .IsRequired();
 
                     b.Navigation("Plan");
+                });
+
+            modelBuilder.Entity("SdHub.Database.Entities.Bins.EmbeddingEntity", b =>
+                {
+                    b.Navigation("Versions");
+                });
+
+            modelBuilder.Entity("SdHub.Database.Entities.Bins.HypernetEntity", b =>
+                {
+                    b.Navigation("Versions");
+                });
+
+            modelBuilder.Entity("SdHub.Database.Entities.Bins.ModelEntity", b =>
+                {
+                    b.Navigation("Versions");
+                });
+
+            modelBuilder.Entity("SdHub.Database.Entities.Bins.VaeEntity", b =>
+                {
+                    b.Navigation("Versions");
                 });
 
             modelBuilder.Entity("SdHub.Database.Entities.Images.ImageEntity", b =>

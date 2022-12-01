@@ -6,7 +6,7 @@ public class SendEmailConfirmationEmailRequestValidator : AbstractValidator<Send
 {
     public SendEmailConfirmationEmailRequestValidator()
     {
-        RuleFor(x => x.CaptchaCode).NotEmpty();
+        //RuleFor(x => x.CaptchaCode).NotEmpty();
         RuleFor(x => x.CaptchaType).IsInEnum();
         RuleFor(x => x.Login).NotEmpty();
     }

@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
+import {environment} from "apps/SdHub/src/environments/environment";
 
 interface INavTab {
     label: string;
     link: string;
-    index: number;
 }
 
 @Component({
@@ -17,17 +17,15 @@ export class AuthPageComponent implements OnInit {
         {
             label: 'Login',
             link: './login',
-            index: 0
         },
-        {
-            label: 'Register',
-            link: './register',
-            index: 1
-        },
+        ...environment.settings.disableUsersRegistration
+            ? [] : [{
+                label: 'Register',
+                link: './register',
+            }],
         {
             label: 'Recover',
             link: './recover',
-            index: 2
         }
     ];
 

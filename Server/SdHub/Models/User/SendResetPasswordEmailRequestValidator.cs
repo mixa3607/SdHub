@@ -6,7 +6,7 @@ public class SendResetPasswordEmailRequestValidator : AbstractValidator<SendRese
 {
     public SendResetPasswordEmailRequestValidator()
     {
-        RuleFor(x => x.CaptchaCode).NotEmpty();
+        //RuleFor(x => x.CaptchaCode).NotEmpty();
         RuleFor(x => x.CaptchaType).IsInEnum();
         RuleFor(x => x.Login).NotEmpty();
     }

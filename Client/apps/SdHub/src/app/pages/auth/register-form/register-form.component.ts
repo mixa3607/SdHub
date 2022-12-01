@@ -9,6 +9,7 @@ import {ILoginByPasswordRequest, IRegisterRequest} from "apps/SdHub/src/app/mode
 import {CaptchaType} from "apps/SdHub/src/app/models/autogen/misc.models";
 import {httpErrorResponseHandler} from "apps/SdHub/src/app/shared/http-error-handling/handlers";
 import {Router} from "@angular/router";
+import {environment} from "apps/SdHub/src/environments/environment";
 
 
 @Component({
@@ -20,6 +21,7 @@ export class RegisterFormComponent implements OnInit {
     public form: FormGroup;
     public hidePassword = true;
     public loading = false;
+    public captchaDisabled = environment.settings.disableCaptcha;
 
     constructor(private formBuilder: FormBuilder,
                 private userApi: UserApi,
@@ -45,9 +47,10 @@ export class RegisterFormComponent implements OnInit {
                 Validators.minLength(8),
                 Validators.maxLength(100)
             ])],
-            recaptcha: [null, Validators.compose([
-                Validators.required,
-            ])],
+            recaptcha: this.captchaDisabled
+                ? undefined : [null, Validators.compose([
+                    Validators.required,
+                ])],
         }, {validators: [CustomValidators.MatchingPasswords]});
     }
 

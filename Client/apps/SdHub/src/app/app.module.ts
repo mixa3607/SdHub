@@ -14,7 +14,7 @@ import {RECAPTCHA_SETTINGS, RecaptchaSettings} from "ng-recaptcha";
 import {MarkdownModule, MarkedOptions} from "ngx-markdown";
 import {HttpClient} from "@angular/common/http";
 
-const globalSettings: RecaptchaSettings = {siteKey: '6LdMtMYiAAAAAMYBK_wIrw0b-65U5jGKkW9jGSoW'};
+console.log(environment.settings);
 
 @NgModule({
     declarations: [
@@ -55,7 +55,7 @@ const globalSettings: RecaptchaSettings = {siteKey: '6LdMtMYiAAAAAMYBK_wIrw0b-65
     providers: [
         {
             provide: RECAPTCHA_SETTINGS,
-            useValue: globalSettings,
+            useFactory: () => ({siteKey: environment.settings.recaptchaSiteKey}),
         },
     ],
 })

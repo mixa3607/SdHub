@@ -10,6 +10,6 @@ public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
         RuleFor(x => x.Email).EmailAddress().NotEmpty();
         RuleFor(x => x.Password).Matches(@"^(.{8,})$").WithMessage("Min 8 chars");
         RuleFor(x => x.CaptchaType).IsInEnum();
-        RuleFor(x => x.CaptchaCode).NotEmpty();
+        //RuleFor(x => x.CaptchaCode).NotEmpty();
     }
 }

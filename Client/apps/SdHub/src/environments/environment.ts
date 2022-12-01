@@ -1,4 +1,5 @@
-import { NgxLoggerLevel } from 'ngx-logger';
+import {NgxLoggerLevel} from 'ngx-logger';
+import {IFrontendSettings} from "apps/SdHub/src/app/models/autogen/misc.models";
 
 // The file contents for the current environment will overwrite these during build.
 // The build system defaults to the dev environment which uses `environment.ts`, but if you do
@@ -6,9 +7,10 @@ import { NgxLoggerLevel } from 'ngx-logger';
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
 export const environment = {
-  production: false,
-  logLevel: NgxLoggerLevel.TRACE,
-  serverLogLevel: NgxLoggerLevel.OFF,
-  clientBranch: '<not_set>',
-  clientSha: '<not_set>',
+    production: false,
+    logLevel: NgxLoggerLevel.TRACE,
+    serverLogLevel: NgxLoggerLevel.OFF,
+    clientBranch: '<not_set>',
+    clientSha: '<not_set>',
+    settings: {} as IFrontendSettings,
 };

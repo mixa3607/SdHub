@@ -1,14 +1,12 @@
-﻿using SdHub.Database.Entities;
-using SdHub.Database.Entities.Files;
-using SdHub.Database.Entities.Images;
+﻿using SdHub.Models.Files;
 using System;
 
-namespace SdHub.Models;
+namespace SdHub.Models.Image;
 
 public class ImageModel
 {
     public ImageOwnerModel? Owner { get; set; }
-    
+
     public FileModel? OriginalImage { get; set; }
     public FileModel? CompressedImage { get; set; }
     public FileModel? ThumbImage { get; set; }

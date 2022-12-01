@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SdHub.Models;
+namespace SdHub.Models.Image;
 
 public class ImageParsedMetadataModel
 {

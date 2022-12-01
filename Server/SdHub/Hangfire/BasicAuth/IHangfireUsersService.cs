@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using SdHub.Database.Entities.User;
+using SdHub.Database.Entities.Users;
 
 namespace SdHub.Hangfire.BasicAuth;
 

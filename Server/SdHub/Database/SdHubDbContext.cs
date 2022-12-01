@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SdHub.Database.Entities;
+using SdHub.Database.Entities.Albums;
 using SdHub.Database.Entities.Bins;
 using SdHub.Database.Entities.Files;
+using SdHub.Database.Entities.Grids;
 using SdHub.Database.Entities.Images;
-using SdHub.Database.Entities.User;
 using SdHub.Database.Entities.Users;
 
 namespace SdHub.Database;
@@ -20,6 +21,14 @@ public class SdHubDbContext : DbContext
     public DbSet<ImageRawMetadataEntity> ImageRawMetadata { get; set; } = null!;
     public DbSet<ImageParsedMetadataEntity> ImageParsedMetadata { get; set; } = null!;
     public DbSet<ImageParsedMetadataTagEntity> ImageParsedMetadataTags { get; set; } = null!;
+
+    //grids
+    public DbSet<GridEntity> Grids { get; set; } = null!;
+    public DbSet<GridImageEntity> GridImages { get; set; } = null!;
+
+    //albums
+    public DbSet<AlbumEntity> Albums { get; set; }
+    public DbSet<AlbumImageEntity> AlbumImages { get; set; }
 
     //bins
     public DbSet<ModelEntity> Models { get; set; }

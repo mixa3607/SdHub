@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using SdHub.Models;
+using SdHub.Models.Image;
 using SdHub.Services.FileProc.Metadata;
 
 namespace SdHub.Services.FileProc.Detectors;

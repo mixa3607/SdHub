@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SdHub.Database.Entities.User;
+namespace SdHub.Database.Entities.Users;
 
 public class RefreshTokenEntity
 {

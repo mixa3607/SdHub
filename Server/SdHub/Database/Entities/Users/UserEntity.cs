@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using SdHub.Database.Entities.Images;
-using SdHub.Database.Entities.Users;
 
-namespace SdHub.Database.Entities.User;
+namespace SdHub.Database.Entities.Users;
 
 public class UserEntity
 {

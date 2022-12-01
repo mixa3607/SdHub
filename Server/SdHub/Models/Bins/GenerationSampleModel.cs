@@ -1,4 +1,6 @@
-﻿namespace SdHub.Models.Bins;
+﻿using SdHub.Models.Image;
+
+namespace SdHub.Models.Bins;
 
 public class GenerationSampleModel
 {

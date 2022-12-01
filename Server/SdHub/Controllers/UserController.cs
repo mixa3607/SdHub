@@ -13,7 +13,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using SdHub.Constants;
 using SdHub.Database;
-using SdHub.Database.Entities.User;
+using SdHub.Database.Entities.Users;
 using SdHub.Database.Extensions;
 using SdHub.Extensions;
 using SdHub.Hangfire.Jobs;

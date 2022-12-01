@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using Reinforced.Typings.Attributes;
+﻿using Reinforced.Typings.Attributes;
 
-namespace SdHub.Models;
+namespace SdHub.Models.Image;
 
 public class EditImageModel
 {

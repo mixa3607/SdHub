@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace SdHub.Models;
+namespace SdHub.Models.Image;
 
 public class EditImageModelValidator : AbstractValidator<EditImageModel>
 {

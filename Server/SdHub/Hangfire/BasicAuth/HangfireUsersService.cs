@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SdHub.Constants;
 using SdHub.Database;
-using SdHub.Database.Entities.User;
+using SdHub.Database.Entities.Users;
 using SdHub.Services.Tokens;
 
 namespace SdHub.Hangfire.BasicAuth;

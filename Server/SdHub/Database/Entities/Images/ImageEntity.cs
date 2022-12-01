@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using SdHub.Database.Entities.Files;
-using SdHub.Database.Entities.User;
+using SdHub.Database.Entities.Users;
 
 namespace SdHub.Database.Entities.Images;
 
@@ -25,12 +25,8 @@ public class ImageTagEntity
 public class ImageEntity
 {
     public long Id { get; set; }
-
-    /// <summary>
-    /// null for anon
-    /// </summary>
+    
     public long OwnerId { get; set; }
-
     public UserEntity? Owner { get; set; }
 
     public long UploaderId { get; set; }

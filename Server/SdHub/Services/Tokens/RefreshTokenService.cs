@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using SdHub.Database;
-using SdHub.Database.Entities.User;
+using SdHub.Database.Entities.Users;
 using SdHub.Options;
 
 namespace SdHub.Services.Tokens;

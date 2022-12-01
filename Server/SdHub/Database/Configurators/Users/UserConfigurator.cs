@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SdHub.Database.Entities.User;
+using SdHub.Database.Entities.Users;
 
 namespace SdHub.Database.Configurators.Users;
 

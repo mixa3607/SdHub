@@ -2,12 +2,13 @@
 using SdHub.Models.Enums;
 using SdHub.TsConfigurators.Shared;
 using Reinforced.Typings.Fluent;
-using SdHub.Database.Entities.Files;
 using SdHub.TsConfigurators.Extensions;
 using SdHub.Models;
 using SdHub.Services.ErrorHandling;
 using System.IO;
-using SdHub.Controllers;
+using SdHub.Models.Files;
+using SdHub.Models.Image;
+using SdHub.Models.Upload;
 
 namespace SdHub.TsConfigurators;
 
@@ -25,6 +26,7 @@ public class MiscTsConfigurator : ITsConfigurator
                 typeof(ImageModel),
                 typeof(ImageOwnerModel),
                 typeof(FileModel),
+                typeof(DirectoryModel),
                 typeof(UploadedFileModel),
                 typeof(UserModel),
                 typeof(ServerErrorResponse)

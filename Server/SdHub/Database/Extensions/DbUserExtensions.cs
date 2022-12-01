@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using SdHub.Database.Entities.User;
+using SdHub.Database.Entities.Users;
 
 namespace SdHub.Database.Extensions;
 

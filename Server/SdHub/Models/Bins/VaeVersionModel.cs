@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using SdHub.Database.Entities.Files;
+using SdHub.Models.Files;
 
 namespace SdHub.Models.Bins;
 

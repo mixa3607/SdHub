@@ -1,4 +1,6 @@
-﻿namespace SdHub.Models;
+﻿using SdHub.Models.Image;
+
+namespace SdHub.Models.Upload;
 
 public class UploadedFileModel
 {

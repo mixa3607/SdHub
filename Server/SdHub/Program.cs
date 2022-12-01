@@ -6,7 +6,6 @@ using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Threading.Tasks;
-using ArkProjects.YCBot.Telegram.Options;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;

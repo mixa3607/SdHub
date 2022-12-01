@@ -8,6 +8,21 @@ export interface IFrontendSettings
 	disableUsersRegistration: boolean;
 	disableCaptcha: boolean;
 }
+export interface IImageOwnerModel
+{
+	guid: string;
+	login: string;
+	isAnonymous: boolean;
+}
+export interface IUserModel
+{
+	guid: string;
+	login: string;
+	loginNormalized: string;
+	createdAt: string;
+	roles: string[];
+	about: string;
+}
 export interface IEditImageModel
 {
 	shortToken: string;
@@ -41,11 +56,24 @@ export interface IImageModel
 	description: string;
 	parsedMetadata: IImageParsedMetadataModel;
 }
-export interface IImageOwnerModel
+export interface IFileModel
 {
-	guid: string;
-	login: string;
-	isAnonymous: boolean;
+	id: number;
+	name: string;
+	hash: string;
+	mimeType: string;
+	extension: string;
+	size: number;
+	createdAt: string;
+	directUrl: string;
+}
+export interface IDirectoryModel
+{
+	id: number;
+	name: string;
+	size: number;
+	createdAt: string;
+	directUrl: string;
 }
 export interface IUploadedFileModel
 {
@@ -53,26 +81,6 @@ export interface IUploadedFileModel
 	reason: string;
 	manageToken: string;
 	image: IImageModel;
-}
-export interface IUserModel
-{
-	guid: string;
-	login: string;
-	loginNormalized: string;
-	createdAt: string;
-	roles: string[];
-	about: string;
-}
-export interface IFileModel
-{
-	id: number;
-	name: string;
-	directUrl: string;
-	hash: string;
-	mimeType: string;
-	extension: string;
-	size: number;
-	createdAt: string;
 }
 export interface IServerErrorResponse
 {

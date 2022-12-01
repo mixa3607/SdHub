@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SdHub.Constants;
 using SdHub.Database.Entities.Files;
-using SdHub.Database.Entities.User;
 using SdHub.Database.Entities.Users;
 using SdHub.Database.Shared;
 using SdHub.Options;

@@ -1,4 +1,4 @@
-﻿namespace ArkProjects.YCBot.Telegram.Options;
+﻿namespace SdHub.Options;
 
 public class HangfireOptions
 {

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Flurl;
 using System.Text;
 using AutoMapper;
-using SdHub.Models;
+using SdHub.Models.Image;
 
 namespace SdHub.Services;
 

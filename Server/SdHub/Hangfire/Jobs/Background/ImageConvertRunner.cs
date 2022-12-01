@@ -7,7 +7,7 @@ using ImageMagick;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SdHub.Database;
-using SdHub.Models;
+using SdHub.Models.Image;
 using SdHub.Services.FileProc;
 
 namespace SdHub.Hangfire.Jobs;

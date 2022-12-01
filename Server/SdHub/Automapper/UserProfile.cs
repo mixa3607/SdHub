@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using SdHub.Database.Entities.User;
+using SdHub.Database.Entities.Users;
 using SdHub.Models;
 
 namespace SdHub.Automapper;

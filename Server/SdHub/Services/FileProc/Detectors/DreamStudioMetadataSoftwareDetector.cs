@@ -2,7 +2,7 @@
 using System.Linq;
 using MetadataExtractor.Formats.Exif;
 using SdHub.Constants;
-using SdHub.Models;
+using SdHub.Models.Image;
 using SdHub.Services.FileProc.Metadata;
 
 namespace SdHub.Services.FileProc.Detectors;

@@ -58,7 +58,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Database\Extensions\" />
 		<Folder Include="Utils\" />
 		<Folder Include="wwwroot\" />
 	</ItemGroup>

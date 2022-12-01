@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SdHub.Database;
 using SdHub.Database.Entities.Files;
-using SdHub.Models;
+using SdHub.Models.Image;
 using SdHub.Options;
 using SdHub.Services.FileProc.Detectors;
 using SdHub.Services.FileProc.Extractor;

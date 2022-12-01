@@ -24,6 +24,65 @@ namespace SdHub.Database.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("SdHub.Database.Entities.Albums.AlbumEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<long>("OwnerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ShortToken")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long?>("ThumbImageId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
+
+                    b.HasIndex("ThumbImageId");
+
+                    b.ToTable("Albums");
+                });
+
+            modelBuilder.Entity("SdHub.Database.Entities.Albums.AlbumImageEntity", b =>
+                {
+                    b.Property<long>("AlbumId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("ImageId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("GridId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("AlbumId", "ImageId", "GridId");
+
+                    b.HasIndex("GridId");
+
+                    b.HasIndex("ImageId");
+
+                    b.ToTable("AlbumImages");
+                });
+
             modelBuilder.Entity("SdHub.Database.Entities.Bins.EmbeddingEntity", b =>
                 {
                     b.Property<long>("Id")
@@ -407,6 +466,88 @@ namespace SdHub.Database.Migrations
                     b.ToTable("FileStorages");
                 });
 
+            modelBuilder.Entity("SdHub.Database.Entities.Grids.GridEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<long?>("LayersDirectoryId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("MaxLayer")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MinLayer")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<long>("OwnerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ShortToken")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long?>("ThumbImageId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("XTiles")
+                        .HasColumnType("integer");
+
+                    b.Property<List<string>>("XValues")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.Property<int>("YTiles")
+                        .HasColumnType("integer");
+
+                    b.Property<List<string>>("YValues")
+                        .IsRequired()
+                        .HasColumnType("text[]");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LayersDirectoryId");
+
+                    b.HasIndex("OwnerId");
+
+                    b.HasIndex("ThumbImageId");
+
+                    b.ToTable("Grids");
+                });
+
+            modelBuilder.Entity("SdHub.Database.Entities.Grids.GridImageEntity", b =>
+                {
+                    b.Property<long>("GridId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ImageId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.HasKey("GridId", "ImageId");
+
+                    b.HasIndex("ImageId");
+
+                    b.ToTable("GridImages");
+                });
+
             modelBuilder.Entity("SdHub.Database.Entities.Images.ImageEntity", b =>
                 {
                     b.Property<long>("Id")
@@ -728,6 +869,50 @@ namespace SdHub.Database.Migrations
                     b.ToTable("UserPlans");
                 });
 
+            modelBuilder.Entity("SdHub.Database.Entities.Albums.AlbumEntity", b =>
+                {
+                    b.HasOne("SdHub.Database.Entities.User.UserEntity", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SdHub.Database.Entities.Files.FileEntity", "ThumbImage")
+                        .WithMany()
+                        .HasForeignKey("ThumbImageId");
+
+                    b.Navigation("Owner");
+
+                    b.Navigation("ThumbImage");
+                });
+
+            modelBuilder.Entity("SdHub.Database.Entities.Albums.AlbumImageEntity", b =>
+                {
+                    b.HasOne("SdHub.Database.Entities.Albums.AlbumEntity", "Album")
+                        .WithMany("AlbumImages")
+                        .HasForeignKey("AlbumId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SdHub.Database.Entities.Grids.GridEntity", "Grid")
+                        .WithMany()
+                        .HasForeignKey("GridId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SdHub.Database.Entities.Images.ImageEntity", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Album");
+
+                    b.Navigation("Grid");
+
+                    b.Navigation("Image");
+                });
+
             modelBuilder.Entity("SdHub.Database.Entities.Bins.EmbeddingVersionEntity", b =>
                 {
                     b.HasOne("SdHub.Database.Entities.Bins.EmbeddingEntity", "Embedding")
@@ -857,6 +1042,48 @@ namespace SdHub.Database.Migrations
                     b.Navigation("Storage");
                 });
 
+            modelBuilder.Entity("SdHub.Database.Entities.Grids.GridEntity", b =>
+                {
+                    b.HasOne("SdHub.Database.Entities.Files.DirectoryEntity", "LayersDirectory")
+                        .WithMany()
+                        .HasForeignKey("LayersDirectoryId");
+
+                    b.HasOne("SdHub.Database.Entities.User.UserEntity", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SdHub.Database.Entities.Files.FileEntity", "ThumbImage")
+                        .WithMany()
+                        .HasForeignKey("ThumbImageId");
+
+                    b.Navigation("LayersDirectory");
+
+                    b.Navigation("Owner");
+
+                    b.Navigation("ThumbImage");
+                });
+
+            modelBuilder.Entity("SdHub.Database.Entities.Grids.GridImageEntity", b =>
+                {
+                    b.HasOne("SdHub.Database.Entities.Grids.GridEntity", "Grid")
+                        .WithMany("GridImages")
+                        .HasForeignKey("GridId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SdHub.Database.Entities.Images.ImageEntity", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Grid");
+
+                    b.Navigation("Image");
+                });
+
             modelBuilder.Entity("SdHub.Database.Entities.Images.ImageEntity", b =>
                 {
                     b.HasOne("SdHub.Database.Entities.Files.FileEntity", "CompressedImage")
@@ -947,6 +1174,11 @@ namespace SdHub.Database.Migrations
                     b.Navigation("Plan");
                 });
 
+            modelBuilder.Entity("SdHub.Database.Entities.Albums.AlbumEntity", b =>
+                {
+                    b.Navigation("AlbumImages");
+                });
+
             modelBuilder.Entity("SdHub.Database.Entities.Bins.EmbeddingEntity", b =>
                 {
                     b.Navigation("Versions");
@@ -965,6 +1197,11 @@ namespace SdHub.Database.Migrations
             modelBuilder.Entity("SdHub.Database.Entities.Bins.VaeEntity", b =>
                 {
                     b.Navigation("Versions");
+                });
+
+            modelBuilder.Entity("SdHub.Database.Entities.Grids.GridEntity", b =>
+                {
+                    b.Navigation("GridImages");
                 });
 
             modelBuilder.Entity("SdHub.Database.Entities.Images.ImageEntity", b =>

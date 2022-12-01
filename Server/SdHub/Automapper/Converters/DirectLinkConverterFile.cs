@@ -5,7 +5,7 @@ using SdHub.Database.Entities.Files;
 
 namespace SdHub.Automapper.Converters;
 
-public class DirectLinkConverter : IValueConverter<FileEntity, string>
+public class DirectLinkConverterFile : IValueConverter<FileEntity, string>
 {
     public string Convert(FileEntity entity, ResolutionContext context)
     {

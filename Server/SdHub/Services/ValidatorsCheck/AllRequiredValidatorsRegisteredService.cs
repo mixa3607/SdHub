@@ -61,7 +61,7 @@ public class AllRequiredValidatorsRegisteredService
                 {
                     _services.GetRequiredService(validatorType);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     missingValidators.Add(new MissingValidatorError(controller, arg));
                 }

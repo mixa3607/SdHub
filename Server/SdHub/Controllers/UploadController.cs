@@ -183,7 +183,7 @@ public class UploadController : ControllerBase
                 _db.Images.Add(imageEntity);
                 savedImages.Add(imageEntity);
             }
-            catch (MetadataExtractor.ImageProcessingException e)
+            catch (MetadataExtractor.ImageProcessingException)
             {
                 uplFile.Uploaded = false;
                 uplFile.Reason = "Allow only images";

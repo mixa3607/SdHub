@@ -98,3 +98,10 @@ export interface IGetUserResponse
 {
 	user: IUserModel;
 }
+export abstract class UserRoleTypes
+{
+	public static User: string = `User`;
+	public static Admin: string = `Admin`;
+	public static HangfireRW: string = `HangfireRW`;
+	public static HangfireRO: string = `HangfireRO`;
+}

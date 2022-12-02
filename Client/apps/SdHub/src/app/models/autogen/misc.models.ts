@@ -99,3 +99,17 @@ export enum AudienceType {
 export enum CaptchaType {
 	ReCaptchaV2 = 0
 }
+export abstract class ModelStateErrors
+{
+	public static UserNotFound: string = `USER_NOT_FOUND`;
+	public static UserEditNotAllowed: string = `USER_EDIT_NOT_ALLOWED`;
+	public static EmailNotConfirmed: string = `EMAIL_NOT_CONFIRMED`;
+	public static BadCreds: string = `BAD_CREDS`;
+	public static BadConfirmationCode: string = `BAD_CONFIRMATION_CODE`;
+	public static UserWithEmailExist: string = `USER_WITH_EMAIL_EXIST`;
+	public static UserWithLoginExist: string = `USER_WITH_LOGIN_EXIST`;
+	public static InvalidCaptcha: string = `INVALID_CAPTCHA`;
+	public static RefreshTokenNotExist: string = `REFRESH_TOKEN_NOT_EXIST`;
+	public static ImageNotFound: string = `IMAGE_NOT_FOUND`;
+	public static UserRegistrationDisabled: string = `USER_REGISTRATION_DISABLED`;
+}

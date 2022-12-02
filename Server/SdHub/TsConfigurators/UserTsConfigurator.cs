@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Reinforced.Typings.Fluent;
+using SdHub.Constants;
 using SdHub.Models.User;
 using SdHub.TsConfigurators.Extensions;
 using SdHub.TsConfigurators.Shared;
@@ -43,5 +44,16 @@ public class UserTsConfigurator : ITsConfigurator
         builder.ExportAsEnums(new Type[]
         {
         }, c => c.ExportTo(outFile));
+        builder.ExportAsClasses(new Type[]
+            {
+                typeof(UserRoleTypes),
+            }, c => c
+                .SubsDatetimeOffsetToStr()
+                .SubsTimespanToStr()
+                .SubsGuidToStr()
+                .WithPublicFields()
+                .WithPublicProperties()
+                .ExportTo(outFile))
+            ;
     }
 }

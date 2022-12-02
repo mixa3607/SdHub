@@ -88,3 +88,10 @@ export enum SearchImageOrderByType {
 	Asc = 0,
 	Desc = 1
 }
+export abstract class SoftwareGeneratedTypes
+{
+	public static Unknown: string = `Unknown`;
+	public static AutomaticWebUi: string = `AutomaticWebUi`;
+	public static DreamStudio: string = `DreamStudio`;
+	public static NovelAi: string = `NovelAi`;
+}

@@ -6,6 +6,7 @@ using SdHub.TsConfigurators.Extensions;
 using SdHub.Models;
 using SdHub.Services.ErrorHandling;
 using System.IO;
+using SdHub.Constants;
 using SdHub.Models.Files;
 using SdHub.Models.Image;
 using SdHub.Models.Upload;
@@ -29,7 +30,7 @@ public class MiscTsConfigurator : ITsConfigurator
                 typeof(DirectoryModel),
                 typeof(UploadedFileModel),
                 typeof(UserModel),
-                typeof(ServerErrorResponse)
+                typeof(ServerErrorResponse),
             }, c => c
                 .SubsDatetimeOffsetToStr()
                 .SubsTimespanToStr()
@@ -42,5 +43,16 @@ public class MiscTsConfigurator : ITsConfigurator
             typeof(AudienceType),
             typeof(CaptchaType),
         }, c => c.ExportTo(outFile));
+        builder.ExportAsClasses(new Type[]
+            {
+                typeof(ModelStateErrors)
+            }, c => c
+                .SubsDatetimeOffsetToStr()
+                .SubsTimespanToStr()
+                .SubsGuidToStr()
+                .WithPublicFields()
+                .WithPublicProperties()
+                .ExportTo(outFile))
+            ;
     }
 }

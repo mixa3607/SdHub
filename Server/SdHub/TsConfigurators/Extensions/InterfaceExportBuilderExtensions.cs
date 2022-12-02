@@ -6,7 +6,7 @@ namespace SdHub.TsConfigurators.Extensions;
 
 public static class InterfaceExportBuilderExtensions
 {
-    public static InterfaceExportBuilder SubsDatetimeOffsetToStr(this InterfaceExportBuilder builder)
+    public static T SubsDatetimeOffsetToStr<T>(this T builder) where T : TypeExportBuilder
     {
         return builder
                 .Substitute(typeof(DateTimeOffset), new RtSimpleTypeName("string"))
@@ -14,7 +14,7 @@ public static class InterfaceExportBuilderExtensions
             ;
     }
 
-    public static InterfaceExportBuilder SubsTimespanToStr(this InterfaceExportBuilder builder)
+    public static T SubsTimespanToStr<T>(this T builder) where T : TypeExportBuilder
     {
         return builder
                 .Substitute(typeof(TimeSpan), new RtSimpleTypeName("string"))
@@ -22,7 +22,7 @@ public static class InterfaceExportBuilderExtensions
             ;
     }
 
-    public static InterfaceExportBuilder SubsGuidToStr(this InterfaceExportBuilder builder)
+    public static T SubsGuidToStr<T>(this T builder) where T : TypeExportBuilder
     {
         return builder
                 .Substitute(typeof(Guid), new RtSimpleTypeName("string"))

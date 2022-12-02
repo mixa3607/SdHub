@@ -4,7 +4,7 @@ import {
     ISearchImageResponse,
     SearchImageInFieldType,
     SearchImageOrderByFieldType,
-    SearchImageOrderByType
+    SearchImageOrderByType, SoftwareGeneratedTypes
 } from "apps/SdHub/src/app/models/autogen/image.models";
 import {PerformType, SearchArgsService} from "apps/SdHub/src/app/pages/generated/search-args.service";
 import {first, switchMap, tap} from "rxjs";
@@ -50,10 +50,10 @@ export class SearchInImagesComponent implements OnInit {
         },
     ];
     public readonly softwareCheckboxes: { id: string, value: string, checked: boolean }[] = [
-        {id: 'AutomaticWebUi', value: 'AutomaticWebUi', checked: false},
-        {id: 'DreamStudio', value: 'DreamStudio', checked: false},
-        {id: 'NovelAi', value: 'NovelAi', checked: false},
-        {id: 'Unknown', value: '-----', checked: false},
+        {id: SoftwareGeneratedTypes.AutomaticWebUi, value: 'AutomaticWebUi', checked: false},
+        {id: SoftwareGeneratedTypes.DreamStudio, value: 'DreamStudio', checked: false},
+        {id: SoftwareGeneratedTypes.NovelAi, value: 'NovelAi', checked: false},
+        {id: SoftwareGeneratedTypes.Unknown, value: '-----', checked: false},
     ];
     public readonly searchFieldsCheckboxes: { id: SearchImageInFieldType, value: string, checked: boolean }[] = [
         {id: SearchImageInFieldType.Prompt, value: 'Prompt', checked: false},

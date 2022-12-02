@@ -4,20 +4,21 @@ import {
     ISearchImageRequest,
     SearchImageInFieldType,
     SearchImageOrderByFieldType,
-    SearchImageOrderByType
+    SearchImageOrderByType, SoftwareGeneratedTypes
 } from "apps/SdHub/src/app/models/autogen/image.models";
 
-export enum PerformType{
+export enum PerformType {
     Search,
     Pagination
 }
+
 @Injectable({
     providedIn: 'root'
 })
 export class SearchArgsService {
     private readonly defaultSearchInImagesArgs: ISearchImageRequest = {
         fields: [SearchImageInFieldType.Name, SearchImageInFieldType.Description, SearchImageInFieldType.Prompt],
-        softwares: ['AutomaticWebUi', 'DreamStudio', 'NovelAi'],
+        softwares: [SoftwareGeneratedTypes.AutomaticWebUi, SoftwareGeneratedTypes.DreamStudio, SoftwareGeneratedTypes.NovelAi],
         searchText: '',
         orderByField: SearchImageOrderByFieldType.UploadDate,
         orderBy: SearchImageOrderByType.Asc,

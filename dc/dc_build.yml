@@ -1,0 +1,10 @@
+services:
+  sdhub:
+    image: ${REGISTRY-local}/${IMAGE_NAME-sdhub}:${IMAGE_TAG-latest}
+    build:
+      context: ../
+      network: host
+      target: app
+      args:
+        - COMMIT_REF_NAME=${CI_COMMIT_REF_NAME-local}
+        - COMMIT_SHA=${CI_COMMIT_SHA-deadbeef}

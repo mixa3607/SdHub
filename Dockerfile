@@ -1,7 +1,9 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build_server
 COPY ./Server/ .
+ARG COMMIT_SHA=none
+ARG COMMIT_REF_NAME=none
 RUN dotnet restore
-RUN sed -i -e 's|"GitRefName": ".*",|"GitRefName": "'$COMMIT_REF_NAME'",|1' -e 's|"GitCommitSha": ".*",|"GitCommitSha": "'$COMMIT_SHA'",|1' appsettings*.json
+RUN sed -i -e 's|"GitRefName": ".*"|"GitRefName": "'$COMMIT_REF_NAME'"|1' -e 's|"GitCommitSha": ".*"|"GitCommitSha": "'$COMMIT_SHA'"|1' SdHub/appsettings*.json
 RUN dotnet build -c Release --no-restore
 RUN dotnet publish -c Release --no-build -o /out
 

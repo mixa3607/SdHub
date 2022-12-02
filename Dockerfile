@@ -1,6 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build_server
 COPY ./Server/ .
 RUN dotnet restore
+RUN sed -i -e 's|"GitRefName": ".*",|"GitRefName": "'$COMMIT_REF_NAME'",|1' -e 's|"GitCommitSha": ".*",|"GitCommitSha": "'$COMMIT_SHA'",|1' appsettings*.json
 RUN dotnet build -c Release --no-restore
 RUN dotnet publish -c Release --no-build -o /out
 
@@ -13,7 +14,6 @@ COPY Client/package-lock.json .
 RUN npm install -D
 COPY ./Client/ .
 RUN sed -i -e "s|clientBranch: '.*'|clientBranch: '$COMMIT_REF_NAME'|1" -e "s|clientSha: '.*'|clientSha: '$COMMIT_SHA'|1" apps/SdHub/src/environments/environment*.ts
-RUN cat apps/SdHub/src/environments/environment*.ts
 RUN npm run-script build -- --output-path /out
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS app

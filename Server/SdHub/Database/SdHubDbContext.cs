@@ -27,20 +27,20 @@ public class SdHubDbContext : DbContext
     public DbSet<GridImageEntity> GridImages { get; set; } = null!;
 
     //albums
-    public DbSet<AlbumEntity> Albums { get; set; }
-    public DbSet<AlbumImageEntity> AlbumImages { get; set; }
+    public DbSet<AlbumEntity> Albums { get; set; } = null!;
+    public DbSet<AlbumImageEntity> AlbumImages { get; set; } = null!;
 
     //bins
-    public DbSet<ModelEntity> Models { get; set; }
-    public DbSet<ModelVersionEntity> ModelVersions { get; set; }
-    public DbSet<HypernetEntity> Hypernets { get; set; }
-    public DbSet<HypernetVersionEntity> HypernetVersions { get; set; }
-    public DbSet<VaeEntity> Vaes { get; set; }
-    public DbSet<VaeVersionEntity> VaeVersions { get; set; }
-    public DbSet<EmbeddingEntity> Embeddings { get; set; }
-    public DbSet<EmbeddingVersionEntity> EmbeddingVersions { get; set; }
+    public DbSet<ModelEntity> Models { get; set; } = null!;
+    public DbSet<ModelVersionEntity> ModelVersions { get; set; } = null!;
+    public DbSet<HypernetEntity> Hypernets { get; set; } = null!;
+    public DbSet<HypernetVersionEntity> HypernetVersions { get; set; } = null!;
+    public DbSet<VaeEntity> Vaes { get; set; } = null!;
+    public DbSet<VaeVersionEntity> VaeVersions { get; set; } = null!;
+    public DbSet<EmbeddingEntity> Embeddings { get; set; } = null!;
+    public DbSet<EmbeddingVersionEntity> EmbeddingVersions { get; set; } = null!;
 
-    public DbSet<GenerationSampleEntity> GenerationSamples { get; set; }
+    public DbSet<GenerationSampleEntity> GenerationSamples { get; set; } = null!;
     public DbSet<ImageUploaderEntity> ImageUploaders { get; set; } = null!;
 
     public DbSet<RefreshTokenEntity> RefreshTokens { get; set; } = null!;

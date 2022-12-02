@@ -5,3 +5,7 @@ COMPOSE_FILE=./dc/dc.yml:./dc/dc.nginx.yml
 SDHUB_HOST=diffai.xyz
 SDHUB_PORT=8085
 ASPNETCORE_ENVIRONMENT=Production
+
+REGISTRY=ghcr.io
+IMAGE_NAME=mixa3607/sdhub
+IMAGE_TAG=master

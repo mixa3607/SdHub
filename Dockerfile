@@ -6,7 +6,7 @@ RUN dotnet publish -c Release --no-build -o /out
 
 FROM node:14 AS build_client
 WORKDIR /build
-ARG COMMIT_SHA==none
+ARG COMMIT_SHA=none
 ARG COMMIT_REF_NAME=none
 COPY Client/package.json .
 COPY Client/package-lock.json .

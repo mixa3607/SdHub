@@ -4,6 +4,8 @@
 
 import { IImageOwnerModel } from './misc.models';
 import { IFileModel } from './misc.models';
+import { IImageModel } from './misc.models';
+import { IGridModel } from './grid.models';
 
 export interface IAlbumModel
 {
@@ -19,7 +21,7 @@ export interface IAlbumModel
 export interface IAlbumImageModel
 {
 	imageId: number;
-	image: any;
+	image: IImageModel;
 	gridId: number;
-	grid: any;
+	grid: IGridModel;
 }

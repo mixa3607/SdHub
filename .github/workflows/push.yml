@@ -28,6 +28,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Config
+        run: docker-compose --env-file ./dc/env-build config
+
       - name: Build
         run: docker-compose --env-file ./dc/env-build build
 

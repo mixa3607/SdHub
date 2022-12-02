@@ -127,6 +127,7 @@ builder.Services
     .AddAndGetOptionsReflex<RecaptchaOptions>(builder.Configuration, out _)
     .AddSingleton<ICaptchaValidator, CaptchaValidator>()
     .AddAndGetOptionsReflex<WebSecurityOptions>(builder.Configuration, out var securityOptions)
+    .AddCustomCors(securityOptions)
     .AddCustomSecurity(securityOptions)
     ;
 //database

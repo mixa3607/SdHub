@@ -1,3 +1,3 @@
 # SdHub
-
-# Не трогайте пока что код. Если нужны изменения в вики, то откройте пулл реквест или напишите в ишью
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/mixa3607/SdHub/build-container?style=flat-square)
+![GitHub](https://img.shields.io/github/license/mixa3607/SdHub?style=flat-square)

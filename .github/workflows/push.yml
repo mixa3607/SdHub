@@ -18,11 +18,11 @@ jobs:
         run: |
           echo "REGISTRY=ghcr.io"                >> ${GITHUB_ENV}
           echo "IMAGE_NAME=${REPO,,}"            >> ${GITHUB_ENV}
-          echo "IMAGE_TAG=${SHA,,}"              >> ${GITHUB_ENV}
+          echo "IMAGE_TAG1=${SHA,,}"             >> ${GITHUB_ENV}
+          echo "IMAGE_TAG2=${REF_NAME,,}"        >> ${GITHUB_ENV}
           echo "CI_COMMIT_REF_NAME=${REF_NAME}"  >> ${GITHUB_ENV}
           echo "CI_COMMIT_SHA=${SHA}"            >> ${GITHUB_ENV}
           echo "DOCKER_BUILDKIT=1"               >> ${GITHUB_ENV}
-
         env:
           REPO: "${{ github.repository }}"
           SHA: "${{ github.sha }}"
@@ -39,7 +39,10 @@ jobs:
         run: docker-compose --env-file ./dc/env-build config
 
       - name: Build
-        run: docker-compose --env-file ./dc/env-build build
+        run: export IMAGE_TAG=$IMAGE_TAG1 && docker-compose --env-file ./dc/env-build build
 
       - name: Push
-        run: docker-compose --env-file ./dc/env-build push
+        run: |
+          docker tag $REGISTRY/$IMAGE_NAME:$IMAGE_TAG1 $REGISTRY/$IMAGE_NAME:$IMAGE_TAG2
+          docker push $REGISTRY/$IMAGE_NAME:$IMAGE_TAG1
+          docker push $REGISTRY/$IMAGE_NAME:$IMAGE_TAG2

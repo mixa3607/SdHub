@@ -3,7 +3,6 @@ COPY ./Server/ .
 ARG COMMIT_SHA=none
 ARG COMMIT_REF_NAME=none
 RUN dotnet restore
-RUN sed -i -e 's|"GitRefName": ".*"|"GitRefName": "'$COMMIT_REF_NAME'"|1' -e 's|"GitCommitSha": ".*"|"GitCommitSha": "'$COMMIT_SHA'"|1' SdHub/appsettings*.json
 RUN dotnet build -c Release --no-restore
 RUN dotnet publish -c Release --no-build -o /out
 
@@ -21,6 +20,10 @@ RUN npm run-script build -- --output-path /out
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS app
 RUN apt update && apt install -y wget unzip
 WORKDIR /app
+ARG COMMIT_SHA=none
+ARG COMMIT_REF_NAME=none
+ENV ApplicationSettings__AppInfo__GitCommitSha=${COMMIT_SHA}
+ENV ApplicationSettings__AppInfo__GitRefName=${COMMIT_REF_NAME}
 COPY --from=build_server /out /app
 COPY --from=build_client /out /app/spa_dist
 EXPOSE 80

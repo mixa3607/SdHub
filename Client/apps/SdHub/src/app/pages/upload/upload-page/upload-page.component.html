@@ -4,8 +4,12 @@
       <mat-card-content>
         <h1>Upload</h1>
         <div class="file-drop-area-wrap">
-          <div *ngIf="uploading" class="loading-overlay">
-            <mat-spinner diameter="60"></mat-spinner>
+          <div *ngIf="uploadingStatus$ | async as uploadingStatus" class="loading-overlay">
+            <mat-spinner
+              [mode]="uploadingStatus.type === 'uploading' ? 'determinate' : 'indeterminate'"
+              [value]="uploadingStatus.type === 'uploading' ? uploadingStatus.progress : 0"
+              diameter="60">
+            </mat-spinner>
           </div>
           <ngx-file-drop class="file-drop-area"
             [class.file-drop-area_disabled]="uploading"

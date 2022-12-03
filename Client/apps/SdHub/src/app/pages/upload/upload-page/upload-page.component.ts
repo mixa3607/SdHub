@@ -4,14 +4,15 @@ import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
 import {IServerErrorResponse, IUploadedFileModel} from "../../../models/autogen/misc.models";
 import {Clipboard} from "@angular/cdk/clipboard";
 import {ToastrService} from "ngx-toastr";
-import {HttpClient, HttpErrorResponse, HttpHeaders} from "@angular/common/http";
+import {HttpClient, HttpErrorResponse, HttpEventType, HttpHeaders, HttpResponse} from "@angular/common/http";
 import {IUploadResponse} from "../../../models/autogen/upload.models";
 import {httpErrorResponseHandler} from "apps/SdHub/src/app/shared/http-error-handling/handlers";
 import {UploadApi} from "apps/SdHub/src/app/shared/services/api/upload.api";
 import {bytesToHuman} from "apps/SdHub/src/app/shared/utils/bytes";
 import {AuthService} from "apps/SdHub/src/app/core/services/auth.service";
 import {AuthStateService} from "apps/SdHub/src/app/core/services/auth-state.service";
-import {tap} from "rxjs";
+import {filter, map, Observable, of, shareReplay, tap} from "rxjs";
+import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
 
 interface IImageForUpload {
     file: File | null,
@@ -26,6 +27,12 @@ interface IImageForUpload {
     uploadedFile: IUploadedFileModel | null
 }
 
+type UploadingStatus =
+  | null
+  | { type: 'uploading', progress: number } // progress is a value between 0 and 100
+  | { type: 'server-processing' }
+
+@UntilDestroy()
 @Component({
     selector: 'app-upload-page',
     templateUrl: './upload-page.component.html',
@@ -34,6 +41,7 @@ interface IImageForUpload {
 export class UploadPageComponent implements OnInit {
     public uploading: boolean = false;
     public isAuthenticated: boolean = false;
+    public uploadingStatus$: Observable<UploadingStatus> = of(null);
 
     constructor(private sanitizer: DomSanitizer,
                 private clipboard: Clipboard,
@@ -100,10 +108,35 @@ export class UploadPageComponent implements OnInit {
 
         this.toastr.info('Begin upload ' + selectedImages.length + ' images');
         console.log(this.isAuthenticated, 'asasasa');
-        (this.isAuthenticated
+
+        const request$ = (this.isAuthenticated
             ? this.uploadApi.uploadAuth(formData)
-            : this.uploadApi.upload(formData))
-            .subscribe(data => {
+            : this.uploadApi.upload(formData)
+          ).pipe(untilDestroyed(this), shareReplay());
+
+        this.uploadingStatus$ = request$.pipe(
+          map(data => {
+            if (data.type !== HttpEventType.UploadProgress) {
+              return null;
+            }
+
+            if (data.loaded === data.total) {
+              return { type: 'server-processing' };
+            }
+
+            return {
+              type: 'uploading',
+              progress: (data.loaded / data.total!) * 100
+            };
+          }),
+        )
+
+        request$
+            .pipe(
+                filter((data) => data.type === HttpEventType.Response),
+                map((data) => (data as HttpResponse<IUploadResponse>).body!)
+            )
+            .subscribe((data) => {
                 console.log(data);
                 for (let i = 0; i < data.files.length; i++) {
                     const uploadedFile = data.files[i];

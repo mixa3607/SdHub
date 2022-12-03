@@ -3,17 +3,24 @@
     <mat-card style="display: flex; flex-direction: column; gap: 1rem">
       <mat-card-content>
         <h1>Upload</h1>
-        <ngx-file-drop (onFileDrop)="dropped($event)"
-                       accept=".png,.jpeg,.jpg,.webp"
-                       dropZoneLabel="Drop images here">
-          <ng-template let-openFileSelector="openFileSelector" ngx-file-drop-content-tmp>
-            Drop images here (or pick
-            <button (click)="openFileSelector()" mat-icon-button type="button">
-              <mat-icon>folder_open</mat-icon>
-            </button>
-            )
-          </ng-template>
-        </ngx-file-drop>
+        <div class="file-drop-area-wrap">
+          <div *ngIf="uploading" class="loading-overlay">
+            <mat-spinner class="loader" diameter="60"></mat-spinner>
+          </div>
+          <ngx-file-drop class="file-drop-area"
+            [class.file-drop-area_disabled]="uploading"
+            (onFileDrop)="dropped($event)"
+            accept=".png,.jpeg,.jpg,.webp"
+            dropZoneLabel="Drop images here">
+            <ng-template let-openFileSelector="openFileSelector" ngx-file-drop-content-tmp>
+              Drop images here (or pick
+              <button (click)="openFileSelector()" mat-icon-button type="button">
+                <mat-icon>folder_open</mat-icon>
+              </button>
+              )
+            </ng-template>
+          </ngx-file-drop>
+        </div>
       </mat-card-content>
       <div class="actions">
         <button (click)="onUploadClick()" [disabled]="waitUpload() == 0 || uploading"

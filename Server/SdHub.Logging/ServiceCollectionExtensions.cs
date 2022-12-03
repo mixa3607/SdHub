@@ -16,7 +16,7 @@ public static class ServiceCollectionExtensions
         return section.Get<T>();
     }
 
-    public static IServiceCollection AddAndGetOptionsReflex<T>(this IServiceCollection services, IConfiguration configuration, out T options) where T : class
+    public static IServiceCollection AddAndGetOptionsReflex<T>(this IServiceCollection services, IConfiguration configuration, out T options) where T : class, new()
     {
         var sectionName = GetSectionName(typeof(T), null);
         if (sectionName == null)
@@ -24,28 +24,28 @@ public static class ServiceCollectionExtensions
 
         var section = configuration.GetSection(sectionName);
         services.Configure<T>(section);
-        options = section.Get<T>();
+        options = section.Get<T>() ?? new T();
         return services;
     }
 
-    public static IConfiguration GetOptionsReflex<T>(this IConfiguration configuration, out T options) where T : class
+    public static IConfiguration GetOptionsReflex<T>(this IConfiguration configuration, out T options) where T : class, new()
     {
         var sectionName = GetSectionName(typeof(T), null);
         if (sectionName == null)
             throw new Exception("Options class must have \"SectionName\" property or ends with \"Options\"");
 
         var section = configuration.GetSection(sectionName);
-        options = section.Get<T>();
+        options = section.Get<T>() ?? new T();
         return configuration;
     }
 
-    public static T GetOptionsReflex<T>(this IConfiguration configuration) where T : class
+    public static T GetOptionsReflex<T>(this IConfiguration configuration) where T : class, new()
     {
         var sectionName = GetSectionName(typeof(T), null);
         if (sectionName == null)
             throw new Exception("Options class must have \"SectionName\" property or ends with \"Options\"");
 
-        return configuration.GetSection(sectionName).Get<T>();
+        return configuration.GetSection(sectionName).Get<T>() ?? new T();
     }
 
     public static string? GetSectionName(Type type, string? fallback)

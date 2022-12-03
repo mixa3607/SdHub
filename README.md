@@ -2,7 +2,26 @@
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/mixa3607/SdHub/build-container?style=flat-square)
 ![GitHub](https://img.shields.io/github/license/mixa3607/SdHub?style=flat-square)
 
-## appsettings
+## Как поднять dev среду
+### Бэк
+Требования:
+- postgresql
+- .net 6
+- nodejs
+
+Настройка:
+- В `SdHub/appsettings.Development.json` подредактировать connection string'и для `Database` и `Hangfire`
+- БД для `Hangfire` нужно создать руками, основная БД создасться и засидиться сама если есть права
+- Серты для подписи жвт для dev окружения есть в репо, если нужно то новые можно сгенерировать скриптом в `/scripts`
+
+Запуск:
+- Экспортировать `ASPNETCORE_ENVIRONMENT` с значением `Development` или указать в профиле для студии
+- Запустить `SdHub` из солюшена в `/Server` 
+- Запустить `npm run start` из `/Client`
+- Открыть http://0.0.0.0:5790 и войти с кредсами `Admin:strong_password`
+
+
+## Настройки дсотупные в appsettings
 |name|default|summary|
 |-|-|-|
 |**AppInfo**||Application info|
@@ -37,7 +56,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;SecretKey*||Secret key
 &nbsp;&nbsp;&nbsp;&nbsp;SiteKey*||Public site key
 |**SdHubSeeder**||Database seeder options|
-&nbsp;&nbsp;&nbsp;&nbsp;AdminPassword||Password for Admin account
+&nbsp;&nbsp;&nbsp;&nbsp;AdminPassword*||Password for Admin account
 |**Swagger**||Swagger options|
 &nbsp;&nbsp;&nbsp;&nbsp;Enable|false|Enable /swagger endpoint
 |**WebSecurity**||Web security options|

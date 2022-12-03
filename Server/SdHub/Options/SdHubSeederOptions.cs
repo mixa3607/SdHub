@@ -1,4 +1,6 @@
-﻿namespace SdHub.Options;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SdHub.Options;
 
 /// <summary>
 /// Database seeder options
@@ -8,5 +10,6 @@ public class SdHubSeederOptions
     /// <summary>
     /// Password for Admin account
     /// </summary>
+    [Required]
     public string? AdminPassword { get; set; }
 }

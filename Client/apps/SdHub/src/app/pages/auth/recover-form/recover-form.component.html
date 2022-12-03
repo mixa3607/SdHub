@@ -46,7 +46,7 @@
             *ngIf="resetForm.get('confirmPassword')!.invalid">{{getErrorMessage(resetForm.get('confirmPassword')!)}}</mat-error>
   </mat-form-field>
 
-  <button (click)="onResetClick()" [disabled]="resetForm.invalid" color="primary" mat-raised-button>Register</button>
+  <button (click)="onResetClick()" [disabled]="resetForm.invalid" color="primary" mat-raised-button>Reset</button>
 </div>
 
 
@@ -63,6 +63,6 @@
               formControlName="recaptcha"
               style="align-self: center"></re-captcha>
 
-  <button [disabled]="sendCodeForm.invalid" color="primary" mat-raised-button (click)="onSendCodeClick()">Register
+  <button [disabled]="sendCodeForm.invalid" color="primary" mat-raised-button (click)="onSendCodeClick()">Send email
   </button>
 </div>

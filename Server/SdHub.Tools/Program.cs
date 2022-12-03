@@ -6,6 +6,7 @@ using SdHub.Storage.S3;
 
 var docs = OptionsDocsBuilder.Generate();
 var md = OptionsDocsBuilder.ToMarkdown(docs);
+
 Console.WriteLine("Hello, World!");
 var options = new S3StorageSettings()
 {

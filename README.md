@@ -3,7 +3,6 @@
 ![GitHub](https://img.shields.io/github/license/mixa3607/SdHub?style=flat-square)
 
 ## Как поднять dev среду
-### Бэк
 Требования:
 - postgresql
 - .net 6

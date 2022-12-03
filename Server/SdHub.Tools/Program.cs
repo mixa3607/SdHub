@@ -1,16 +1,11 @@
-﻿using System.Diagnostics;
-using System.IO.MemoryMappedFiles;
-using ImageMagick;
-using Minio;
-using System.Net.Mime;
-using System.Security.AccessControl;
-using System.Security.Cryptography;
+﻿using ImageMagick;
 using Microsoft.Extensions.Logging.Abstractions;
 using SdHub.Database.Entities.Files;
 using SdHub.Storage;
 using SdHub.Storage.S3;
 
-
+var docs = OptionsDocsBuilder.Generate();
+var md = OptionsDocsBuilder.ToMarkdown(docs);
 Console.WriteLine("Hello, World!");
 var options = new S3StorageSettings()
 {
@@ -20,7 +15,8 @@ var options = new S3StorageSettings()
     Disabled = false,
     Endpoint = "minio.nas1.in.arkprojects.space",
     WithSsl = true,
-    PolicyJson = "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"s3:GetObject\"],\"Effect\":\"Allow\",\"Principal\":{\"AWS\":[\"*\"]},\"Resource\":[\"arn:aws:s3:::diffai/bins/*\"],\"Sid\":\"\"}]}"
+    PolicyJson =
+        "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"s3:GetObject\"],\"Effect\":\"Allow\",\"Principal\":{\"AWS\":[\"*\"]},\"Resource\":[\"arn:aws:s3:::diffai/bins/*\"],\"Sid\":\"\"}]}"
 };
 var ent = new FileStorageEntity()
 {

@@ -48,7 +48,7 @@ public static class ServiceCollectionExtensions
         return configuration.GetSection(sectionName).Get<T>();
     }
 
-    private static string? GetSectionName(Type type, string? fallback)
+    public static string? GetSectionName(Type type, string? fallback)
     {
         var value = type.GetField("SectionName")?.GetValue(null) as string;
         if (value == null)

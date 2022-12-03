@@ -1,10 +1,37 @@
-﻿namespace SdHub.Options;
+﻿using System.ComponentModel.DataAnnotations;
 
+namespace SdHub.Options;
+
+/// <summary>
+/// Application info
+/// </summary>
 public class AppInfoOptions
 {
+    /// <summary>
+    /// Base url
+    /// </summary>
+    [Required]
     public string? BaseUrl { get; set; }
-    public string? GitRefName { get; set; }
-    public string? GitCommitSha { get; set; }
+
+    /// <summary>
+    /// Git ref. Fill from env if docker container
+    /// </summary>
+    [Required]
+    public string? GitRefName { get; set; } = "not_set";
+
+    /// <summary>
+    /// Git sha. Fill from env if docker container
+    /// </summary>
+    [Required]
+    public string? GitCommitSha { get; set; } = "deadbeef";
+
+    /// <summary>
+    /// Use angular dev server instead compiled blobs. For development
+    /// </summary>
     public string? FrontDevServer { get; set; }
-    public bool DisableUsersRegistration { get; set; }
+
+    /// <summary>
+    /// Disable user registration
+    /// </summary>
+    public bool DisableUsersRegistration { get; set; } = true;
 }

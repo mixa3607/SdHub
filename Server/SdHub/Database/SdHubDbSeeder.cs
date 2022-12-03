@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -103,10 +104,12 @@ public class SdHubDbSeeder : IDbSeeder<SdHubDbContext>
             _logger.LogInformation("Create admin user");
             var user = new UserEntity()
             {
-                Roles = new List<string>() { UserRoleTypes.Admin, UserRoleTypes.User },
+                Roles = new List<string>() { UserRoleTypes.Admin, UserRoleTypes.User, UserRoleTypes.HangfireRW },
                 Login = "Admin",
                 PasswordHash = _passwordService.CreatePasswordHash(_options.AdminPassword!),
                 Plan = await db.UserPlans.FirstAsync(x => x.Name == RatesPlanTypes.AdminPlan),
+                Email = "admin@test.com",
+                EmailConfirmedAt = DateTimeOffset.Now,
             };
             db.Users.Add(user);
             await db.SaveChangesAsync();

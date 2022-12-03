@@ -36,7 +36,7 @@ public static class CustomSerilogLoggingExtensions
 
             if (!serilogOptions.DisableElastic)
             {
-                var indexFormat = $"serilogs-sink-8.4.1-{assemblyName}-{{0:yyyy.MM.dd}}";
+                var indexFormat = $"serilogs-sink-{assemblyName}-{{0:yyyy.MM.dd}}";
                 if (serilogOptions.ElasticIndexPrefix != null)
                     indexFormat = $"{serilogOptions.ElasticIndexPrefix}-{indexFormat}";
 

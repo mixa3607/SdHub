@@ -1,8 +1,6 @@
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {
-    ICanEditRequest,
-    ICanEditResponse,
     ICheckManageTokenRequest,
     ICheckManageTokenResponse,
     IDeleteImageRequest,
@@ -20,12 +18,6 @@ export class ImageApi {
     public readonly base = "/api/v1/image"
 
     public constructor(private http: HttpClient) {
-    }
-
-    public canEdit(req: ICanEditRequest) {
-        return this.http.get<ICanEditResponse>(this.base + '/canEdit', {
-            params: req as any
-        });
     }
 
     public checkManageToken(req: ICheckManageTokenRequest) {

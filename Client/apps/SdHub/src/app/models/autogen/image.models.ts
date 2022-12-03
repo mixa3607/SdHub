@@ -34,16 +34,6 @@ export interface IGetImageResponse
 {
 	image: IImageModel;
 }
-export interface ICanEditRequest
-{
-	shortToken: string;
-}
-export interface ICanEditResponse
-{
-	shortToken: string;
-	canEdit: boolean;
-	manageTokenRequired: boolean;
-}
 export interface ICheckManageTokenRequest
 {
 	shortToken: string;

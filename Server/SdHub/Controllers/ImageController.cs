@@ -155,44 +155,6 @@ public class ImageController : ControllerBase
 
     [HttpGet("[action]")]
     [AllowAnonymous]
-    public async Task<CanEditResponse> CanEdit([FromQuery] CanEditRequest req, CancellationToken ct = default)
-    {
-        ModelState.ThrowIfNotValid();
-
-        var userJwt = _fromTokenService.Get();
-
-        var imageEnt = await _db.Images
-            .Include(x => x.Owner)
-            .Where(x => x.DeletedAt == null && x.ShortToken == req.ShortToken)
-            .FirstOrDefaultAsync(ct);
-        if (imageEnt == null)
-            ModelState.AddError(ModelStateErrors.ImageNotFound).ThrowIfNotValid();
-        var response = new CanEditResponse()
-        {
-            ShortToken = req.ShortToken,
-        };
-
-        if (imageEnt!.Owner!.IsAnonymous)
-        {
-            response.CanEdit = true;
-            response.ManageTokenRequired = true;
-        }
-        else if (imageEnt!.Owner!.Guid == userJwt?.Guid)
-        {
-            response.CanEdit = true;
-            response.ManageTokenRequired = false;
-        }
-        else
-        {
-            response.CanEdit = false;
-            response.ManageTokenRequired = false;
-        }
-
-        return response;
-    }
-
-    [HttpGet("[action]")]
-    [AllowAnonymous]
     public async Task<CheckManageTokenResponse> CheckManageToken([FromQuery] CheckManageTokenRequest req,
         CancellationToken ct = default)
     {

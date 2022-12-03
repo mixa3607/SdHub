@@ -4,7 +4,7 @@ import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
 import {BehaviorSubject} from "rxjs";
 import {HttpErrorResponse} from "@angular/common/http";
 import {IGetImageRequest} from "../../../models/autogen/image.models";
-import {IImageModel, IImageParsedMetadataTagModel} from "../../../models/autogen/misc.models";
+import {IImageModel, IImageParsedMetadataTagModel, IUserModel} from "../../../models/autogen/misc.models";
 import {Clipboard} from "@angular/cdk/clipboard";
 import {ToastrService} from "ngx-toastr";
 import {ImageApi} from "apps/SdHub/src/app/shared/services/api/image.api";
@@ -13,11 +13,11 @@ import {
     ManageTokenInputModalComponent
 } from "apps/SdHub/src/app/pages/image/manage-token-input-modal/manage-token-input-modal.component";
 import {MatDialog} from "@angular/material/dialog";
-import {FormControl, FormControlName} from "@angular/forms";
 import {bytesToHuman} from "apps/SdHub/src/app/shared/utils/bytes";
 import {
     ImageViewerDialogComponent
 } from "apps/SdHub/src/app/shared/components/image-viewer-dialog/image-viewer-dialog.component";
+import {AuthStateService} from "apps/SdHub/src/app/core/services/auth-state.service";
 
 interface IGroupedTags {
     software: string,
@@ -36,26 +36,31 @@ interface IEditImage {
     styleUrls: ['./image-page.component.scss']
 })
 export class ImagePageComponent implements OnInit {
+    public user: IUserModel | null = null;
     public loading$ = new BehaviorSubject<boolean>(false);
     public imageInfo: IImageModel | null = null;
     public originalImageHumanSize: string = '0B';
     public loadType: 'ok' | 'error' | null = null;
     public groupedTags: IGroupedTags[] = [];
-    public accessCheckIsLoading = false;
     public manageToken: string | null = null;
 
     public editMode: boolean = false;
     public editData: IEditImage = {};
+    public showEditButton = false;
 
     constructor(private route: ActivatedRoute,
                 private router: Router,
                 private imageApi: ImageApi,
                 private clipboard: Clipboard,
                 private toastr: ToastrService,
+                private authState: AuthStateService,
                 private dialog: MatDialog) {
         route.paramMap
             .pipe(untilDestroyed(this))
-            .subscribe(x => this.loadImageCard(x.get('shortCode')))
+            .subscribe(x => this.loadImageCard(x.get('shortCode')));
+        authState.user$
+            .pipe(untilDestroyed(this))
+            .subscribe(x => this.user = x);
     }
 
     ngOnInit(): void {
@@ -73,11 +78,13 @@ export class ImagePageComponent implements OnInit {
             next: resp => {
                 this.loadType = "ok";
                 this.applyLoadedImage(resp.image);
+                this.showEditButton = resp.image.owner.isAnonymous || this.user?.guid === resp.image.owner.guid;
                 this.loading$.next(false);
             },
             error: (err: HttpErrorResponse) => {
-                this.loading$.next(false);
+                this.showEditButton = false;
                 this.loadType = "error";
+                this.loading$.next(false);
                 httpErrorResponseHandler(err, this.toastr);
             }
         })
@@ -112,25 +119,12 @@ export class ImagePageComponent implements OnInit {
     }
 
     public onEditClick(): void {
-        this.accessCheckIsLoading = true;
-        this.imageApi.canEdit({shortToken: this.imageInfo?.shortToken!})
-            .subscribe({
-                next: resp => {
-                    this.accessCheckIsLoading = false;
-                    if (!resp.canEdit) {
-                        this.toastr.error('You can\'t edit this image');
-                    } else if (resp.manageTokenRequired) {
-                        this.toastr.error('Manage token required');
-                        this.showManageTokenInputDialog();
-                    } else {
-                        this.editMode = true;
-                    }
-                },
-                error: (err: HttpErrorResponse) => {
-                    this.accessCheckIsLoading = false;
-                    httpErrorResponseHandler(err, this.toastr);
-                }
-            })
+        if (this.imageInfo?.owner.isAnonymous) {
+            this.toastr.error('Manage token required');
+            this.showManageTokenInputDialog();
+        } else {
+            this.editMode = true;
+        }
     }
 
     private showManageTokenInputDialog(): void {

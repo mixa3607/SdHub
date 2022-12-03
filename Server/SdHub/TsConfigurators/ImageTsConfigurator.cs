@@ -21,8 +21,6 @@ public class ImageTsConfigurator : ITsConfigurator
                 typeof(EditImageResponse),
                 typeof(GetImageRequest),
                 typeof(GetImageResponse),
-                typeof(CanEditRequest),
-                typeof(CanEditResponse),
                 typeof(CheckManageTokenRequest),
                 typeof(CheckManageTokenResponse),
                 typeof(SearchImageRequest),

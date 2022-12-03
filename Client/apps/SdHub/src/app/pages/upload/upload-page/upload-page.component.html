@@ -5,7 +5,7 @@
         <h1>Upload</h1>
         <div class="file-drop-area-wrap">
           <div *ngIf="uploading" class="loading-overlay">
-            <mat-spinner class="loader" diameter="60"></mat-spinner>
+            <mat-spinner diameter="60"></mat-spinner>
           </div>
           <ngx-file-drop class="file-drop-area"
             [class.file-drop-area_disabled]="uploading"

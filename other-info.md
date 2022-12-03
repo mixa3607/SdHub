@@ -1,9 +1,21 @@
+---
+title: other-info
+description: 
+published: true
+date: 2022-12-03T01:57:55.529Z
+tags: 
+editor: markdown
+dateCreated: 2022-12-03T01:46:21.404Z
+---
+
 ## Промты, промты, промты
 https://rentry.org/faces-faces-faces - Помощь по тегам эмоций лиц
 https://autotagger.donmai.us/ - Автотеггер
 https://pst.klgrth.io/paste/qxwtx - Список рисовак и стилей
 https://unideer.notion.site/Clothes-Research-NovelAI-ae4219aebcd742ea89aaa553c00e7b40 - Одежда для NAI
 https://unideer.notion.site/Perspective-Research-NovelAI-9fb472f4faeb492d8e0b095d2efa0796 - Перспектива для NAI
+https://rentry.org/NAIwildcards - Каталог вайлдкардов
+[hqs4yf.pdf](/hqs4yf.pdf) ([alt](https://files.catbox.moe/hqs4yf.pdf)) - Влияние тегов
 
 ## Позы для img2img
 https://app.posemy.art

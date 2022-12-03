@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
+using SdHub.Attributes;
 using SdHub.Constants;
 using SdHub.Database;
 using SdHub.Database.Entities.Users;
@@ -156,6 +157,7 @@ public class UserController : ControllerBase
 
     [HttpPost("[action]")]
     [AllowAnonymous]
+    [AllowExpiredJwt]
     public async Task<LoginResponse> LoginByRefreshToken([FromBody] LoginByRefreshTokenRequest req,
         CancellationToken ct = default)
     {

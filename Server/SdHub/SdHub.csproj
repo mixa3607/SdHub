@@ -60,6 +60,8 @@
 	<ItemGroup>
 		<Folder Include="Utils\" />
 		<Folder Include="wwwroot\" />
+		<Folder Include="RequestFeatures\" />
+		<Folder Include="Attributes\" />
 	</ItemGroup>
 
 	<ItemGroup>

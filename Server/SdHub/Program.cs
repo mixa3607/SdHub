@@ -12,6 +12,9 @@ using FluentValidation.AspNetCore;
 using Hangfire;
 using Hangfire.Dashboard;
 using Hangfire.PostgreSql;
+using MetadataExtractor.Formats.Xmp;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -21,8 +24,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Npgsql;
+using SdHub.Attributes;
 using SdHub.Constants;
 using SdHub.Database;
 using SdHub.Database.Shared;
@@ -31,6 +36,7 @@ using SdHub.Hangfire.BasicAuth;
 using SdHub.Hangfire.Jobs;
 using SdHub.Logging;
 using SdHub.Options;
+using SdHub.RequestFeatures;
 using SdHub.Services;
 using SdHub.Services.Captcha;
 using SdHub.Services.ErrorHandling.Extensions;
@@ -250,6 +256,23 @@ app.UseSpaStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.Use((HttpContext ctx, RequestDelegate next) =>
+{
+    var jwtFailedFeature = ctx.Features.Get<JwtAuthFailedFeature>();
+    if (jwtFailedFeature == null)
+        return next(ctx);
+
+    var endpoint = ctx.GetEndpoint();
+    var allowExpiredJwt = endpoint?.Metadata.GetMetadata<AllowExpiredJwtAttribute>() != null;
+    if (jwtFailedFeature.Exception is SecurityTokenExpiredException && !allowExpiredJwt)
+    {
+        ctx.Response.Headers.Add("WWW-Authenticate", JwtBearerDefaults.AuthenticationScheme);
+        ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+        return Task.CompletedTask;
+    }
+
+    return next(ctx);
+});
 
 //hangfire
 app.UseHangfireDashboard("/hgf", new DashboardOptions
@@ -275,7 +298,7 @@ app.UseSpa(c =>
 
 app.Use((HttpContext ctx, RequestDelegate next) =>
 {
-    ctx.Response.StatusCode = 418;
+    ctx.Response.StatusCode = StatusCodes.Status418ImATeapot;
     return Task.CompletedTask;
 });
 

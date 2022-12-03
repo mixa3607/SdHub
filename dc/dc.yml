@@ -3,10 +3,10 @@ services:
     image: ${REGISTRY-local}/${IMAGE_NAME-sdhub}:${IMAGE_TAG-latest}
     environment:
       - ASPNETCORE_ENVIRONMENT=$ASPNETCORE_ENVIRONMENT
-      - ApplicationSettings__AppInfo__GitRefName=${CI_COMMIT_REF_NAME-local}
-      - ApplicationSettings__AppInfo__GitCommitSha=${CI_COMMIT_SHA-deadbeef}
     volumes:
       - ./data/wwwroot:/app/wwwroot
+      - ./data/maildir:/app/files/maildir
+      - ./data/cache:/app/files/cache
       - ./data/certs:/app/files/certs:ro
       - ./data/appsettings.json:/app/appsettings.json:ro
       - ./data/appsettings.$ASPNETCORE_ENVIRONMENT.json:/app/appsettings.$ASPNETCORE_ENVIRONMENT.json:ro

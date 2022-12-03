@@ -2,6 +2,29 @@
   margin: 1.5rem;
 }
 
+.file-drop-area-wrap {
+  position: relative
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.file-drop-area {
+  &_disabled {
+    filter: blur(4px);
+  }
+}
+
 .preview-cards-container {
   display: flex;
   flex-direction: row;

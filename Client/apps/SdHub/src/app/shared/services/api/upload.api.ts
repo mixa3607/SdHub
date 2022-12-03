@@ -12,11 +12,11 @@ export class UploadApi {
     }
 
     public upload(form: FormData) {
-        return this.http.post<IUploadResponse>(this.base + '/upload', form);
+        return this.http.post<IUploadResponse>(this.base + '/upload', form, { reportProgress: true, observe: 'events' });
     }
 
     public uploadAuth(form: FormData) {
-        return this.http.post<IUploadResponse>(this.base + '/uploadAuth', form);
+        return this.http.post<IUploadResponse>(this.base + '/uploadAuth', form, { reportProgress: true, observe: 'events' });
     }
 }
 

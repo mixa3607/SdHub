@@ -17,7 +17,7 @@
 - Экспортировать `ASPNETCORE_ENVIRONMENT` с значением `Development` или указать в профиле для студии
 - Запустить `SdHub` из солюшена в `/Server` 
 - Запустить `npm run start` из `/Client`
-- Открыть http://0.0.0.0:5790 и войти с кредсами `Admin:strong_password`
+- Открыть http://localhost:5790 и войти с кредсами `Admin:strong_password`
 
 
 ## Настройки дсотупные в appsettings

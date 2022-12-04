@@ -1,10 +1,15 @@
 import {Component} from '@angular/core';
-import {PerformType, SearchArgsService} from "apps/SdHub/src/app/pages/generated/search-args.service";
+import {Observable, ReplaySubject, Subject} from "rxjs";
 
-export enum SearchInType{
+export enum SearchInType {
     Images,
     Albums,
     Grids
+}
+
+export enum PerformType {
+    Search,
+    Pagination
 }
 
 @Component({
@@ -13,12 +18,13 @@ export enum SearchInType{
     styleUrls: ['./search-page.component.scss']
 })
 export class SearchPageComponent {
-    public readonly searchInVariants: {id: SearchInType, value: string}[] = [
+    public readonly searchInVariants: { id: SearchInType, value: string }[] = [
         {id: SearchInType.Images, value: 'Images'},
         {id: SearchInType.Albums, value: 'Albums'},
         {id: SearchInType.Grids, value: 'Grids'},
     ];
     public readonly searchInType = SearchInType;
+    public readonly performSearch$ = new ReplaySubject<unknown>(1);
     public selectedSearchType: SearchInType = SearchInType.Images;
     public searchText: string = '';
 
@@ -27,10 +33,11 @@ export class SearchPageComponent {
     //fruits: string[] = ['portrait'];
     //allFruits: string[] = ['Apple', 'Lemon', 'Lime', 'Orange', 'Strawberry'];
 
-    constructor(private argsService: SearchArgsService) {
+    constructor() {
+        this.performSearch$.next(null);
     }
 
-    public onSearchClick(): void{
-        this.argsService.searchPerform$.next(PerformType.Search);
+    public onSearchClick(): void {
+        this.performSearch$.next(null);
     }
 }

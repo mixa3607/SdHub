@@ -1,51 +1,43 @@
 import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {
-    ISearchImageResponse,
-    SearchImageInFieldType,
-    SearchImageOrderByFieldType,
-    SearchImageOrderByType,
-    SoftwareGeneratedTypes
-} from "apps/SdHub/src/app/models/autogen/image.models";
 import {Observable} from "rxjs";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
-import {ImageApi} from "apps/SdHub/src/app/shared/services/api/image.api";
 import {HttpErrorResponse} from "@angular/common/http";
 import {httpErrorResponseHandler} from "apps/SdHub/src/app/shared/http-error-handling/handlers";
 import {ToastrService} from "ngx-toastr";
+import {AlbumApi} from "apps/SdHub/src/app/shared/services/api/album.api";
+import {
+    ISearchAlbumResponse,
+    SearchAlbumInFieldType,
+    SearchAlbumOrderByFieldType,
+    SearchAlbumOrderByType
+} from "apps/SdHub/src/app/models/autogen/album.models";
 import {PerformType} from "apps/SdHub/src/app/pages/generated/search-page/search-page.component";
 
 @UntilDestroy()
 @Component({
-    selector: 'search-in-images',
-    templateUrl: './search-in-images.component.html',
-    styleUrls: ['./search-in-images.component.scss'],
+    selector: 'search-in-albums',
+    templateUrl: './search-in-albums.component.html',
+    styleUrls: ['./search-in-albums.component.scss'],
 })
-export class SearchInImagesComponent implements OnInit {
-    public readonly orderBy: { name: string, field: SearchImageOrderByFieldType, order: SearchImageOrderByType | null, icon: string | null }[] = [
+export class SearchInAlbumsComponent implements OnInit {
+    public readonly orderBy: { name: string, field: SearchAlbumOrderByFieldType, order: SearchAlbumOrderByType | null, icon: string | null }[] = [
         {
             name: 'Upload date',
-            field: SearchImageOrderByFieldType.UploadDate,
-            order: SearchImageOrderByType.Asc,
+            field: SearchAlbumOrderByFieldType.UploadDate,
+            order: SearchAlbumOrderByType.Asc,
             icon: 'arrow_downward',
         },
         {
             name: 'User name',
-            field: SearchImageOrderByFieldType.UserName,
+            field: SearchAlbumOrderByFieldType.UserName,
             order: null,
             icon: null,
         },
     ];
-    public readonly softwareCheckboxes: { id: string, value: string, checked: boolean }[] = [
-        {id: SoftwareGeneratedTypes.AutomaticWebUi, value: 'AutomaticWebUi', checked: true},
-        {id: SoftwareGeneratedTypes.DreamStudio, value: 'DreamStudio', checked: true},
-        {id: SoftwareGeneratedTypes.NovelAi, value: 'NovelAi', checked: true},
-        {id: SoftwareGeneratedTypes.Unknown, value: '-----', checked: false},
-    ];
-    public readonly searchFieldsCheckboxes: { id: SearchImageInFieldType, value: string, checked: boolean }[] = [
-        {id: SearchImageInFieldType.Prompt, value: 'Prompt', checked: true},
-        {id: SearchImageInFieldType.Name, value: 'Name', checked: true},
-        {id: SearchImageInFieldType.Description, value: 'Description', checked: true},
-        {id: SearchImageInFieldType.User, value: 'User name', checked: false},
+    public readonly searchFieldsCheckboxes: { id: SearchAlbumInFieldType, value: string, checked: boolean }[] = [
+        {id: SearchAlbumInFieldType.Name, value: 'Name', checked: true},
+        {id: SearchAlbumInFieldType.Description, value: 'Description', checked: true},
+        {id: SearchAlbumInFieldType.User, value: 'User name', checked: false},
     ];
 
     // region search text
@@ -69,16 +61,13 @@ export class SearchInImagesComponent implements OnInit {
 
     @Output() searchTextChange = new EventEmitter<string>();
     @ViewChild('scrollTo', {read: ElementRef}) scrollTo?: ElementRef;
-    public alsoFromGrids = false;
-    public onlyFromRegisteredUsers = true;
-    public searchAsRegexp = false;
     public loading = false;
-    public searchResult: ISearchImageResponse | null = null;
+    public searchResult: ISearchAlbumResponse | null = null;
     public pageSize = 50;
     public page = 0;
     public totalPages = 1;
 
-    constructor(private imageApi: ImageApi,
+    constructor(private albumApi: AlbumApi,
                 private toastr: ToastrService,) {
     }
 
@@ -93,16 +82,12 @@ export class SearchInImagesComponent implements OnInit {
         } else if (type === PerformType.Pagination) {
             skip = this.page * this.pageSize;
         }
-        this.imageApi.search({
+        this.albumApi.search({
             skip,
             take,
-            onlyFromRegisteredUsers: this.onlyFromRegisteredUsers,
-            alsoFromGrids: this.alsoFromGrids,
-            searchAsRegexp: this.searchAsRegexp,
             orderBy: this.orderBy.find(x => x.order != null)!.order!,
             orderByField: this.orderBy.find(x => x.order != null)!.field!,
             fields: this.searchFieldsCheckboxes.filter(x => x.checked).map(x => x.id),
-            softwares: this.softwareCheckboxes.filter(x => x.checked).map(x => x.id),
             searchText: this.searchText,
         }).subscribe({
             next: resp => {
@@ -128,15 +113,15 @@ export class SearchInImagesComponent implements OnInit {
         this.runSearch(PerformType.Pagination);
     }
 
-    public onOrderBtnClick(field: SearchImageOrderByFieldType): void {
+    public onOrderBtnClick(field: SearchAlbumOrderByFieldType): void {
         for (const entry of this.orderBy) {
             if (entry.field === field) {
-                entry.order = entry.order === SearchImageOrderByType.Asc
-                    ? SearchImageOrderByType.Desc
-                    : SearchImageOrderByType.Asc;
-                if (entry.order === SearchImageOrderByType.Desc)
+                entry.order = entry.order === SearchAlbumOrderByType.Asc
+                    ? SearchAlbumOrderByType.Desc
+                    : SearchAlbumOrderByType.Asc;
+                if (entry.order === SearchAlbumOrderByType.Desc)
                     entry.icon = 'arrow_upward';
-                else if (entry.order === SearchImageOrderByType.Asc)
+                else if (entry.order === SearchAlbumOrderByType.Asc)
                     entry.icon = 'arrow_downward';
             } else {
                 entry.order = null;

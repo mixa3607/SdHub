@@ -4,11 +4,11 @@ import {
     SearchImageOrderByFieldType,
     SearchImageOrderByType
 } from "apps/SdHub/src/app/models/autogen/image.models";
-import {PerformType} from "apps/SdHub/src/app/pages/generated/search-args.service";
 import {HttpErrorResponse} from "@angular/common/http";
 import {httpErrorResponseHandler} from "apps/SdHub/src/app/shared/http-error-handling/handlers";
 import {ImageApi} from "apps/SdHub/src/app/shared/services/api/image.api";
 import {ToastrService} from "ngx-toastr";
+import {PerformType} from "apps/SdHub/src/app/pages/generated/search-page/search-page.component";
 
 @Component({
     selector: 'user-images',

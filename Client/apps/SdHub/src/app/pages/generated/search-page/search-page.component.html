@@ -42,7 +42,12 @@
     <ng-container [ngSwitch]="selectedSearchType">
       <search-in-images *ngSwitchCase="searchInType.Images"
                         style="flex-grow: 1"
-                        [(searchText)]="searchText"></search-in-images>
+                        [(searchText)]="searchText"
+                        [searchButtonClick]="performSearch$"></search-in-images>
+      <search-in-albums *ngSwitchCase="searchInType.Albums"
+                        style="flex-grow: 1"
+                        [(searchText)]="searchText"
+                        [searchButtonClick]="performSearch$"></search-in-albums>
       <div *ngSwitchDefault
            style="display: flex; flex-direction: column; align-items: center; flex-grow: 1; justify-content: center; font-size: 4rem">
         <div>This search type not supported yet</div>

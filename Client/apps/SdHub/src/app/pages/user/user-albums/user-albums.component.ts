@@ -1,5 +1,4 @@
 import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
-import {PerformType} from "apps/SdHub/src/app/pages/generated/search-args.service";
 import {HttpErrorResponse} from "@angular/common/http";
 import {httpErrorResponseHandler} from "apps/SdHub/src/app/shared/http-error-handling/handlers";
 import {ToastrService} from "ngx-toastr";
@@ -11,6 +10,7 @@ import {
 import {AlbumApi} from "apps/SdHub/src/app/shared/services/api/album.api";
 import {AddAlbumDialogComponent} from "apps/SdHub/src/app/pages/user/add-album-dialog/add-album-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
+import {PerformType} from "apps/SdHub/src/app/pages/generated/search-page/search-page.component";
 
 @Component({
     selector: 'user-albums',
@@ -91,6 +91,6 @@ export class UserAlbumsComponent implements OnInit {
                 this.loading = false;
                 httpErrorResponseHandler(err, this.toastr);
             }
-        })
+        });
     }
 }

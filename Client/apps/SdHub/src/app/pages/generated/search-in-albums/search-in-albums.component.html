@@ -17,23 +17,6 @@
         {{cb.value}}
       </mat-checkbox>
     </mat-card>
-    <mat-card style="display: flex; flex-direction: column">
-      <mat-card-subtitle>Software</mat-card-subtitle>
-      <mat-checkbox *ngFor="let cb of softwareCheckboxes"
-                    [(ngModel)]="cb.checked">
-        {{cb.value}}
-      </mat-checkbox>
-    </mat-card>
-    <mat-card style="display: flex; flex-direction: column">
-      <mat-card-subtitle>Misc</mat-card-subtitle>
-      <mat-checkbox [(ngModel)]="alsoFromGrids">Also from grids
-      </mat-checkbox>
-      <mat-checkbox [(ngModel)]="searchAsRegexp">Is regexp
-      </mat-checkbox>
-      <mat-checkbox disabled
-                    [(ngModel)]="onlyFromRegisteredUsers">Only from registered
-      </mat-checkbox>
-    </mat-card>
   </div>
 
   <div *ngIf="(searchResult?.total ?? 0) === 0 && !loading"
@@ -51,8 +34,8 @@
        #scrollTo
        class="search-result-container">
     <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: .5rem">
-      <small-image-card *ngFor="let img of searchResult?.images ?? []" [imageInfo]="img">
-      </small-image-card>
+      <small-album-card *ngFor="let album of searchResult?.albums ?? []" [albumInfo]="album">
+      </small-album-card>
     </div>
     <div style="flex-grow: 1"></div>
     <paginator [(page)]="page"

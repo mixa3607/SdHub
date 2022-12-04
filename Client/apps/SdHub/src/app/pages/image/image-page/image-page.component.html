@@ -32,7 +32,7 @@
             </ng-template>
 
             <div style="flex-grow: 1"></div>
-            <ng-container *ngIf="!editMode; else editBtns">
+            <ng-container *ngIf="!editMode && showEditButton; else editBtns">
               <button (click)="onEditClick()" mat-icon-button>
                 <mat-icon>edit</mat-icon>
               </button>

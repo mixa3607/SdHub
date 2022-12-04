@@ -33,7 +33,7 @@ public class AlbumController : ControllerBase
     }
 
     [HttpPost]
-    [Route("api/v1/[controller]")]
+    [Route("[action]")]
     [AllowAnonymous]
     public async Task<SearchAlbumResponse> Search([FromBody] SearchAlbumRequest req, CancellationToken ct = default)
     {
@@ -106,7 +106,7 @@ public class AlbumController : ControllerBase
     }
 
     [HttpPost]
-    [Route("api/v1/[controller]")]
+    [Route("[action]")]
     [AllowAnonymous]
     public async Task<GetAlbumResponse> Get([FromBody] GetAlbumRequest req, CancellationToken ct = default)
     {
@@ -129,7 +129,7 @@ public class AlbumController : ControllerBase
     }
 
     [HttpPost]
-    [Route("api/v1/[controller]")]
+    [Route("[action]")]
     public async Task<AlbumModel> Create([FromBody] CreateAlbumRequest req, CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
@@ -149,7 +149,7 @@ public class AlbumController : ControllerBase
     }
 
     [HttpPost]
-    [Route("api/v1/[controller]")]
+    [Route("[action]")]
     public async Task<DeleteAlbumResponse> Delete([FromBody] DeleteAlbumRequest req, CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
@@ -169,7 +169,7 @@ public class AlbumController : ControllerBase
     }
 
     [HttpPost]
-    [Route("api/v1/[controller]")]
+    [Route("[action]")]
     public async Task<AlbumModel> Edit([FromBody] EditAlbumRequest req, CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
@@ -198,7 +198,7 @@ public class AlbumController : ControllerBase
     }
 
     [HttpPost]
-    [Route("api/v1/[controller]")]
+    [Route("[action]")]
     public async Task<AddAlbumImagesResponse> AddImages([FromBody] AddAlbumImagesRequest req,
         CancellationToken ct = default)
     {
@@ -227,7 +227,7 @@ public class AlbumController : ControllerBase
     }
 
     [HttpPost]
-    [Route("api/v1/[controller]")]
+    [Route("[action]")]
     public async Task<DeleteAlbumImagesResponse> DeleteImages([FromBody] DeleteAlbumImagesRequest req,
         CancellationToken ct = default)
     {

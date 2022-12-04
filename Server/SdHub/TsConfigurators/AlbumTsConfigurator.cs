@@ -16,14 +16,18 @@ public class AlbumTsConfigurator : ITsConfigurator
             {
                 typeof(AlbumModel),
                 typeof(AlbumImageModel),
+                typeof(GetAlbumRequest),
+                typeof(GetAlbumResponse),
                 typeof(AddAlbumImagesRequest),
                 typeof(AddAlbumImagesResponse),
                 typeof(CreateAlbumRequest),
                 typeof(DeleteAlbumRequest),
+                typeof(DeleteAlbumResponse),
                 typeof(DeleteAlbumImagesRequest),
                 typeof(DeleteAlbumImagesResponse),
                 typeof(SearchAlbumRequest),
-                typeof(SearchAlbumResponse)
+                typeof(SearchAlbumResponse),
+                typeof(EditAlbumRequest),
             }, c => c
                 .SubsDatetimeOffsetToStr()
                 .SubsTimespanToStr()

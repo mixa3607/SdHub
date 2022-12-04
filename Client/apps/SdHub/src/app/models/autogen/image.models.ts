@@ -49,6 +49,7 @@ export interface ISearchImageRequest
 {
 	searchText: string;
 	owner: string;
+	album: string;
 	fields: SearchImageInFieldType[];
 	softwares: string[];
 	alsoFromGrids: boolean;

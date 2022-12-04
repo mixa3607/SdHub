@@ -18,7 +18,7 @@
             </ng-template>
           </ng-container>
         </div>
-        <div *ngIf="!editMode; else editDescription" style="max-height: 30rem; overflow: auto;">
+        <div *ngIf="!editMode; else editDescription" style="max-height: 15rem; overflow: auto;">
           <markdown [data]="user?.about"></markdown>
         </div>
         <ng-template #editDescription>
@@ -52,7 +52,8 @@
                  [userLogin]="user?.login ?? null"></user-images>
     <user-albums *ngIf="activeTab === 'album'"
                  [userLogin]="user?.login ?? null"
-                 [enableAddButton]="allowEdit"></user-albums>
+                 [enableAddButton]="allowEdit"
+                 style="flex-grow: 1;"></user-albums>
 
   </div>
 </div>

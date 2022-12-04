@@ -12,10 +12,10 @@
             </mat-spinner>
           </div>
           <ngx-file-drop class="file-drop-area"
-            [class.file-drop-area_disabled]="uploading"
-            (onFileDrop)="dropped($event)"
-            accept=".png,.jpeg,.jpg,.webp"
-            dropZoneLabel="Drop images here">
+                         [class.file-drop-area_disabled]="uploading"
+                         (onFileDrop)="dropped($event)"
+                         accept=".png,.jpeg,.jpg,.webp"
+                         dropZoneLabel="Drop images here">
             <ng-template let-openFileSelector="openFileSelector" ngx-file-drop-content-tmp>
               Drop images here (or pick
               <button (click)="openFileSelector()" mat-icon-button type="button">
@@ -27,10 +27,35 @@
         </div>
       </mat-card-content>
       <div class="actions">
+        <mat-form-field *ngIf="isAuthenticated"
+                        appearance="fill"
+                        class="form-no-bottom-padding"
+                        style="flex-grow: 10">
+          <mat-label>Album</mat-label>
+          <input type="text"
+                 placeholder="Pick one"
+                 aria-label="Number"
+                 matInput
+                 [matAutocomplete]="auto"
+                 [formControl]="albumForm">
+          <mat-autocomplete #auto="matAutocomplete"
+                            [displayWith]="displayAlbumFn">
+            <mat-option *ngIf="albumsLoading"
+                        [disabled]="true">
+              <mat-progress-bar mode="query"></mat-progress-bar>
+            </mat-option>
+            <mat-option *ngIf="allowedAlbums.length === 0 && !albumsLoading"
+                        [disabled]="true">(▀̿Ĺ̯▀̿ ̿) nothing...
+            </mat-option>
+            <mat-option *ngFor="let opt of allowedAlbums" [value]="opt">
+              {{opt.name}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
         <button (click)="onUploadClick()" [disabled]="waitUpload() == 0 || uploading"
                 color="primary"
                 mat-raised-button
-                style="flex-grow: 80">Upload
+                style="flex-grow: 60">Upload
         </button>
         <button (click)="onClearClick()" [disabled]="files.length == 0 || uploading"
                 color="warn"

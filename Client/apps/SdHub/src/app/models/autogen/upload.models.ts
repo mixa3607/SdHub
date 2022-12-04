@@ -6,6 +6,7 @@ import { IUploadedFileModel } from './misc.models';
 
 export interface IUploadRequest
 {
+	albumShortToken: string;
 	files: any[];
 }
 export interface IUploadResponse

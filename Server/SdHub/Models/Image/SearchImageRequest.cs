@@ -7,6 +7,7 @@ public class SearchImageRequest
 {
     public string? SearchText { get; set; }
     public string? Owner { get; set; }
+    public string? Album { get; set; }
 
     //public IReadOnlyList<string> Tags { get; set; } = Array.Empty<string>();
     public IReadOnlyList<SearchImageInFieldType> Fields { get; set; } = Array.Empty<SearchImageInFieldType>();

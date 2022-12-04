@@ -1,0 +1,104 @@
+<div class="container" fxLayout="row" fxLayoutAlign="center none">
+  <div fxFlex="100%" style="display: flex; flex-direction: column; gap: .5rem">
+    <ng-container *ngIf="loading; else loaded">
+      <h1>Album loading...</h1>
+    </ng-container>
+    <ng-template #loaded>
+      <mat-card style="display: flex; flex-direction: column; box-sizing: border-box">
+        <mat-card-content style="display: flex; flex-direction: row; gap: 1rem">
+
+          <div class="album-preview-container">
+            <img *ngIf="thumbUrl != ''; else noThumb" class="thumbnail" [attr.src]="thumbUrl">
+            <ng-template #noThumb>
+              <span style="font-style: italic; height: 10rem;">Preview not available</span>
+            </ng-template>
+          </div>
+
+          <div class="info">
+            <div class="name-and-edit">
+              <div *ngIf="!editMode; else editName" style="font-size: 2rem">
+                Album name:
+                <ng-container>
+                  <span *ngIf="name != ''; else nameNotSet">{{name}}</span>
+                  <ng-template #nameNotSet><span style="font-style: italic">not set</span></ng-template>
+                </ng-container>
+              </div>
+
+              <div style="flex-grow: 1"></div>
+
+              <ng-template #editName>
+                <mat-form-field appearance="outline"
+                                class="form-no-bottom-padding"
+                                style="font-size: medium; width: 100%">
+                  <mat-label>Album name</mat-label>
+                  <input matInput [(ngModel)]="editData.name">
+                </mat-form-field>
+              </ng-template>
+
+              <ng-container *ngIf="!editMode; else editBtns">
+                <button mat-icon-button (click)="onEditClick()">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </ng-container>
+              <ng-template #editBtns>
+                <button (click)="onSaveClick()" mat-raised-button>
+                  <mat-icon>save</mat-icon>
+                </button>
+                <button (click)="onCancelClick()" mat-raised-button>
+                  <mat-icon>cancel</mat-icon>
+                </button>
+                <button (click)="onDeleteClick()" mat-raised-button color="warn">
+                  <mat-icon>delete_forever</mat-icon>
+                </button>
+              </ng-template>
+            </div>
+
+            <div>Owner: <a [routerLink]="'/user/' + (albumOwner?.login ?? '')">{{albumOwner?.login ?? ''}}</a></div>
+
+            <div *ngIf="!editMode; else editDescription" style="max-height: 15rem; overflow: auto;">
+              <markdown [data]="description"></markdown>
+            </div>
+            <ng-template #editDescription>
+              <mat-form-field appearance="outline"
+                              class="form-no-bottom-padding"
+                              style="font-size: medium">
+                <mat-label>About</mat-label>
+                <textarea cdkTextareaAutosize [(ngModel)]="editData.description" matInput placeholder="About"></textarea>
+              </mat-form-field>
+            </ng-template>
+          </div>
+
+        </mat-card-content>
+      </mat-card>
+    </ng-template>
+
+
+    <div #scrollTo
+         style="display: flex; flex-direction: column; flex-grow: 1">
+
+      <div *ngIf="(searchResult?.total ?? 0) === 0 && !loading"
+           class="search-result-placeholder-container">
+        <div>Nothing found ＞︿＜</div>
+      </div>
+      <div *ngIf="loading"
+           class="search-result-placeholder-container">
+        <div style="display: flex; flex-direction: column">
+          <div>Search (_　_)。゜zｚＺ</div>
+          <mat-progress-bar mode="query"></mat-progress-bar>
+        </div>
+      </div>
+      <div *ngIf="(searchResult?.total ?? 0) > 0 && !loading"
+           class="search-result-container">
+        <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: .5rem">
+          <small-image-card *ngFor="let img of searchResult?.images ?? []" [imageInfo]="img">
+          </small-image-card>
+        </div>
+        <div style="flex-grow: 1"></div>
+        <paginator [(page)]="page"
+                   [totalPages]="totalPages"
+                   (pageChange)="onPageChange()"></paginator>
+      </div>
+    </div>
+
+  </div>
+</div>

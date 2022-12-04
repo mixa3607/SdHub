@@ -1,10 +1,22 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import {NgModule} from '@angular/core';
+import {Routes, RouterModule} from '@angular/router';
 
 const appRoutes: Routes = [
   {
     path: 'i',
     loadChildren: () => import('./pages/image/image.module').then(m => m.ImageModule),
+  },
+  {
+    path: 'image',
+    loadChildren: () => import('./pages/image/image.module').then(m => m.ImageModule),
+  },
+  {
+    path: 'a',
+    loadChildren: () => import('./pages/album/album.module').then(m => m.AlbumModule),
+  },
+  {
+    path: 'album',
+    loadChildren: () => import('./pages/album/album.module').then(m => m.AlbumModule),
   },
   {
     path: 'gen',
@@ -44,4 +56,5 @@ const appRoutes: Routes = [
   exports: [RouterModule],
   providers: []
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {
+}

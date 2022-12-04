@@ -1,36 +1,38 @@
-<div #scrollTo></div>
-<div *ngIf="((searchResult?.total ?? 0) === 0) && !loading"
-     class="search-result-placeholder-container">
-  <div>Nothing found ＞︿＜</div>
-</div>
-
-<div *ngIf="loading"
-     class="search-result-placeholder-container">
-  <div style="display: flex; flex-direction: column">
-    <div>Search (_　_)。゜zｚＺ</div>
-    <mat-progress-bar mode="query"></mat-progress-bar>
+<div #scrollTo
+     style="display: flex; flex-direction: column; min-height: 100%">
+  <div *ngIf="((searchResult?.total ?? 0) === 0) && !loading"
+       class="search-result-placeholder-container">
+    <div>Nothing found ＞︿＜</div>
   </div>
-</div>
 
-<div *ngIf="((searchResult?.total ?? 0) > 0 || enableAddButton) && !loading"
-     class="search-result-container">
-  <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: .5rem">
-    <mat-card *ngIf="enableAddButton"
-              class="add-new-card"
-              (click)="onCreateNewClick()">
-      <mat-card-content>
-        <div class="content">
-          <mat-icon inline style="">add</mat-icon>
-          <div>Create album</div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-    <small-album-card *ngFor="let img of searchResult?.albums ?? []"
-                      [albumInfo]="img">
-    </small-album-card>
+  <div *ngIf="loading"
+       class="search-result-placeholder-container">
+    <div style="display: flex; flex-direction: column">
+      <div>Search (_　_)。゜zｚＺ</div>
+      <mat-progress-bar mode="query"></mat-progress-bar>
+    </div>
   </div>
-  <div style="flex-grow: 1"></div>
-  <paginator [(page)]="page"
-             [totalPages]="totalPages"
-             (pageChange)="onPageChange()"></paginator>
+
+  <div *ngIf="((searchResult?.total ?? 0) > 0 || enableAddButton) && !loading"
+       class="search-result-container">
+    <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: .5rem">
+      <mat-card *ngIf="enableAddButton"
+                class="add-new-card"
+                (click)="onCreateNewClick()">
+        <mat-card-content>
+          <div class="content">
+            <mat-icon inline style="">add</mat-icon>
+            <div>Create album</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <small-album-card *ngFor="let img of searchResult?.albums ?? []"
+                        [albumInfo]="img">
+      </small-album-card>
+    </div>
+    <div style="flex-grow: 1"></div>
+    <paginator [(page)]="page"
+               [totalPages]="totalPages"
+               (pageChange)="onPageChange()"></paginator>
+  </div>
 </div>

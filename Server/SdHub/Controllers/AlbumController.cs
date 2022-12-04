@@ -105,10 +105,10 @@ public class AlbumController : ControllerBase
         };
     }
 
-    [HttpPost]
+    [HttpGet]
     [Route("[action]")]
     [AllowAnonymous]
-    public async Task<GetAlbumResponse> Get([FromBody] GetAlbumRequest req, CancellationToken ct = default)
+    public async Task<GetAlbumResponse> Get([FromQuery] GetAlbumRequest req, CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
         var album = await _db.Albums

@@ -10,7 +10,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SdHub.Constants;
 using SdHub.Database;
+using SdHub.Database.Entities.Albums;
 using SdHub.Database.Entities.Images;
 using SdHub.Database.Entities.Users;
 using SdHub.Database.Extensions;
@@ -57,13 +59,30 @@ public class UploadController : ControllerBase
             .ApplyFilter(guid: jwtUser!.Guid)
             .FirstAsync(ct);
 
+        var albumId = 0L;
+        if (!string.IsNullOrWhiteSpace(req.AlbumShortToken))
+        {
+            var album = await _db.Albums
+                .FirstOrDefaultAsync(x => x.ShortToken == req.AlbumShortToken && x.DeletedAt == null, ct);
+            if (album == null)
+            {
+                ModelState.AddError(ModelStateErrors.AlbumNotFound).ThrowIfNotValid();
+            }
+            else if (album.OwnerId != user.Id)
+            {
+                ModelState.AddError(ModelStateErrors.NotAlbumOwner).ThrowIfNotValid();
+            }
+
+            albumId = album!.Id;
+        }
+
         var uploadedLastHour = await _db.Images
             .Where(x => x.DeletedAt == null
                         && x.OwnerId == user.Id
                         && x.CreatedAt > DateTimeOffset.Now.AddHours(-1))
             .CountAsync(ct);
 
-        return await UploadAsync(req, uploadedLastHour, user, uploader, ct);
+        return await UploadAsync(req, uploadedLastHour, user, uploader, albumId, ct);
     }
 
 
@@ -74,6 +93,9 @@ public class UploadController : ControllerBase
     {
         ModelState.ThrowIfNotValid();
         var uploader = await GetUploaderAsync(ct);
+
+        if (!string.IsNullOrWhiteSpace(req.AlbumShortToken))
+            ModelState.AddError("Registration required for upload to album").ThrowIfNotValid();
 
         var user = await _db.Users
             .Include(x => x.Plan)
@@ -86,11 +108,11 @@ public class UploadController : ControllerBase
                         && x.CreatedAt > DateTimeOffset.Now.AddHours(-1))
             .CountAsync(ct);
 
-        return await UploadAsync(req, uploadedLastHour, user, uploader, ct);
+        return await UploadAsync(req, uploadedLastHour, user, uploader, 0, ct);
     }
 
     private async Task<UploadResponse> UploadAsync(UploadRequest req, int uploadedLastHour, UserEntity user,
-        ImageUploaderEntity uploader, CancellationToken ct = default)
+        ImageUploaderEntity uploader, long albumId, CancellationToken ct = default)
     {
         var ip = HttpContext.Connection.RemoteIpAddress!.ToString();
 
@@ -176,6 +198,15 @@ public class UploadController : ControllerBase
                     },
                     OriginalImage = originalFileEntity
                 };
+                if (albumId != 0)
+                {
+                    _db.AlbumImages.Add(new AlbumImageEntity()
+                    {
+                        AlbumId = albumId,
+                        Image = imageEntity
+                    });
+                }
+
                 uplFile.ManageToken = manageToken;
                 uplFile.Uploaded = true;
                 uplFile.Reason = "OK";

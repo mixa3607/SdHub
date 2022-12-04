@@ -5,6 +5,8 @@ namespace SdHub.Database.Entities.Albums;
 
 public class AlbumImageEntity
 {
+    public long Id { get; set; }
+
     public long AlbumId { get; set; }
     public AlbumEntity? Album { get; set; }
 

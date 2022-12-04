@@ -93,6 +93,11 @@ public class ImageController : ControllerBase
             query = query.Where(x => x.Owner!.LoginNormalized! == owner);
         }
 
+        if (!string.IsNullOrWhiteSpace(req.Album))
+        {
+            query = query.Where(x => x.AlbumImages!.Any(y => y.Album!.ShortToken == req.Album));
+        }
+
         //var str = query.ToQueryString();
 
         if (req.Softwares.Count > 0)

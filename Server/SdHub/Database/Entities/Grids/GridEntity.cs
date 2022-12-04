@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SdHub.Database.Entities.Albums;
 using SdHub.Database.Entities.Files;
 using SdHub.Database.Entities.Users;
 
@@ -36,4 +37,6 @@ public class GridEntity
 
     public long? LayersDirectoryId { get; set; }
     public DirectoryEntity? LayersDirectory { get; set; }
+
+    public List<AlbumImageEntity>? AlbumImages { get; set; }
 }

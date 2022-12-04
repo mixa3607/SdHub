@@ -32,12 +32,12 @@
             </ng-template>
 
             <div style="flex-grow: 1"></div>
-            <ng-container *ngIf="!editMode && showEditButton; else editBtns">
+            <ng-container *ngIf="!editMode && showEditButton">
               <button (click)="onEditClick()" mat-icon-button>
                 <mat-icon>edit</mat-icon>
               </button>
             </ng-container>
-            <ng-template #editBtns>
+            <ng-container *ngIf="editMode">
               <button (click)="onSaveClick()" mat-raised-button>
                 <mat-icon>save</mat-icon>
               </button>
@@ -47,7 +47,7 @@
               <button (click)="onDeleteClick()" mat-raised-button color="warn">
                 <mat-icon>delete_forever</mat-icon>
               </button>
-            </ng-template>
+            </ng-container>
           </div>
           <div class="album-card-container">
             <img [src]="imageInfo?.compressedImage?.directUrl ?? imageInfo?.originalImage?.directUrl"

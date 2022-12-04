@@ -19,6 +19,9 @@ import {ImageViewerComponent} from './components/image-viewer/image-viewer.compo
 import {ImageViewerDialogComponent} from './components/image-viewer-dialog/image-viewer-dialog.component';
 import {LeafletModule} from "@asymmetrik/ngx-leaflet";
 import {GridViewerComponent} from "apps/SdHub/src/app/shared/components/grid-viewer/grid-viewer.component";
+import {
+    SmallAlbumCardComponent
+} from "apps/SdHub/src/app/shared/components/small-album-card/small-album-card.component";
 
 @NgModule({
     imports: [
@@ -34,6 +37,7 @@ import {GridViewerComponent} from "apps/SdHub/src/app/shared/components/grid-vie
     declarations: [
         ConfirmDialogComponent,
         SmallImageCardComponent,
+        SmallAlbumCardComponent,
         LimitToPipe,
         LocalDatePipe,
         YesNoPipe,
@@ -51,6 +55,7 @@ import {GridViewerComponent} from "apps/SdHub/src/app/shared/components/grid-vie
         LimitToPipe,
         ConfirmDialogComponent,
         SmallImageCardComponent,
+        SmallAlbumCardComponent,
         LocalDatePipe,
         YesNoPipe,
         GridViewerComponent,

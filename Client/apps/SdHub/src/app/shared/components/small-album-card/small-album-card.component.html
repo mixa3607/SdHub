@@ -1,14 +1,11 @@
 <mat-card>
   <mat-card-content style="display: flex; flex-direction: column; gap: .4rem">
-    <a class="card-container" [routerLink]="'/i/' + shortToken">
-      <a *ngIf="thumbUrl != ''; else noThumb"
-         [href]="compressedUrl">
-        <img class="thumbnail"
-             [attr.src]="thumbUrl"
-             [attr.data-src]="compressedUrl">
-      </a>
+    <a
+       class="album-card-container"
+       [routerLink]="'/album/' + shortToken">
+      <img *ngIf="thumbUrl != ''; else noThumb" class="thumbnail" [attr.src]="thumbUrl">
       <ng-template #noThumb>
-        <span style="font-style: italic">Preview not available</span>
+        <span style="font-style: italic; height: 10rem;">Preview not available</span>
       </ng-template>
     </a>
     <mat-divider></mat-divider>
@@ -21,7 +18,6 @@
     </div>
     <div>User: <a [routerLink]="'/user/' + userName">{{userName}}</a></div>
     <div>Uploaded: <span class="gray-value">{{uploadAt | date:'dd.MM.yyyy hh:mm'}}</span></div>
-    <div>Software: <span class="gray-value">{{software}}</span></div>
-    <div>Dims: <span class="gray-value">{{dims}}</span></div>
+    <div *ngIf="imagesCount != -1">Images: <span class="gray-value">{{imagesCount}}</span></div>
   </mat-card-content>
 </mat-card>

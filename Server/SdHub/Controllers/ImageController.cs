@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic.FileIO;
 using SdHub.Constants;
 using SdHub.Database;
 using SdHub.Database.Entities.Images;
@@ -17,7 +16,6 @@ using SdHub.Extensions;
 using SdHub.Models;
 using SdHub.Models.Image;
 using SdHub.Services.User;
-using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
 namespace SdHub.Controllers;
 

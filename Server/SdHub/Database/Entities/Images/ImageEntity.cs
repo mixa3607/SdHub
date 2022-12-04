@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using SdHub.Database.Entities.Albums;
+using SdHub.Database.Entities.Bins;
 using SdHub.Database.Entities.Files;
 using SdHub.Database.Entities.Users;
+using SdHub.Models.Album;
 
 namespace SdHub.Database.Entities.Images;
 
@@ -58,4 +61,6 @@ public class ImageEntity
     public ImageRawMetadataEntity? RawMetadata { get; set; }
 
     //public List<ImageTagEntity>? ImageTags { get; set; }
+    public List<AlbumImageEntity>? AlbumImages { get; set; }
+    public List<GenerationSampleEntity>? GenSamples { get; set; }
 }

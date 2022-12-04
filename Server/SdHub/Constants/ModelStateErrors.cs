@@ -13,4 +13,7 @@ public static class ModelStateErrors
     public const string RefreshTokenNotExist = "REFRESH_TOKEN_NOT_EXIST";
     public const string ImageNotFound = "IMAGE_NOT_FOUND";
     public const string UserRegistrationDisabled = "USER_REGISTRATION_DISABLED";
+
+    public const string AlbumNotFound = "ALBUM_NOT_FOUND";
+    public const string NotAlbumOwner = "NOT_ALBUM_OWNER";
 }

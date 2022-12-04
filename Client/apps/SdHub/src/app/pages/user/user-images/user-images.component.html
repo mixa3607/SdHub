@@ -1,0 +1,23 @@
+<div #scrollTo></div>
+<div *ngIf="(searchImagesResult?.total ?? 0) === 0 && !loading"
+     class="search-result-placeholder-container">
+  <div>Nothing found ＞︿＜</div>
+</div>
+<div *ngIf="loading"
+     class="search-result-placeholder-container">
+  <div style="display: flex; flex-direction: column">
+    <div>Search (_　_)。゜zｚＺ</div>
+    <mat-progress-bar mode="query"></mat-progress-bar>
+  </div>
+</div>
+<div *ngIf="(searchImagesResult?.total ?? 0) > 0 && !loading"
+     class="search-result-container">
+  <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: .5rem">
+    <small-image-card *ngFor="let img of searchImagesResult?.images ?? []" [imageInfo]="img">
+    </small-image-card>
+  </div>
+  <div style="flex-grow: 1"></div>
+  <paginator [(page)]="page"
+             [totalPages]="totalPages"
+             (pageChange)="onPageChange()"></paginator>
+</div>

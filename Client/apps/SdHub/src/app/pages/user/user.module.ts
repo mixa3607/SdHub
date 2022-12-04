@@ -4,15 +4,18 @@ import { CommonModule } from '@angular/common';
 import { UserRoutingModule } from 'apps/SdHub/src/app/pages/user/user-routing.module';
 import { UserPageComponent } from 'apps/SdHub/src/app/pages/user/user-page/user-page.component';
 import { SharedModule } from '../../shared/shared.module';
-import {MarkdownModule} from "ngx-markdown";
+import { MarkdownModule } from 'ngx-markdown';
+import { UserImagesComponent } from './user-images/user-images.component';
+import { UserAlbumsComponent } from 'apps/SdHub/src/app/pages/user/user-albums/user-albums.component';
+import { AddAlbumDialogComponent } from './add-album-dialog/add-album-dialog.component';
 
 @NgModule({
-  declarations: [UserPageComponent],
-    imports: [
-        CommonModule,
-        SharedModule,
-        UserRoutingModule,
-        MarkdownModule
-    ]
+  declarations: [
+    UserPageComponent,
+    UserImagesComponent,
+    UserAlbumsComponent,
+    AddAlbumDialogComponent,
+  ],
+  imports: [CommonModule, SharedModule, UserRoutingModule, MarkdownModule],
 })
-export class UserModule { }
+export class UserModule {}

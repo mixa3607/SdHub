@@ -112,4 +112,6 @@ export abstract class ModelStateErrors
 	public static RefreshTokenNotExist: string = `REFRESH_TOKEN_NOT_EXIST`;
 	public static ImageNotFound: string = `IMAGE_NOT_FOUND`;
 	public static UserRegistrationDisabled: string = `USER_REGISTRATION_DISABLED`;
+	public static AlbumNotFound: string = `ALBUM_NOT_FOUND`;
+	public static NotAlbumOwner: string = `NOT_ALBUM_OWNER`;
 }

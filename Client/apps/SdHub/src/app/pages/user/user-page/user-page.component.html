@@ -33,39 +33,26 @@
       </mat-card-content>
     </mat-card>
 
-    <mat-card #scrollTo>
+    <mat-card>
       <nav mat-tab-nav-bar mat-stretch-tabs [tabPanel]="tabPanel">
-        <a mat-tab-link *ngFor="let link of tabs"
-           [disabled]="!link.enable"
-           (click)="onTabChange(link.type)"
-           [active]="activeTab == link.type">{{link.name}}</a>
+        <ng-container *ngFor="let link of tabs">
+          <a mat-tab-link
+             [disabled]="!link.enable"
+             (click)="onTabChange(link.type)"
+             [active]="activeTab == link.type">{{link.name}}
+          </a>
+        </ng-container>
+
       </nav>
       <mat-tab-nav-panel #tabPanel></mat-tab-nav-panel>
     </mat-card>
 
 
-    <div *ngIf="(searchImagesResult?.total ?? 0) === 0 && !loading"
-         class="search-result-placeholder-container">
-      <div>Nothing found ＞︿＜</div>
-    </div>
-    <div *ngIf="loading"
-         class="search-result-placeholder-container">
-      <div style="display: flex; flex-direction: column">
-        <div>Search (_　_)。゜zｚＺ</div>
-        <mat-progress-bar mode="query"></mat-progress-bar>
-      </div>
-    </div>
-    <div *ngIf="(searchImagesResult?.total ?? 0) > 0 && !loading"
-         class="search-result-container">
-      <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: .5rem">
-        <small-image-card *ngFor="let img of searchImagesResult?.images ?? []" [imageInfo]="img">
-        </small-image-card>
-      </div>
-      <div style="flex-grow: 1"></div>
-      <paginator [(page)]="page"
-                 [totalPages]="totalPages"
-                 (pageChange)="onPageChange()"></paginator>
-    </div>
+    <user-images *ngIf="activeTab === 'image'"
+                 [userLogin]="user?.login ?? null"></user-images>
+    <user-albums *ngIf="activeTab === 'album'"
+                 [userLogin]="user?.login ?? null"
+                 [enableAddButton]="allowEdit"></user-albums>
 
   </div>
 </div>

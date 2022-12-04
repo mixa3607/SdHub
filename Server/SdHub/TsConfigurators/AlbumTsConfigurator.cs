@@ -16,6 +16,14 @@ public class AlbumTsConfigurator : ITsConfigurator
             {
                 typeof(AlbumModel),
                 typeof(AlbumImageModel),
+                typeof(AddAlbumImagesRequest),
+                typeof(AddAlbumImagesResponse),
+                typeof(CreateAlbumRequest),
+                typeof(DeleteAlbumRequest),
+                typeof(DeleteAlbumImagesRequest),
+                typeof(DeleteAlbumImagesResponse),
+                typeof(SearchAlbumRequest),
+                typeof(SearchAlbumResponse)
             }, c => c
                 .SubsDatetimeOffsetToStr()
                 .SubsTimespanToStr()
@@ -25,6 +33,9 @@ public class AlbumTsConfigurator : ITsConfigurator
             ;
         builder.ExportAsEnums(new Type[]
         {
+            typeof(SearchAlbumInFieldType),
+            typeof(SearchAlbumOrderByType),
+            typeof(SearchAlbumOrderByFieldType),
         }, c => c.ExportTo(outFile));
     }
 }

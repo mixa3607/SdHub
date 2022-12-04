@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using SdHub.Models.Files;
 
 namespace SdHub.Models.Album;
@@ -17,5 +16,4 @@ public class AlbumModel
     public ImageOwnerModel? Owner { get; set; }
 
     public FileModel? ThumbImage { get; set; }
-    public List<AlbumImageModel>? AlbumImages { get; set; }
 }

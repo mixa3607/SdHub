@@ -16,7 +16,6 @@ export interface IAlbumModel
 	description: string;
 	owner: IImageOwnerModel;
 	thumbImage: IFileModel;
-	albumImages: IAlbumImageModel[];
 }
 export interface IAlbumImageModel
 {
@@ -24,4 +23,77 @@ export interface IAlbumImageModel
 	image: IImageModel;
 	gridId: number;
 	grid: IGridModel;
+}
+export interface IGetAlbumRequest
+{
+	shortToken: string;
+}
+export interface IGetAlbumResponse
+{
+	album: IAlbumModel;
+	imagesCount: number;
+}
+export interface IAddAlbumImagesRequest
+{
+	albumShortToken: string;
+	images: string[];
+}
+export interface IAddAlbumImagesResponse
+{
+	addedImages: string[];
+}
+export interface ICreateAlbumRequest
+{
+	name: string;
+	description: string;
+}
+export interface IDeleteAlbumRequest
+{
+	shortToken: string;
+}
+export interface IDeleteAlbumResponse
+{
+}
+export interface IDeleteAlbumImagesRequest
+{
+	albumShortToken: string;
+	images: string[];
+}
+export interface IDeleteAlbumImagesResponse
+{
+	deletedImages: string[];
+}
+export interface ISearchAlbumRequest
+{
+	searchText: string;
+	owner: string;
+	fields: SearchAlbumInFieldType[];
+	orderByField: SearchAlbumOrderByFieldType;
+	orderBy: SearchAlbumOrderByType;
+	skip: number;
+	take: number;
+}
+export interface ISearchAlbumResponse
+{
+	albums: IAlbumModel[];
+	total: number;
+}
+export interface IEditAlbumRequest
+{
+	shortToken: string;
+	name: string;
+	description: string;
+}
+export enum SearchAlbumInFieldType {
+	Name = 0,
+	Description = 1,
+	User = 2
+}
+export enum SearchAlbumOrderByType {
+	Asc = 0,
+	Desc = 1
+}
+export enum SearchAlbumOrderByFieldType {
+	UploadDate = 0,
+	UserName = 1
 }

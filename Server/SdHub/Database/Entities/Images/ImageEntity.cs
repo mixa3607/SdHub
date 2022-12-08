@@ -3,27 +3,11 @@ using System.Collections.Generic;
 using SdHub.Database.Entities.Albums;
 using SdHub.Database.Entities.Bins;
 using SdHub.Database.Entities.Files;
+using SdHub.Database.Entities.Grids;
 using SdHub.Database.Entities.Users;
-using SdHub.Models.Album;
 
 namespace SdHub.Database.Entities.Images;
 
-/*public class TagForImageEntity
-{
-    public long Id { get; set; }
-    public string? Value { get; set; }
-
-    public List<ImageTagEntity>? ImageTags { get; set; }
-}
-
-public class ImageTagEntity
-{
-    public long ImageId { get; set; }
-    public ImageEntity? Image { get; set; }
-
-    public long TagId { get; set; }
-    public TagForImageEntity? Tag { get; set; }
-}*/
 
 public class ImageEntity
 {
@@ -59,8 +43,8 @@ public class ImageEntity
 
     public ImageParsedMetadataEntity? ParsedMetadata { get; set; }
     public ImageRawMetadataEntity? RawMetadata { get; set; }
-
-    //public List<ImageTagEntity>? ImageTags { get; set; }
+    
     public List<AlbumImageEntity>? AlbumImages { get; set; }
+    public List<GridImageEntity>? GridImages { get; set; }
     public List<GenerationSampleEntity>? GenSamples { get; set; }
 }

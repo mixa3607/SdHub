@@ -13,11 +13,11 @@ namespace SdHub.Database;
 public class SdHubDbContext : DbContext
 {
     //tags
-    public DbSet<TagEntity> Tags { get; set; }
-    public DbSet<ModelTagEntity> ModelTags { get; set; }
-    public DbSet<VaeTagEntity> VaeTags { get; set; }
-    public DbSet<HypernetTagEntity> HypernetTags { get; set; }
-    public DbSet<EmbeddingTagEntity> EmbeddingTags { get; set; }
+    public DbSet<TagEntity> Tags { get; set; } = null!;
+    public DbSet<ModelTagEntity> ModelTags { get; set; } = null!;
+    public DbSet<VaeTagEntity> VaeTags { get; set; } = null!;
+    public DbSet<HypernetTagEntity> HypernetTags { get; set; } = null!;
+    public DbSet<EmbeddingTagEntity> EmbeddingTags { get; set; } = null!;
 
     //files
     public DbSet<FileStorageEntity> FileStorages { get; set; } = null!;

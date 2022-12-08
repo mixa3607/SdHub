@@ -5,12 +5,20 @@ using SdHub.Database.Entities.Bins;
 using SdHub.Database.Entities.Files;
 using SdHub.Database.Entities.Grids;
 using SdHub.Database.Entities.Images;
+using SdHub.Database.Entities.Tags;
 using SdHub.Database.Entities.Users;
 
 namespace SdHub.Database;
 
 public class SdHubDbContext : DbContext
 {
+    //tags
+    public DbSet<TagEntity> Tags { get; set; }
+    public DbSet<ModelTagEntity> ModelTags { get; set; }
+    public DbSet<VaeTagEntity> VaeTags { get; set; }
+    public DbSet<HypernetTagEntity> HypernetTags { get; set; }
+    public DbSet<EmbeddingTagEntity> EmbeddingTags { get; set; }
+
     //files
     public DbSet<FileStorageEntity> FileStorages { get; set; } = null!;
     public DbSet<FileEntity> Files { get; set; } = null!;

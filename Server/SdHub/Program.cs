@@ -109,10 +109,10 @@ if (hangfireOptions.RunServer)
 {
     builder.Services.AddHangfireServer(x =>
     {
-        x.ServerTimeout = TimeSpan.FromSeconds(5);
-        x.ServerCheckInterval = TimeSpan.FromSeconds(10);
-        x.CancellationCheckInterval = TimeSpan.FromSeconds(10);
-        x.HeartbeatInterval = TimeSpan.FromSeconds(10);
+        //x.ServerTimeout = TimeSpan.FromSeconds(5);
+        //x.ServerCheckInterval = TimeSpan.FromSeconds(10);
+        //x.CancellationCheckInterval = TimeSpan.FromSeconds(10);
+        //x.HeartbeatInterval = TimeSpan.FromSeconds(10);
         x.ServerName = hangfireOptions.ServerName;
     });
 }

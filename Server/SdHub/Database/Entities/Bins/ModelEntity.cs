@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using SdHub.Database.Entities.Tags;
 using SdHub.Models.Bins;
 
 namespace SdHub.Database.Entities.Bins;
@@ -12,4 +13,5 @@ public class ModelEntity
     public string? Author { get; set; }
 
     public List<ModelVersionEntity>? Versions { get; set; }
+    public List<ModelTagEntity>? ModelTags { get; set; }
 }

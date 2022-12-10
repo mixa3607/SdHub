@@ -29,7 +29,7 @@ https://rentry.org/voldy#-running-on-4gb-and-under-
 ----------------------------------
 [b]УСТАНОВКА В ОБЛАКЕ[/b]
 Если у вас слабое железо, можно поднять нейронку на гугл коллабе. Google Colab - облако, выделяемое гуглом с мощными CPU и TPU. Можно юзать бесплатно несколько часов каждый день. Обойти ограничение можно, создав второй аккаунт.
-http://ai-art-wiki.com/wiki/Stable_diffusion/cloud/ru
+https://ai-art-wiki.com/wiki/Stable_diffusion/cloud/ru
 https://rentry.org/244wt - список колабов
 ----------------------------------
 [i]Аска тест (проверка работоспособности NAI)[/i]:

@@ -1,5 +1,3 @@
-
-
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { map, shareReplay, switchMap } from 'rxjs/operators';

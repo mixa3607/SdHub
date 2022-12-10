@@ -1,4 +1,10 @@
 <mat-card>
+  <div
+    *ngIf="isSelectionModeActivated$ | async"
+    class="image-selection-overlay"
+    [class.image-selection-overlay_selected]="isSelected$ | async"
+    (click)="toggleSelection()">
+  </div>
   <mat-card-content style="display: flex; flex-direction: column; gap: .4rem">
     <a class="card-container">
       <a *ngIf="thumbUrl != ''; else noThumb"
@@ -34,10 +40,10 @@
 </mat-card>
 
 <mat-menu #cardMenu="matMenu">
-  <!-- <button mat-menu-item>
+  <button mat-menu-item (click)="toggleSelection()">
     <mat-icon>library_add_check</mat-icon>
     <span>Begin selection</span>
-  </button> -->
+  </button>
   <button *ngIf="hasAlbums$ | async" mat-menu-item [matMenuTriggerFor]="albumsMenu">
     <mat-icon>photo_library</mat-icon>
     <span>Add to album</span>

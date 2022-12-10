@@ -2,9 +2,10 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { IImageModel } from "apps/SdHub/src/app/models/autogen/misc.models";
 import { ToastrService } from 'ngx-toastr';
-import { combineLatest } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { AuthStateService } from '../../../core/services/auth-state.service';
+import { ImageSelectionService } from '../../../core/services/image-selection.service';
 import { MyAlbumsService } from '../../../core/services/my-albums.service';
 import { AlbumApi } from '../../services/api/album.api';
 import { ImageApi } from '../../services/api/image.api';
@@ -50,6 +51,10 @@ export class SmallImageCardComponent implements OnInit {
       map(([hasAlbums, canDelete]) => hasAlbums || canDelete)
     );
 
+    public isSelected$: Observable<boolean> = null!;
+
+    public isSelectionModeActivated$ = this.imageSelectionService.hasSelectedImages$;
+
     constructor(
       private dialog: MatDialog,
       private albumApi: AlbumApi,
@@ -57,9 +62,11 @@ export class SmallImageCardComponent implements OnInit {
       private toastr: ToastrService,
       private authStateService: AuthStateService,
       private myAlbumsService: MyAlbumsService,
+      private imageSelectionService: ImageSelectionService,
     ) { }
 
     ngOnInit(): void {
+      this.isSelected$ = this.imageSelectionService.isSelected(this.shortToken);
     }
 
     public addImageToAlbum(albumShortToken: string) {
@@ -89,6 +96,10 @@ export class SmallImageCardComponent implements OnInit {
           this.toastr.success('Image deleted');
           this.imageDeleted.emit();
         });
+    }
+
+    toggleSelection() {
+      this.imageSelectionService.toggleSelected(this.shortToken);
     }
 
     private loadImage(value: IImageModel | null): void {

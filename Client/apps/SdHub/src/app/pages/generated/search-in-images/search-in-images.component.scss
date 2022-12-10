@@ -11,6 +11,23 @@
   gap: .6rem;
 }
 
+.actions {
+  position: sticky;
+  top: 15px;
+  display: flex;
+  gap: 10px;
+  z-index: 2;
+  visibility: hidden;
+
+  &_visible {
+    visibility: visible;
+  }
+
+  &_unavailable {
+    display: none;
+  }
+}
+
 .search-result-placeholder-container {
   display: flex;
   flex-direction: column;

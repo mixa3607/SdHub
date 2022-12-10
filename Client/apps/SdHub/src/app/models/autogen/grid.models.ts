@@ -10,6 +10,7 @@ import { IImageModel } from './misc.models';
 export interface IGridModel
 {
 	id: number;
+	shortUrl: string;
 	shortToken: string;
 	deletedAt: string|null;
 	createdAt: string;
@@ -30,4 +31,19 @@ export interface IGridImageModel
 {
 	order: number;
 	image: IImageModel;
+}
+export interface IUploadGridRequest
+{
+	albumShortToken: string;
+	file: any;
+	xTiles: number;
+	yTiles: number;
+	xValues: string[];
+	yValues: string[];
+}
+export interface IUploadGridResponse
+{
+	uploaded: boolean;
+	reason: string;
+	grid: IGridModel;
 }

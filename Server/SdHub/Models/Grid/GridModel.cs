@@ -9,6 +9,7 @@ public class GridModel
 {
     public long Id { get; set; }
 
+    public string? ShortUrl { get; set; }
     public string? ShortToken { get; set; }
 
     public DateTimeOffset? DeletedAt { get; set; }

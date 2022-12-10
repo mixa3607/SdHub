@@ -51,7 +51,6 @@ export class UploadImageComponent implements OnInit {
               private authState: AuthStateService,
               private uploadApi: UploadApi,
               private albumApi: AlbumApi,) {
-
     this.authState.isAuthenticated$
       .pipe(untilDestroyed(this))
       .subscribe(x => this.isAuthenticated = x);

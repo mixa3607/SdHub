@@ -4,13 +4,27 @@
     <div style="display: flex; flex-direction: column; gap: 1rem;">
       <div class="file-drop-area-wrap">
         <ngx-file-drop class="file-drop-area"
+                       (onFileDrop)="dropped($event)"
                        dropZoneLabel="Drop archive with images here">
           <ng-template let-openFileSelector="openFileSelector" ngx-file-drop-content-tmp>
-            Drop archive (or pick
-            <button (click)="openFileSelector()" mat-icon-button type="button">
-              <mat-icon>folder_open</mat-icon>
-            </button>
-            )
+            <div style="display: flex; flex-direction: column">
+              <div *ngIf="fileForUpload == null">
+                Drop archive (or pick
+                <button (click)="openFileSelector()" mat-icon-button type="button">
+                  <mat-icon>folder_open</mat-icon>
+                </button>
+                )
+              </div>
+              <div *ngIf="fileForUpload != null">
+                {{fileForUpload.name}} | {{fileForUpload.sizeHuman}}
+              </div>
+              <div *ngIf="fileForUpload?.uploaded === 'error'">
+                {{fileForUpload?.uploadingError ?? ''}}
+              </div>
+              <div *ngIf="fileForUpload?.uploaded === 'yes'">
+                <a [href]="fileForUpload?.uploadedGrid?.shortUrl ?? ''">{{fileForUpload?.uploadedGrid?.shortUrl ?? ''}}</a>
+              </div>
+            </div>
           </ng-template>
         </ngx-file-drop>
       </div>
@@ -43,4 +57,18 @@
     </div>
   </mat-card-content>
 
+  <div class="actions">
+    <album-autocomplete *ngIf="isAuthenticated" [userLogin]="userLogin"
+                        (uploadToAlbumChange)="uploadToAlbum = $event"></album-autocomplete>
+    <button (click)="onUploadClick()" [disabled]="fileForUpload == null || uploading || !xForm.valid || !yForm.valid"
+            color="primary"
+            mat-raised-button
+            style="flex-grow: 60">Upload
+    </button>
+    <button (click)="onClearClick()" [disabled]="uploading"
+            color="warn"
+            mat-raised-button
+            style="flex-grow: 20">Clear
+    </button>
+  </div>
 </mat-card>

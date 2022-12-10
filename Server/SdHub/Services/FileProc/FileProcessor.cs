@@ -54,6 +54,12 @@ public class FileProcessor : IFileProcessor
         return tmpFile;
     }
 
+    public string GetNewTempDirPath()
+    {
+        var tmpFile = Path.Combine(_options.CacheDir!, Guid.NewGuid().ToString("N"));
+        return tmpFile;
+    }
+
     public async Task<string> WriteToCacheAsync(Stream bytes, CancellationToken ct = default)
     {
         var tmpFile = GetNewTempFilePath();

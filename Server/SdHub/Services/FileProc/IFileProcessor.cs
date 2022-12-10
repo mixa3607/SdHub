@@ -10,6 +10,7 @@ namespace SdHub.Services.FileProc;
 public interface IFileProcessor
 {
     string GetNewTempFilePath();
+    string GetNewTempDirPath();
 
     Task<string> WriteToCacheAsync(Stream bytes, CancellationToken ct = default);
 

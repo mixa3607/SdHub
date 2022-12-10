@@ -20,7 +20,7 @@ public class FileProfile : Profile
         CreateMap<FileEntity, FileModel>(MemberList.Destination)
             .ForMember(x => x.DirectUrl, o => o.ConvertUsing<DirectLinkConverterFile, FileEntity>(x => x));
         CreateMap<ImageEntity, ImageModel>(MemberList.Destination)
-            .ForMember(x => x.ShortUrl, o => o.ConvertUsing<ShortLinkConverter, ImageEntity>(x => x));
+            .ForMember(x => x.ShortUrl, o => o.ConvertUsing<ShortLinkImageConverter, ImageEntity>(x => x));
         CreateMap<ImageParsedMetadataEntity, ImageParsedMetadataModel>(MemberList.Destination).ReverseMap();
         CreateMap<ImageParsedMetadataTagEntity, ImageParsedMetadataTagModel>(MemberList.Destination).ReverseMap();
         CreateMap<UserEntity, ImageOwnerModel>(MemberList.Destination);

@@ -119,12 +119,16 @@ public class UploadGridController : ControllerBase
             return resp;
         }
 
+
+        var count = 0;
         await using var formStream = req.File!.OpenReadStream();
         {
             try
             {
-                using var archive = ReaderFactory.Open(formStream);
-                var count = 0;
+                using var archive = ReaderFactory.Open(formStream, new ReaderOptions()
+                {
+                    LeaveStreamOpen = true
+                });
                 while (archive.MoveToNextEntry())
                 {
                     if (archive.Entry.IsDirectory)
@@ -148,10 +152,20 @@ public class UploadGridController : ControllerBase
             }
         }
 
+        if (req.XTiles * req.YTiles != count)
+        {
+            resp.Uploaded = false;
+            resp.Reason = $"Archive must contain {req.XTiles * req.YTiles} images. Read {count}";
+            return resp;
+        }
+
         var files = new List<ProcessingFile>();
         formStream.Position = 0;
         {
-            using var archive = ReaderFactory.Open(formStream);
+            using var archive = ReaderFactory.Open(formStream, new ReaderOptions()
+            {
+                LeaveStreamOpen = true
+            });
             var i = 0;
             while (archive.MoveToNextEntry())
             {
@@ -183,6 +197,7 @@ public class UploadGridController : ControllerBase
             }
         }
 
+        files = files.OrderBy(x => x.OriginalName).ToList();
         foreach (var f in files)
         {
             f.Hash = await _fileProcessor.CalculateHashAsync(f.TmpFile, ct);
@@ -216,7 +231,7 @@ public class UploadGridController : ControllerBase
 
         foreach (var file in files)
         {
-            if (file.Image == null)
+            if (file.Image != null)
                 continue;
             var uploadResult =
                 await _fileProcessor.WriteFileToStorageAsync(file.TmpFile, file.OriginalName, file.Hash!, ct);
@@ -241,7 +256,9 @@ public class UploadGridController : ControllerBase
                 },
                 OriginalImage = _mapper.Map<FileEntity>(uploadResult),
             };
+            _db.Images.Add(file.Image);
         }
+        await _db.SaveChangesAsync(CancellationToken.None);
 
         var grid = new GridEntity()
         {

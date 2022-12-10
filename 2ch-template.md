@@ -21,7 +21,7 @@ https://wiki.diffai.xyz/free-tg-bots - Бесплатные телеграм б�
 ----------------------------------
 [b]УСТАНОВКА НА ПК[/b]
 Для комфортной работы нужна видеокарта с как минимум 6Gb памяти.
-http://ai-art-wiki.com/wiki/Stable_diffusion/install/ru
+https://ai-art-wiki.com/wiki/Stable_diffusion/install/ru
 https://teletype.in/@stablediffusion/PC_install_SD
 Оптимизация для слабых ПК. Обычно это приводит к потере детерминированности и качества.
 https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Optimizations

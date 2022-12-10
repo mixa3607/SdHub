@@ -16,7 +16,7 @@ dateCreated: 2022-11-18T23:51:44.600Z
 Прошлый тред: https://arhivach.ng/thread/ https://t.me/000000
 ----------------------------------
 [b]Руководство с нуля[/b]
-http://ai-art-wiki.com/wiki/Stable_Diffusion/Absolute_beginners_guide/ru
+https://ai-art-wiki.com/wiki/Stable_Diffusion/Absolute_beginners_guide/ru
 https://wiki.diffai.xyz/free-tg-bots - Бесплатные телеграм боты
 ----------------------------------
 [b]УСТАНОВКА НА ПК[/b]
@@ -26,7 +26,7 @@ https://teletype.in/@stablediffusion/PC_install_SD
 Оптимизация для слабых ПК. Обычно это приводит к потере детерминированности и качества.
 https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Optimizations
 https://rentry.org/voldy#-running-on-4gb-and-under-
-Гайд для АМД под винду: https://travelneil.com/stable-diffusion-windows-amd.html
+Гайд для АМД под винду: https://www.travelneil.com/stable-diffusion-windows-amd.html
 ----------------------------------
 [b]УСТАНОВКА В ОБЛАКЕ[/b]
 Если у вас слабое железо, можно поднять нейронку на гугл коллабе. Google Colab - облако, выделяемое гуглом с мощными CPU и TPU. Можно юзать бесплатно несколько часов каждый день. Обойти ограничение можно, создав второй аккаунт.
@@ -38,8 +38,7 @@ https://rentry.org/244wt - список колабов
 Negative prompt:
 >lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, artist name
 
-[b]Если у тебя чёрные квадраты вместо сгенерированной картинки, пропиши в параметрах webui-user.bat [i]set COMMANDLINE_ARGS=--no-half-vae[/i] (Для карт 16 линейки можно [i]--precision full --no-half[/i])
-Если у тебя мыльные картинки при использовании Highres. fix поставь в настройках галочку Upscale latent space image when doing hires. fix[/b]
+[b]Если у тебя мыльные картинки при использовании Highres. fix поставь в настройках галочку Upscale latent space image when doing hires. fix[/b]
 ----------------------------------
 [b]МОДЕЛИ И МИКСЫ:[/b] 
 Модель определяет стиль генерируемых картинок. Популярные модели, используемые в треде:
@@ -62,19 +61,19 @@ Negative prompt:
 ----------------------------------
 [b]ОБУЧЕНИЕ[/b]
 Существующую модель можно обучить симулировать определенный стиль или рисовать конкретного персонажа или объект.
+[b]Обучение своих эмбедингов/моделей[/b] - https://wiki.diffai.xyz/training-info
 Если модель уже умеет рисовать что-то похожее: https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Textual-Inversion
 Если она не умеет, или нужно делать это на нескольких моделях: https://rentry.org/hypernetwork4dumdums
 Гайд по созданию своих моделей: https://github.com/nitrosocke/dreambooth-training-guide
-Сборник гайдов и технических статей по теме: http://ai-art-wiki.com/wiki/Textual_inversion
+Сборник гайдов и технических статей по теме: https://ai-art-wiki.com/wiki/Textual_inversion
 ----------------------------------
 Репозитории: 
 https://github.com/AUTOMATIC1111/stable-diffusion-webui - пользовательский интерфейс от AUTOMATIC1111
-https://github.com/averad/OnnxDiffusersUI - интерфейс для владельцев AMD (если не получилось запустить автоматик)
+https://wiki.diffai.xyz/amd-users - для владельцев AMD (если не получилось запустить автоматик)
 ----------------------------------
 [b]ПОЛЕЗНЫЕ ССЫЛКИ[/b]
 https://wiki.diffai.xyz/FAQ - [b]ЧаВо ДАННОГО ТРЕДА, ЕСЛИ ЕСТЬ ВОПРОС, ДЛЯ НАЧАЛА ЗАГЛЯНИ СЮДА[/b]
 https://rentry.org/sdupdates2 - Вся информация о моделях, эмбедингах, промтах и т.д. (переодически обновляется)
-https://wiki.diffai.xyz/training-info - [b]Обучение своих эмбедингов/моделей[/b]
 https://wiki.diffai.xyz/other-info - Остальные ссылки (промпты, лица, одежда, позы, ракурсы и т.д.)
 ----------------------------------
 Шаблон шапки для тредов: https://wiki.diffai.xyz/2ch-template

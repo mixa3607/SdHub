@@ -15,43 +15,52 @@ dateCreated: 2022-11-18T23:51:44.600Z
 [i]Генерируем тяночек![/i]
 Прошлый тред: https://arhivach.ng/thread/ https://t.me/000000
 ----------------------------------
-[b]NAI[/b]
-https://rentry.org/voldy#-novelai-setup-
-https://rentry.org/naifunya
-----------------------------------
-[b]МОДЕЛИ И МИКСЫ:[/b] 
-200+ моделей и их хэши https://static.nas1.gl.arkprojects.space/stable-diff/
-https://rentry.co/ng5wh
+[b]Руководство с нуля[/b]
+https://ai-art-wiki.com/wiki/Stable_Diffusion/Absolute_beginners_guide/ru
+https://wiki.diffai.xyz/free-tg-bots - Бесплатные телеграм боты
 ----------------------------------
 [b]УСТАНОВКА НА ПК[/b]
-[b]https://rentry.org/nai-speedrun[/b] - [SPOILER]имеется гайд для установки на АМД[/SPOILER]
-[i]https://teletype.in/@stablediffusion/PC_install_SD[/i] - [b]для дегенератов[/b]
-Репозиторий: 
-https://github.com/AUTOMATIC1111/stable-diffusion-webui - пользовательский интерфейс от AUTOMATIC1111
-Гайды:
-https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki
-https://github.com/neonsecret/stable-diffusion/blob/main/GUI_TUTORIAL.md
-https://www.youtube.com/watch?v=6MeJKnbv1ts
-https://wiki.diffai.xyz/amd-users - [b]у тебя AMD? Тебе сюда![/b]
-Оптимизация для слабых карт: 
+Для комфортной работы нужна видеокарта с как минимум 6Gb памяти.
+https://ai-art-wiki.com/wiki/Stable_diffusion/install/ru
+https://teletype.in/@stablediffusion/PC_install_SD
+Оптимизация для слабых ПК. Обычно это приводит к потере детерминированности и качества.
 https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Optimizations
 https://rentry.org/voldy#-running-on-4gb-and-under-
 ----------------------------------
-[i]Пример простого, но хорошего запроса[/i]:
->masterpiece, best quality, 1girl, 1boy, (((pov))), ((cum)), (vaginal:1.4), on back, pussy juice, sweat, by dross
+[b]УСТАНОВКА В ОБЛАКЕ[/b]
+Если у вас слабое железо, можно поднять нейронку на гугл коллабе. Google Colab - облако, выделяемое гуглом с мощными CPU и TPU. Можно юзать бесплатно несколько часов каждый день. Обойти ограничение можно, создав второй аккаунт.
+https://ai-art-wiki.com/wiki/Stable_diffusion/cloud/ru
+https://rentry.org/244wt - список колабов
+----------------------------------
+[i]Аска тест (проверка работоспособности NAI)[/i]:
+>masterpiece, best quality, asuka langley sitting cross legged on a chair
 Negative prompt:
->lowres, bad anatomy, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, blurry
+>lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, artist name
+https://rentry.org/nai-speedrun#hello-asuka
+----------------------------------
+[b]МОДЕЛИ И МИКСЫ:[/b] 
+Модель определяет стиль генерируемых картинок. Популярные модели, используемые в треде:
+- Аниме: AntlersMix, Berrymix
+- Хентай: Anonmix
+- Реализм: HassanBlend
+Подробнее о моделях: https://rentry.co/ng5wh
+200+ моделей и их хэши https://static.nas1.gl.arkprojects.space/stable-diff/
+----------------------------------
+[b]ОБУЧЕНИЕ[/b]
+Существующую модель можно обучить симулировать определенный стиль или рисовать конкретного персонажа или объект.
+[b]Обучение своих эмбедингов/моделей[/b] - https://wiki.diffai.xyz/training-info
+Если модель уже умеет рисовать что-то похожее: https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Textual-Inversion
+Если она не умеет, или нужно делать это на нескольких моделях: https://rentry.org/hypernetwork4dumdums
+Гайд по созданию своих моделей: https://github.com/nitrosocke/dreambooth-training-guide
+Сборник гайдов и технических статей по теме: https://ai-art-wiki.com/wiki/Textual_inversion
+----------------------------------
+Репозитории: 
+https://github.com/AUTOMATIC1111/stable-diffusion-webui - пользовательский интерфейс от AUTOMATIC1111
 ----------------------------------
 [b]ПОЛЕЗНЫЕ ССЫЛКИ[/b]
 https://wiki.diffai.xyz/FAQ - [b]ЧаВо ДАННОГО ТРЕДА, ЕСЛИ ЕСТЬ ВОПРОС, ДЛЯ НАЧАЛА ЗАГЛЯНИ СЮДА[/b]
 https://rentry.org/sdupdates2 - Вся информация о моделях, эмбедингах, промтах и т.д. (переодически обновляется)
-https://wiki.diffai.xyz/free-tg-bots - Бесплатные телеграм боты
-https://wiki.diffai.xyz/training-info - [b]Обучение своих эмбедингов/моделей[/b]
-https://wiki.diffai.xyz/other-info - Остальные ссылки (промты лица, одежды, позы и т.д.)
-----------------------------------
-[b]ГУГЛ КОЛЛАБ[/b]
-Если у вас слабое железо, можно поднять нейронку на гугл коллабе. Google Colab - облако, выделяемое гуглом с мощными CPU и TPU. Можно юзать бесплатно несколько часов каждый день. Обойти ограничение можно, создав второй аккаунт. 
-Список коллабов, можно выбрать любой: https://rentry.org/244wt
+https://wiki.diffai.xyz/other-info - Остальные ссылки (промпты, лица, одежда, позы, ракурсы и т.д.)
 ----------------------------------
 Шаблон шапки для тредов: https://wiki.diffai.xyz/2ch-template
 ```

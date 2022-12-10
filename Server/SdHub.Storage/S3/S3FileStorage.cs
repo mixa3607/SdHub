@@ -55,14 +55,9 @@ public class S3FileStorage : IFileStorage
             ct);
     }
 
-    public async Task<FileSaveResult> SaveAsync(Stream dataStream, string originalName, CancellationToken ct = default)
+    public async Task<FileSaveResult> SaveAsync(Stream dataStream, string originalName, string hash, CancellationToken ct = default)
     {
         var size = dataStream.Length;
-        dataStream.Position = 0;
-
-        using var sha = SHA256.Create();
-        var hashBytes = await sha.ComputeHashAsync(dataStream, ct);
-        var hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
         dataStream.Position = 0;
 
         var fileType = MimeGuesser.GuessFileType(dataStream);

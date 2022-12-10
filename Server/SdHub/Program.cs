@@ -114,6 +114,7 @@ if (hangfireOptions.RunServer)
         //x.CancellationCheckInterval = TimeSpan.FromSeconds(10);
         //x.HeartbeatInterval = TimeSpan.FromSeconds(10);
         x.ServerName = hangfireOptions.ServerName;
+        x.Queues = new[] { "default", hangfireOptions.ServerQueue };
     });
 }
 

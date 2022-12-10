@@ -35,19 +35,13 @@ public class LocalFileStorage : IFileStorage
         return Task.CompletedTask;
     }
 
-    public async Task<FileSaveResult> SaveAsync(Stream dataStream, string originalName, CancellationToken ct = default)
+    public async Task<FileSaveResult> SaveAsync(Stream dataStream, string originalName, string hash, CancellationToken ct = default)
     {
         var tmpFile = Path.Combine(_settings.TempPath!, Guid.NewGuid().ToString("N"));
         var size = dataStream.Length;
 
         await using var tmpFileStream = File.Open(tmpFile, FileMode.CreateNew, FileAccess.ReadWrite);
         await dataStream.CopyToAsync(tmpFileStream, ct);
-        tmpFileStream.Position = 0;
-
-        using var sha = SHA256.Create();
-        var hashBytes = await sha.ComputeHashAsync(tmpFileStream, ct);
-        var hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
-        tmpFileStream.Close();
 
         var fileType = MimeGuesser.GuessFileType(tmpFile);
         var relPath = Path.Combine(hash[..2], $"{hash}.{fileType.Extension}");

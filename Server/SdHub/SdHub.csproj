@@ -9,10 +9,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Controllers\RatesLimitController.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="FluentEmail.Liquid" Version="3.0.2" />
 		<PackageReference Include="FluentEmail.Smtp" Version="3.0.2" />
 		<PackageReference Include="FluentValidation" Version="11.2.2" />
@@ -42,6 +38,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.10" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageReference Include="Scrutor" Version="4.2.0" />
+		<PackageReference Include="SharpCompress" Version="0.32.2" />
 		<PackageReference Include="SimpleBase" Version="3.1.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.4.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.4.0" />
@@ -62,10 +59,6 @@
 		<Folder Include="wwwroot\" />
 		<Folder Include="RequestFeatures\" />
 		<Folder Include="Attributes\" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Include="Controllers\RatesLimitController.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

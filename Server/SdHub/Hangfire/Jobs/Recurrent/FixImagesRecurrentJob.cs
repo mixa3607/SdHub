@@ -17,7 +17,7 @@ public class FixImagesRecurrentJob : IHangfireRecurrentJob
 
     public string Name => "FixImagesThumbs";
     public string CronExpression => "*/5 * * * *"; //every 5 minutes
-    public string? Queue => "default";
+    public string Queue => "default";
 
     private readonly SdHubDbContext _db;
 

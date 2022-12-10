@@ -45,6 +45,6 @@ public class ImageEntity
     public ImageRawMetadataEntity? RawMetadata { get; set; }
     
     public List<AlbumImageEntity>? AlbumImages { get; set; }
-    public List<GridImageEntity>? GridImages { get; set; }
+    public GridImageEntity? GridImage { get; set; }
     public List<GenerationSampleEntity>? GenSamples { get; set; }
 }

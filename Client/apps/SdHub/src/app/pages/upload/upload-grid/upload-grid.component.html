@@ -1,0 +1,46 @@
+<mat-card style="display: flex; flex-direction: column; gap: 1rem">
+  <mat-card-content>
+    <h1>Upload grid</h1>
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+      <div class="file-drop-area-wrap">
+        <ngx-file-drop class="file-drop-area"
+                       dropZoneLabel="Drop archive with images here">
+          <ng-template let-openFileSelector="openFileSelector" ngx-file-drop-content-tmp>
+            Drop archive (or pick
+            <button (click)="openFileSelector()" mat-icon-button type="button">
+              <mat-icon>folder_open</mat-icon>
+            </button>
+            )
+          </ng-template>
+        </ngx-file-drop>
+      </div>
+      <div [formGroup]="xForm" style="display: flex; flex-direction: row; gap: 1rem; align-items: end">
+        <mat-form-field appearance="fill" style="width: 10rem;">
+          <mat-label>Images by X</mat-label>
+          <input formControlName="xTiles" type="number" matInput min="1">
+          <mat-error *ngIf="xForm.get('xTiles')!.invalid">{{getErrorMessage(xForm.get('xTiles')!)}}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" style="flex-grow: 1;">
+          <mat-label>X values</mat-label>
+          <textarea cdkTextareaAutosize formControlName="xValues" type="number" matInput></textarea>
+          <mat-error *ngIf="xForm.get('xValues')!.invalid">{{getErrorMessage(xForm.get('xValues')!)}}</mat-error>
+        </mat-form-field>
+      </div>
+      <div [formGroup]="yForm" style="display: flex; flex-direction: row; gap: 1rem; align-items: end">
+        <mat-form-field appearance="fill" style="width: 10rem;">
+          <mat-label>Images by Y</mat-label>
+          <input formControlName="yTiles" type="number" matInput min="1">
+          <mat-error *ngIf="yForm.get('yTiles')!.invalid">{{getErrorMessage(yForm.get('yTiles')!)}}</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" style="flex-grow: 1;">
+          <mat-label>Y values</mat-label>
+          <textarea cdkTextareaAutosize formControlName="yValues" type="number" matInput></textarea>
+          <mat-error *ngIf="yForm.get('yValues')!.invalid">{{getErrorMessage(yForm.get('yValues')!)}}</mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+  </mat-card-content>
+
+</mat-card>

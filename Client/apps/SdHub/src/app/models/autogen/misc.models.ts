@@ -101,17 +101,19 @@ export enum CaptchaType {
 }
 export abstract class ModelStateErrors
 {
+	public static UserDeleted: string = `USER_DELETED`;
 	public static UserNotFound: string = `USER_NOT_FOUND`;
 	public static UserEditNotAllowed: string = `USER_EDIT_NOT_ALLOWED`;
+	public static UserWithEmailExist: string = `USER_WITH_EMAIL_EXIST`;
+	public static UserWithLoginExist: string = `USER_WITH_LOGIN_EXIST`;
+	public static UserRegistrationDisabled: string = `USER_REGISTRATION_DISABLED`;
+	public static RefreshTokenNotExist: string = `REFRESH_TOKEN_NOT_EXIST`;
 	public static EmailNotConfirmed: string = `EMAIL_NOT_CONFIRMED`;
 	public static BadCreds: string = `BAD_CREDS`;
 	public static BadConfirmationCode: string = `BAD_CONFIRMATION_CODE`;
-	public static UserWithEmailExist: string = `USER_WITH_EMAIL_EXIST`;
-	public static UserWithLoginExist: string = `USER_WITH_LOGIN_EXIST`;
 	public static InvalidCaptcha: string = `INVALID_CAPTCHA`;
-	public static RefreshTokenNotExist: string = `REFRESH_TOKEN_NOT_EXIST`;
 	public static ImageNotFound: string = `IMAGE_NOT_FOUND`;
-	public static UserRegistrationDisabled: string = `USER_REGISTRATION_DISABLED`;
+	public static ImageIsPartOfGrid: string = `IMAGE_IS_PART_OF_GRID`;
 	public static AlbumNotFound: string = `ALBUM_NOT_FOUND`;
 	public static NotAlbumOwner: string = `NOT_ALBUM_OWNER`;
 }

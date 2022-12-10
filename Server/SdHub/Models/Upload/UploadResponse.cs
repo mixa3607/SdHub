@@ -5,6 +5,5 @@ namespace SdHub.Models.Upload;
 
 public class UploadResponse
 {
-
     public IReadOnlyList<UploadedFileModel> Files { get; set; } = Array.Empty<UploadedFileModel>();
 }

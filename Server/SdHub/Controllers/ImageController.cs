@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using SdHub.Constants;
 using SdHub.Database;
 using SdHub.Database.Entities.Images;
+using SdHub.Database.Extensions;
 using SdHub.Extensions;
 using SdHub.Models;
 using SdHub.Models.Image;
@@ -117,11 +118,6 @@ public class ImageController : ControllerBase
             query = query.Where(predicate);
         }
 
-        if (req.OnlyFromRegisteredUsers)
-        {
-            query = query.Where(x => !x.Owner!.IsAnonymous);
-        }
-
         if (req.OrderByField == SearchImageOrderByFieldType.UploadDate)
         {
             if (req.OrderBy == SearchImageOrderByType.Asc)
@@ -142,8 +138,11 @@ public class ImageController : ControllerBase
             .Include(x => x.OriginalImage)
             .Include(x => x.CompressedImage)
             .Include(x => x.ThumbImage)
-            .Include(x => x.Owner)
-            .Where(x => x.DeletedAt == null);
+            .Include(x => x.Owner);
+
+        query = query.ApplyFilter(anonymousUser: !req.OnlyFromRegisteredUsers ? true : null,
+            inGrid: req.AlsoFromGrids ? null : false);
+
         var total = await query.CountAsync(ct);
         var images = await query.Skip(req.Skip).Take(req.Take).ToArrayAsync(ct);
         var imageModels = _mapper.Map<ImageModel[]>(images);
@@ -165,7 +164,7 @@ public class ImageController : ControllerBase
 
         var imageEnt = await _db.Images
             .Include(x => x.Owner)
-            .Where(x => x.DeletedAt == null && x.ShortToken == req.ShortToken)
+            .ApplyFilter(shortCode: req.ShortToken!.Trim())
             .FirstOrDefaultAsync(ct);
         if (imageEnt == null)
             ModelState.AddError(ModelStateErrors.ImageNotFound).ThrowIfNotValid();
@@ -190,7 +189,7 @@ public class ImageController : ControllerBase
             .Include(x => x.CompressedImage)
             .Include(x => x.ThumbImage)
             .Include(x => x.Owner)
-            .Where(x => x.DeletedAt == null && x.ShortToken == req.ShortToken)
+            .ApplyFilter(shortCode: req.ShortToken!.Trim())
             .FirstOrDefaultAsync(ct);
         if (imageEnt == null)
             ModelState.AddError(ModelStateErrors.ImageNotFound).ThrowIfNotValid();
@@ -211,11 +210,14 @@ public class ImageController : ControllerBase
 
         var imageEnt = await _db.Images
             .Include(x => x.Owner)
-            .Where(x => x.DeletedAt == null && x.ShortToken == req.ShortToken)
+            .Include(x => x.GridImage)
+            .ApplyFilter(shortCode: req.ShortToken!.Trim())
             .FirstOrDefaultAsync(ct);
+
         if (imageEnt == null)
             ModelState.AddError(ModelStateErrors.ImageNotFound).ThrowIfNotValid();
-
+        if (imageEnt!.GridImage != null) 
+            ModelState.AddError(ModelStateErrors.ImageIsPartOfGrid).ThrowIfNotValid();
         if (!CanManage(imageEnt!, userJwt, req.ManageToken, ModelState))
             ModelState.Throw();
 
@@ -241,7 +243,7 @@ public class ImageController : ControllerBase
             .Include(x => x.CompressedImage)
             .Include(x => x.ThumbImage)
             .Include(x => x.Owner)
-            .Where(x => x.DeletedAt == null && x.ShortToken == req.Image!.ShortToken)
+            .ApplyFilter(shortCode: req.Image!.ShortToken!.Trim())
             .FirstOrDefaultAsync(ct);
 
         if (imageEnt == null)

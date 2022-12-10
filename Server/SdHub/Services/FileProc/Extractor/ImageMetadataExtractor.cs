@@ -35,7 +35,7 @@ public class ImageMetadataExtractor : IImageMetadataExtractor
     {
         var tag = new ImageMetadataTag(x.Type, dir.GetTagName(x.Type), new ImageMetadataTagValue()
         {
-            AsString = dir.GetDescription(x.Type),
+            AsString = dir.GetDescription(x.Type)?.Replace("\u0000", ""),
             Object = dir.GetObject(x.Type)
         });
         if (tag.Value.Object is Array)

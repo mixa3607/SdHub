@@ -55,9 +55,12 @@ public class ImageConvertRunner : IImageConvertRunnerV1
 
             using var dstImgStream = new MemoryStream();
             await srcImage.WriteAsync(dstImgStream, MagickFormat.WebP, ct);
-            dstImgStream.Position = 0;
 
-            var result = await _fileProcessor.WriteFileToStorageAsync(dstImgStream, $"{imageId}_thumb.webp", ct);
+            dstImgStream.Position = 0;
+            var hash = await _fileProcessor.CalculateHashAsync(dstImgStream, ct);
+
+            dstImgStream.Position = 0;
+            var result = await _fileProcessor.WriteFileToStorageAsync(dstImgStream, $"{imageId}_thumb.webp", hash, ct);
             var file = await _fileProcessor.SaveToDatabaseAsync(result, CancellationToken.None);
             image.ThumbImage = file;
             await _db.SaveChangesAsync(CancellationToken.None);
@@ -68,12 +71,20 @@ public class ImageConvertRunner : IImageConvertRunnerV1
             using var srcImage = new MagickImage(srcImgStream);
             using var dstImgStream = new MemoryStream();
             await srcImage.WriteAsync(dstImgStream, MagickFormat.WebP, ct);
-            dstImgStream.Position = 0;
 
-            var result = await _fileProcessor.WriteFileToStorageAsync(dstImgStream, $"{imageId}_compressed.webp", ct);
+            dstImgStream.Position = 0;
+            var hash = await _fileProcessor.CalculateHashAsync(dstImgStream, ct);
+
+            dstImgStream.Position = 0;
+            var result = await _fileProcessor.WriteFileToStorageAsync(dstImgStream, $"{imageId}_compressed.webp", hash, ct);
             var file = await _fileProcessor.SaveToDatabaseAsync(result, CancellationToken.None);
             image.CompressedImage = file;
             await _db.SaveChangesAsync(CancellationToken.None);
         }
+    }
+
+    public Task GenerateGridAsync(long imageId, bool force, CancellationToken ct = default)
+    {
+        throw new System.NotImplementedException();
     }
 }

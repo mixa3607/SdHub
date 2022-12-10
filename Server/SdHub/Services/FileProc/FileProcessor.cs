@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using ImageMagick;
 using MetadataExtractor.Formats.Png;
 using MetadataExtractor.Formats.WebP;
 using Microsoft.EntityFrameworkCore;
@@ -60,6 +62,20 @@ public class FileProcessor : IFileProcessor
         return tmpFile;
     }
 
+    public async Task<string> CalculateHashAsync(string tempFile, CancellationToken ct = default)
+    {
+        await using var tmpFileStream = File.OpenRead(tempFile);
+        return await CalculateHashAsync(tmpFileStream, ct);
+    }
+
+    public async Task<string> CalculateHashAsync(Stream bytes, CancellationToken ct = default)
+    {
+        using var sha = SHA256.Create();
+        var hashBytes = await sha.ComputeHashAsync(bytes, ct);
+        var hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+        return hash;
+    }
+
     public async Task<ExtractImageMetadataResult> ExtractImageMetadataAsync(string tempFile,
         CancellationToken ct = default)
     {
@@ -68,21 +84,16 @@ public class FileProcessor : IFileProcessor
 
         var height = -1;
         var width = -1;
-        // png
+        try
         {
-            var dir = dirs.FirstOrDefault(x => x.Type == "PNG-IHDR");
-            var pngH = dir?.Tags.FirstOrDefault(x => x.Type == PngDirectory.TagImageHeight)?.Value.Object as int?;
-            var pngW = dir?.Tags.FirstOrDefault(x => x.Type == PngDirectory.TagImageWidth)?.Value.Object as int?;
-            if (pngH.HasValue) height = pngH.Value;
-            if (pngW.HasValue) width = pngW.Value;
+            stream.Position = 0;
+            using var srcImage = new MagickImage(stream);
+            height = srcImage.Height;
+            width = srcImage.Width;
         }
-        // webp
+        catch (Exception)
         {
-            var dir = dirs.FirstOrDefault(x => x.Type == "WebP");
-            var pngH = dir?.Tags.FirstOrDefault(x => x.Type == WebPDirectory.TagImageHeight)?.Value.Object as int?;
-            var pngW = dir?.Tags.FirstOrDefault(x => x.Type == WebPDirectory.TagImageWidth)?.Value.Object as int?;
-            if (pngH.HasValue) height = pngH.Value;
-            if (pngW.HasValue) width = pngW.Value;
+            // ignore
         }
 
         if (height == -1 || width == -1)
@@ -100,50 +111,48 @@ public class FileProcessor : IFileProcessor
         return new ExtractImageMetadataResult(imageMetaTags, dirs, height, width);
     }
 
-    public Task DeleteTempFileAsync(string tempFile, CancellationToken ct = default)
+    public Task DeleteTempFilesAsync(DateTime deleteBefore, CancellationToken ct = default)
     {
         if (_options.PreserveCache)
         {
-            _logger.LogWarning("Skip deleting temp file!");
+            _logger.LogWarning("Skip deleting temp files!");
             return Task.CompletedTask;
         }
 
-        try
+        foreach (var file in Directory.EnumerateFiles(_options.CacheDir!))
         {
-            File.Delete(tempFile);
+            var fileInfo = new FileInfo(file);
+            if (fileInfo.LastAccessTimeUtc < deleteBefore) 
+                fileInfo.Delete();
         }
-        catch (Exception e)
+
+        foreach (var dir in Directory.EnumerateDirectories(_options.CacheDir!))
         {
-            _logger.LogError(e, "Cant delete temp file {name}", tempFile);
+            var dirInfo = new DirectoryInfo(dir);
+            if (dirInfo.LastAccessTimeUtc < deleteBefore)
+                dirInfo.Delete();
         }
 
         return Task.CompletedTask;
     }
 
-    public async Task<FileSaveResult> WriteFileToStorageAsync(string tempFile, string originalName,
+    public async Task<FileSaveResult> WriteFileToStorageAsync(string tempFile, string originalName, string hash,
         CancellationToken ct = default)
     {
         await using var stream = File.OpenRead(tempFile);
-        return await WriteFileToStorageAsync(stream, originalName, ct);
+        return await WriteFileToStorageAsync(stream, originalName, hash, ct);
     }
 
-    public async Task<FileSaveResult> WriteFileToStorageAsync(Stream seekableStream, string originalName,
+    public async Task<FileSaveResult> WriteFileToStorageAsync(Stream seekableStream, string originalName, string hash,
         CancellationToken ct = default)
     {
         var storage = await _fileStorageFactory.GetStorageAsync(seekableStream.Length, ct);
-        var saveResult = await storage.SaveAsync(seekableStream, originalName, ct);
+        var saveResult = await storage.SaveAsync(seekableStream, originalName, hash, ct);
         return saveResult;
     }
 
     public async Task<FileEntity> SaveToDatabaseAsync(FileSaveResult saveResult, CancellationToken ct = default)
     {
-        //TODO: спорная хрень
-        //var existedEntity = await _db.Files
-        //    .Include(x => x.Storage)
-        //    .FirstOrDefaultAsync(x => x.Hash == saveResult.Hash, ct);
-        //if (existedEntity != null)
-        //    return existedEntity;
-
         var entity = _mapper.Map<FileEntity>(saveResult);
         entity.Storage = await _db.FileStorages.FirstAsync(x => x.Name == entity.StorageName, ct);
         _db.Files.Add(entity);

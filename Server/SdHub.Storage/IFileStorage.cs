@@ -9,7 +9,7 @@ public interface IFileStorage
 
     Task InitAsync(CancellationToken ct = default);
 
-    Task<FileSaveResult> SaveAsync(Stream dataStream, string originalName, CancellationToken ct = default);
+    Task<FileSaveResult> SaveAsync(Stream dataStream, string originalName, string hash, CancellationToken ct = default);
 
     Task<bool> IsAvailableAsync(long requiredBytes = 0, CancellationToken ct = default);
 }

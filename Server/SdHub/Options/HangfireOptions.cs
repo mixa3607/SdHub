@@ -29,4 +29,10 @@ public class HangfireOptions
     /// </summary>
     [Required]
     public string? ServerName { get; set; } = "bakend";
+
+    /// <summary>
+    /// Special queue for this worker
+    /// </summary>
+    [Required] 
+    public string? ServerQueue { get; set; } = "backend";
 }

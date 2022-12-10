@@ -2,6 +2,7 @@
 using System.IO;
 using Reinforced.Typings.Fluent;
 using SdHub.Models.Grid;
+using SdHub.Models.Upload;
 using SdHub.TsConfigurators.Extensions;
 using SdHub.TsConfigurators.Shared;
 
@@ -16,6 +17,8 @@ public class GridTsConfigurator : ITsConfigurator
             {
                 typeof(GridModel),
                 typeof(GridImageModel),
+                typeof(UploadGridRequest),
+                typeof(UploadGridResponse),
             }, c => c
                 .SubsDatetimeOffsetToStr()
                 .SubsTimespanToStr()

@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using SdHub.Constants;
 using SdHub.Database;
 using SdHub.Database.Entities.Albums;
+using SdHub.Database.Extensions;
 using SdHub.Extensions;
 using SdHub.Models.Album;
 using SdHub.Services.User;
@@ -93,7 +94,7 @@ public class AlbumController : ControllerBase
         query = query
             .Include(x => x.ThumbImage)
             .Include(x => x.Owner)
-            .Where(x => x.DeletedAt == null);
+            .ApplyFilter();
         var total = await query.CountAsync(ct);
         var albums = await query.Skip(req.Skip).Take(req.Take).ToArrayAsync(ct);
         var albumModels = _mapper.Map<AlbumModel[]>(albums);

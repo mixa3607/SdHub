@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using SdHub.Constants;
 using SdHub.Database;
 using SdHub.Database.Entities.Albums;
@@ -159,11 +160,11 @@ public class UploadController : ControllerBase
                 {
                     uplFile.Uploaded = false;
                     uplFile.Reason = "Can't detect software generated image. Register account for bypass.";
-                    await _fileProcessor.DeleteTempFileAsync(tmpFile, ct);
                     continue;
                 }
 
-                var uploadResult = await _fileProcessor.WriteFileToStorageAsync(tmpFile, formFile.FileName, ct);
+                var hash = await _fileProcessor.CalculateHashAsync(tmpFile, ct);
+                var uploadResult = await _fileProcessor.WriteFileToStorageAsync(tmpFile, formFile.FileName, hash, ct);
                 if (await _db.Images.AnyAsync(x =>
                         x.Owner!.Id == user.Id
                         && x.OriginalImage!.Hash == uploadResult.Hash
@@ -171,11 +172,9 @@ public class UploadController : ControllerBase
                 {
                     uplFile.Uploaded = false;
                     uplFile.Reason = "Already uploaded by you.";
-                    await _fileProcessor.DeleteTempFileAsync(tmpFile, ct);
                     continue;
                 }
-
-                await _fileProcessor.DeleteTempFileAsync(tmpFile, ct);
+                
                 var originalFileEntity = await _fileProcessor.SaveToDatabaseAsync(uploadResult, ct);
                 var imageEntity = new ImageEntity()
                 {
@@ -188,7 +187,7 @@ public class UploadController : ControllerBase
                     UploaderId = uploader.Id,
                     RawMetadata = new ImageRawMetadataEntity()
                     {
-                        Directories = extractMetaResult.RawDirectories
+                        Directories = extractMetaResult.RawDirectories.Skip(2).ToList()
                     },
                     ParsedMetadata = new ImageParsedMetadataEntity()
                     {
@@ -206,7 +205,7 @@ public class UploadController : ControllerBase
                         Image = imageEntity
                     });
                 }
-
+                
                 uplFile.ManageToken = manageToken;
                 uplFile.Uploaded = true;
                 uplFile.Reason = "OK";

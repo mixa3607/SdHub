@@ -58,11 +58,15 @@ public class SdHubDbSeeder : IDbSeeder<SdHubDbContext>
             var plan = new UserPlanEntity()
             {
                 Name = RatesPlanTypes.AdminPlan,
-                ImagesPerHour = 5000,
-                MaxArchiveSizeUpload = 3000 * 1024,
-                MaxImageSizeUpload = 15 * 1024,
                 OnlyWithMetadata = false,
+
+                ImagesPerHour = 5000,
+                MaxImageSizeUpload = 15 * 1024,
                 ImagesPerUpload = 100,
+
+                GridsPerHour = 200,
+                ImagesPerGrid = 25000,
+                MaxGridArchiveSizeUpload = 5L * 1024 * 1024, //5gb
             };
             db.UserPlans.Add(plan);
             await db.SaveChangesAsync();
@@ -73,11 +77,15 @@ public class SdHubDbSeeder : IDbSeeder<SdHubDbContext>
             var plan = new UserPlanEntity()
             {
                 Name = RatesPlanTypes.AnonUserPlan,
-                ImagesPerHour = 50,
-                MaxArchiveSizeUpload = 50 * 1024,
-                MaxImageSizeUpload = 3 * 1024,
                 OnlyWithMetadata = true,
+
+                ImagesPerHour = 50,
+                MaxImageSizeUpload = 3 * 1024,
                 ImagesPerUpload = 10,
+
+                GridsPerHour = 20,
+                ImagesPerGrid = 2500,
+                MaxGridArchiveSizeUpload = 1L * 1024 * 1024, //1gb
             };
             db.UserPlans.Add(plan);
             await db.SaveChangesAsync();
@@ -88,11 +96,15 @@ public class SdHubDbSeeder : IDbSeeder<SdHubDbContext>
             var plan = new UserPlanEntity()
             {
                 Name = RatesPlanTypes.RegUserPlan,
-                ImagesPerHour = 500,
-                MaxArchiveSizeUpload = 500 * 1024,
-                MaxImageSizeUpload = 5 * 1024,
                 OnlyWithMetadata = false,
+
+                ImagesPerHour = 500,
+                MaxImageSizeUpload = 5 * 1024,
                 ImagesPerUpload = 20,
+
+                GridsPerHour = 0,
+                ImagesPerGrid = 0,
+                MaxGridArchiveSizeUpload = 0
             };
             db.UserPlans.Add(plan);
             await db.SaveChangesAsync();

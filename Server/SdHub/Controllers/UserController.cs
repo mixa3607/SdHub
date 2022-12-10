@@ -130,10 +130,17 @@ public class UserController : ControllerBase
         if (!await _captchaValidator.ValidateCodeAsync(req.CaptchaCode!, req.CaptchaType))
             ModelState.AddError(ModelStateErrors.InvalidCaptcha).ThrowIfNotValid();
 
-        var user = await _db.Users.ApplyFilter(loginOrEmail: req.Login).FirstOrDefaultAsync(ct);
+        var user = await _db.Users.ApplyFilter(loginOrEmail: req.Login, deleted: null).FirstOrDefaultAsync(ct);
 
         if (user == null)
             ModelState.AddError(ModelStateErrors.UserNotFound).ThrowIfNotValid();
+        if (user!.DeletedAt != null)
+        {
+            if (!string.IsNullOrWhiteSpace(user.DeleteReason))
+                ModelState.AddError(user.DeleteReason);
+            ModelState.AddError(ModelStateErrors.UserDeleted).ThrowIfNotValid();
+        }
+
         if (!_passwordService.Validate(req.Password, user!.PasswordHash))
             ModelState.AddError(ModelStateErrors.BadCreds).ThrowIfNotValid();
         if (user.EmailConfirmedAt == null)
@@ -169,9 +176,16 @@ public class UserController : ControllerBase
         if (refreshTokenEntity!.UsedAt != null)
             _logger.LogError("Refresh token used more then one time: {rt}", refreshTokenEntity.Token);
 
-        var user = await _db.Users.ApplyFilter(guid: refreshTokenEntity!.UserGuid).FirstOrDefaultAsync(ct);
+        var user = await _db.Users.ApplyFilter(guid: refreshTokenEntity!.UserGuid, deleted: null)
+            .FirstOrDefaultAsync(ct);
         if (user == null)
             ModelState.AddError(ModelStateErrors.UserNotFound).ThrowIfNotValid();
+        if (user!.DeletedAt != null)
+        {
+            if (!string.IsNullOrWhiteSpace(user.DeleteReason))
+                ModelState.AddError(user.DeleteReason);
+            ModelState.AddError(ModelStateErrors.UserDeleted).ThrowIfNotValid();
+        }
 
         var userModel = _mapper.Map<UserModel>(user);
 

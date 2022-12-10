@@ -8,6 +8,8 @@ public class UserEntity
 {
     public long Id { get; set; }
     public Guid Guid { get; set; } = Guid.NewGuid();
+
+    public string? DeleteReason { get; set; }
     public DateTimeOffset? DeletedAt { get; set; }
     public DateTimeOffset? EmailConfirmedAt { get; set; }
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.Now;

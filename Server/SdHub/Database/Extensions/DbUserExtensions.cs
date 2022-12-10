@@ -7,15 +7,18 @@ namespace SdHub.Database.Extensions;
 public static class DbUserExtensions
 {
     public static IQueryable<UserEntity> ApplyFilter(this IQueryable<UserEntity> q, string? loginOrEmail = null,
-        string? email = null, string? login = null, bool? anonymous = false, Guid? guid = null)
+        string? email = null, string? login = null, bool? anonymous = false, Guid? guid = null, bool? deleted = false)
     {
-        q = q.Where(x => x.DeletedAt == null);
-
         if (loginOrEmail != null)
         {
             loginOrEmail = loginOrEmail.ToUpper().Normalize();
             q = q.Where(x => x.EmailNormalized == loginOrEmail || x.LoginNormalized == loginOrEmail);
         }
+
+        if (deleted == false)
+            q = q.Where(x => x.DeletedAt == null);
+        else if (deleted == true)
+            q = q.Where(x => x.DeletedAt != null);
 
         if (email != null)
             q = q.Where(x => x.EmailNormalized == email.ToUpper().Normalize());

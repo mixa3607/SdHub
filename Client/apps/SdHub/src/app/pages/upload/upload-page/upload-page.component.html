@@ -1,114 +1,19 @@
 <div class="container" fxLayout="row" fxLayoutAlign="center none">
-  <div fxFlex="100%">
-    <mat-card style="display: flex; flex-direction: column; gap: 1rem">
-      <mat-card-content>
-        <h1>Upload</h1>
-        <div class="file-drop-area-wrap">
-          <div *ngIf="uploadingStatus$ | async as uploadingStatus" class="loading-overlay">
-            <mat-spinner
-              [mode]="uploadingStatus.type === 'uploading' ? 'determinate' : 'indeterminate'"
-              [value]="uploadingStatus.type === 'uploading' ? uploadingStatus.progress : 0"
-              diameter="60">
-            </mat-spinner>
-          </div>
-          <ngx-file-drop class="file-drop-area"
-                         [class.file-drop-area_disabled]="uploading"
-                         (onFileDrop)="dropped($event)"
-                         accept=".png,.jpeg,.jpg,.webp"
-                         dropZoneLabel="Drop images here">
-            <ng-template let-openFileSelector="openFileSelector" ngx-file-drop-content-tmp>
-              Drop images here (or pick
-              <button (click)="openFileSelector()" mat-icon-button type="button">
-                <mat-icon>folder_open</mat-icon>
-              </button>
-              )
-            </ng-template>
-          </ngx-file-drop>
-        </div>
-      </mat-card-content>
-      <div class="actions">
-        <mat-form-field *ngIf="isAuthenticated"
-                        appearance="fill"
-                        class="form-no-bottom-padding"
-                        style="flex-grow: 10">
-          <mat-label>Album</mat-label>
-          <input type="text"
-                 placeholder="Pick one"
-                 aria-label="Number"
-                 matInput
-                 [matAutocomplete]="auto"
-                 [formControl]="albumForm">
-          <mat-autocomplete #auto="matAutocomplete"
-                            [displayWith]="displayAlbumFn">
-            <mat-option *ngIf="albumsLoading"
-                        [disabled]="true">
-              <mat-progress-bar mode="query"></mat-progress-bar>
-            </mat-option>
-            <mat-option *ngIf="allowedAlbums.length === 0 && !albumsLoading"
-                        [disabled]="true">(▀̿Ĺ̯▀̿ ̿) nothing...
-            </mat-option>
-            <mat-option *ngFor="let opt of allowedAlbums" [value]="opt">
-              {{opt.name}}
-            </mat-option>
-          </mat-autocomplete>
-        </mat-form-field>
-        <button (click)="onUploadClick()" [disabled]="waitUpload() == 0 || uploading"
-                color="primary"
-                mat-raised-button
-                style="flex-grow: 60">Upload
-        </button>
-        <button (click)="onClearClick()" [disabled]="files.length == 0 || uploading"
-                color="warn"
-                mat-raised-button
-                style="flex-grow: 20">Clear
-        </button>
-      </div>
-      <div class="preview-cards-container">
-        <mat-card *ngFor="let file of files"
-                  [ngClass]="'upload-image-preview-card_' + file.uploaded"
-                  class="upload-image-preview-card">
-          <div *ngIf="file.uploaded == 'error'" class="error-message">
-            {{file.uploadingError}}
-          </div>
-          <div class="image-container">
-            <img [src]="file.objectUrl">
-          </div>
-
-
-          <div class="props-container">
-            <div class="prop-container">
-              <div class="prop-name">File name</div>
-              <div class="prop-value-container">
-                <mat-icon>file_present</mat-icon>
-                <div class="prop-value">{{file.name}}</div>
-              </div>
-            </div>
-            <div class="prop-container">
-              <div class="prop-name">Size</div>
-              <div class="prop-value-container">
-                <mat-icon>save</mat-icon>
-                <div class="prop-value">{{file.sizeHuman}}</div>
-              </div>
-            </div>
-            <div *ngIf="!isAuthenticated" class="prop-container">
-              <div class="prop-name">Master code</div>
-              <div class="prop-value-container">
-                <mat-icon>save</mat-icon>
-                <div class="prop-value">{{file.uploadedFile?.manageToken ?? 'Fill after upload'}}</div>
-              </div>
-            </div>
-            <div class="link-container">
-              <span>{{file.uploadedFile?.image?.shortUrl ?? 'Require upload'}}</span>
-              <button (click)="onCopyShortLinkClick(file)"
-                      [disabled]="file.uploadedFile?.image?.shortUrl == null"
-                      mat-icon-button>
-                <mat-icon>content_copy</mat-icon>
-              </button>
-            </div>
-          </div>
-
-        </mat-card>
-      </div>
+  <div fxFlex="100%" style="display: flex; flex-direction: column; gap: 1rem">
+    <mat-card>
+      <nav mat-tab-nav-bar mat-stretch-tabs [tabPanel]="tabPanel">
+        <ng-container *ngFor="let link of tabs">
+          <a mat-tab-link
+             [disabled]="!link.enable"
+             (click)="onTabChange(link.type)"
+             [active]="activeTab == link.type">{{link.name}}
+          </a>
+        </ng-container>
+      </nav>
+      <mat-tab-nav-panel #tabPanel></mat-tab-nav-panel>
     </mat-card>
+
+    <upload-image *ngIf="activeTab === 'image'"></upload-image>
+    <upload-grid *ngIf="activeTab === 'grid'"></upload-grid>
   </div>
 </div>

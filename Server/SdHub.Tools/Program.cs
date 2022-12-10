@@ -8,29 +8,7 @@ var docs = OptionsDocsBuilder.Generate();
 var md = OptionsDocsBuilder.ToMarkdown(docs);
 
 Console.WriteLine("Hello, World!");
-var options = new S3StorageSettings()
-{
-    BucketName = "diffai",
-    Login = "diffai",
-    Password = "diffaidiffai",
-    Disabled = false,
-    Endpoint = "minio.nas1.in.arkprojects.space",
-    WithSsl = true,
-    PolicyJson =
-        "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"s3:GetObject\"],\"Effect\":\"Allow\",\"Principal\":{\"AWS\":[\"*\"]},\"Resource\":[\"arn:aws:s3:::diffai/bins/*\"],\"Sid\":\"\"}]}"
-};
-var ent = new FileStorageEntity()
-{
-    BackendType = FileStorageBackendType.S3,
-    Name = "minio",
-    Settings = options.Save(),
-    BaseUrl = "",
-    Version = 1
-};
-var storage = new S3FileStorage(new NullLogger<S3FileStorage>(), ent, options.Save());
-await storage.InitAsync();
-using var fS = File.OpenRead(@"C:\Users\mixa3607\Desktop\Новая папка\tmpxjan9qtd.png");
-var uplResult = await storage.SaveAsync(fS, "tmpxjan9qtd.png", CancellationToken.None);
+
 return;
 
 /*

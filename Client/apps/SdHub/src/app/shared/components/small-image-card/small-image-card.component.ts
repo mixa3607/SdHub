@@ -1,5 +1,13 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {IImageModel} from "apps/SdHub/src/app/models/autogen/misc.models";
+import { Component, Input, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { IImageModel } from "apps/SdHub/src/app/models/autogen/misc.models";
+import { combineLatest } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs/operators';
+import { AuthStateService } from '../../../core/services/auth-state.service';
+import { MyAlbumsService } from '../../../core/services/my-albums.service';
+import { AlbumApi } from '../../services/api/album.api';
+import { ImageApi } from '../../services/api/image.api';
+import { ConfirmDialogComponent, ConfirmDialogModel } from '../confirm-dialog/confirm-dialog.component';
 
 @Component({
     selector: 'small-image-card',
@@ -27,10 +35,53 @@ export class SmallImageCardComponent implements OnInit {
     public dims: string = '';
     public shortToken: string = '';
 
-    constructor() {
-    }
+    public myAlbums$ = this.myAlbumsService.myAlbums$;
+
+    public hasAlbums$ = this.myAlbumsService.hasAlbums$;
+
+    public canDelete$ = this.authStateService.user$.pipe(
+      map((user) => user?.login === this.userName)
+    );
+
+    public displayMenuButton$ = combineLatest([this.hasAlbums$, this.canDelete$]).pipe(
+      map(([hasAlbums, canDelete]) => hasAlbums || canDelete)
+    );
+
+    constructor(
+      private dialog: MatDialog,
+      private albumApi: AlbumApi,
+      private imageApi: ImageApi,
+      private authStateService: AuthStateService,
+      private myAlbumsService: MyAlbumsService,
+    ) { }
 
     ngOnInit(): void {
+    }
+
+    public addImageToAlbum(albumShortToken: string) {
+      this.albumApi
+        .addImages({ albumShortToken, images: [this.shortToken] })
+        .subscribe();
+    }
+
+    public deleteImage() {
+      this.dialog
+        .open<ConfirmDialogComponent, ConfirmDialogModel, boolean>(
+          ConfirmDialogComponent, {
+            data: {
+              title: 'Delete image',
+              message: 'Are you sure you want to delete this image?'
+            }
+          }
+        )
+        .afterClosed()
+        .pipe(
+          filter((res) => !!res),
+          switchMap(() =>
+            this.imageApi.delete({ shortToken: this.shortToken, manageToken: null })
+          )
+        )
+        .subscribe();
     }
 
     private loadImage(value: IImageModel | null): void {

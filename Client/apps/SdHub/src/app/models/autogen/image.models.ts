@@ -2,13 +2,12 @@
 //     Changes to this file may cause incorrect behavior and will be lost if
 //     the code is regenerated.
 
-import { IEditImageModel } from './misc.models';
-import { IImageModel } from './misc.models';
+import { IEditImageModel, IImageModel } from './misc.models';
 
 export interface IDeleteImageRequest
 {
 	shortToken: string;
-	manageToken: string;
+	manageToken: string | null;
 }
 export interface IDeleteImageResponse
 {

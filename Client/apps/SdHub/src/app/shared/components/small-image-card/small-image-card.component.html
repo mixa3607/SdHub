@@ -1,12 +1,19 @@
 <mat-card>
   <mat-card-content style="display: flex; flex-direction: column; gap: .4rem">
-    <a class="card-container" [routerLink]="'/i/' + shortToken">
+    <a class="card-container">
       <a *ngIf="thumbUrl != ''; else noThumb"
-         [href]="compressedUrl">
+        [routerLink]="'/i/' + shortToken">
         <img class="thumbnail"
              [attr.src]="thumbUrl"
              [attr.data-src]="compressedUrl">
       </a>
+      <button
+        *ngIf="displayMenuButton$ | async"
+        class="menu-button"
+        mat-icon-button
+        [matMenuTriggerFor]="cardMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
       <ng-template #noThumb>
         <span style="font-style: italic">Preview not available</span>
       </ng-template>
@@ -25,3 +32,25 @@
     <div>Dims: <span class="gray-value">{{dims}}</span></div>
   </mat-card-content>
 </mat-card>
+
+<mat-menu #cardMenu="matMenu">
+  <!-- <button mat-menu-item>
+    <mat-icon>library_add_check</mat-icon>
+    <span>Begin selection</span>
+  </button> -->
+  <button *ngIf="hasAlbums$ | async" mat-menu-item [matMenuTriggerFor]="albumsMenu">
+    <mat-icon>photo_library</mat-icon>
+    <span>Add to album</span>
+  </button>
+  <button *ngIf="canDelete$ | async" mat-menu-item (click)="deleteImage()">
+    <mat-icon>delete</mat-icon>
+    <span>Delete</span>
+  </button>
+</mat-menu>
+
+<mat-menu #albumsMenu="matMenu">
+  <button *ngFor="let album of myAlbums$ | async" mat-menu-item (click)="addImageToAlbum(album.shortToken)">
+    <mat-icon>photo_library</mat-icon>
+    <span>{{ album.name }}</span>
+  </button>
+</mat-menu>

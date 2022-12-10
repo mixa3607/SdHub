@@ -26,7 +26,6 @@ https://teletype.in/@stablediffusion/PC_install_SD
 Оптимизация для слабых ПК. Обычно это приводит к потере детерминированности и качества.
 https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Optimizations
 https://rentry.org/voldy#-running-on-4gb-and-under-
-Гайд для АМД под винду: https://www.travelneil.com/stable-diffusion-windows-amd.html
 ----------------------------------
 [b]УСТАНОВКА В ОБЛАКЕ[/b]
 Если у вас слабое железо, можно поднять нейронку на гугл коллабе. Google Colab - облако, выделяемое гуглом с мощными CPU и TPU. Можно юзать бесплатно несколько часов каждый день. Обойти ограничение можно, создав второй аккаунт.

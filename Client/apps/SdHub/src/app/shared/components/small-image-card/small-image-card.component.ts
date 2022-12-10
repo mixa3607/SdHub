@@ -1,6 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { IImageModel } from "apps/SdHub/src/app/models/autogen/misc.models";
+import { ToastrService } from 'ngx-toastr';
 import { combineLatest } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { AuthStateService } from '../../../core/services/auth-state.service';
@@ -23,6 +24,8 @@ export class SmallImageCardComponent implements OnInit {
         this._imageInfo = value;
         this.loadImage(value);
     }
+
+    @Output() imageDeleted = new EventEmitter();
 
     private _imageInfo: IImageModel | null = null;
 
@@ -51,6 +54,7 @@ export class SmallImageCardComponent implements OnInit {
       private dialog: MatDialog,
       private albumApi: AlbumApi,
       private imageApi: ImageApi,
+      private toastr: ToastrService,
       private authStateService: AuthStateService,
       private myAlbumsService: MyAlbumsService,
     ) { }
@@ -61,7 +65,7 @@ export class SmallImageCardComponent implements OnInit {
     public addImageToAlbum(albumShortToken: string) {
       this.albumApi
         .addImages({ albumShortToken, images: [this.shortToken] })
-        .subscribe();
+        .subscribe(() => this.toastr.success('Image was added to the album'));
     }
 
     public deleteImage() {
@@ -81,7 +85,10 @@ export class SmallImageCardComponent implements OnInit {
             this.imageApi.delete({ shortToken: this.shortToken, manageToken: null })
           )
         )
-        .subscribe();
+        .subscribe(() => {
+          this.toastr.success('Image deleted');
+          this.imageDeleted.emit();
+        });
     }
 
     private loadImage(value: IImageModel | null): void {

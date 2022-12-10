@@ -124,6 +124,10 @@ export class SearchInImagesComponent implements OnInit {
         });
     }
 
+    public onImageDeleted(): void {
+        this.runSearch(PerformType.Search);
+    }
+
     public onPageChange(): void {
         this.runSearch(PerformType.Pagination);
     }

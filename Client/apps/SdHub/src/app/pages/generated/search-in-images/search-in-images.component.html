@@ -51,7 +51,10 @@
        #scrollTo
        class="search-result-container">
     <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: .5rem">
-      <small-image-card *ngFor="let img of searchResult?.images ?? []" [imageInfo]="img">
+      <small-image-card
+        *ngFor="let img of searchResult?.images ?? []"
+        [imageInfo]="img"
+        (imageDeleted)="onImageDeleted()">
       </small-image-card>
     </div>
     <div style="flex-grow: 1"></div>

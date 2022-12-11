@@ -32,6 +32,6 @@ public class ClearCacheRecurrentJob : IHangfireRecurrentJob
 
     public async Task ExecuteAsync(CancellationToken ct = default)
     {
-        await _fileProcessor.DeleteTempFilesAsync(DateTime.Now.AddHours(4), ct);
+        await _fileProcessor.PruneCacheAsync(DateTime.UtcNow.AddMinutes(-30), ct);
     }
 }

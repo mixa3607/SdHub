@@ -7,7 +7,7 @@
                        (onFileDrop)="dropped($event)"
                        dropZoneLabel="Drop archive with images here">
           <ng-template let-openFileSelector="openFileSelector" ngx-file-drop-content-tmp>
-            <div style="display: flex; flex-direction: column">
+            <div style="display: flex; flex-direction: column; align-items: center;">
               <div *ngIf="fileForUpload == null">
                 Drop archive (or pick
                 <button (click)="openFileSelector()" mat-icon-button type="button">
@@ -17,12 +17,18 @@
               </div>
               <div *ngIf="fileForUpload != null">
                 {{fileForUpload.name}} | {{fileForUpload.sizeHuman}}
+                <button (click)="fileForUpload = null" mat-icon-button type="button">
+                  <mat-icon>close</mat-icon>
+                </button>
               </div>
-              <div *ngIf="fileForUpload?.uploaded === 'error'">
+              <div *ngIf="fileForUpload?.uploaded === 'error'"
+                   style="color: red">
                 {{fileForUpload?.uploadingError ?? ''}}
               </div>
               <div *ngIf="fileForUpload?.uploaded === 'yes'">
-                <a [href]="fileForUpload?.uploadedGrid?.shortUrl ?? ''">{{fileForUpload?.uploadedGrid?.shortUrl ?? ''}}</a>
+                <a [href]="fileForUpload?.uploadedGrid?.shortUrl ?? ''">
+                  {{fileForUpload?.uploadedGrid?.shortUrl ?? ''}}
+                </a>
               </div>
             </div>
           </ng-template>

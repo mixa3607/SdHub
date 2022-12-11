@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-using HeyRed.Mime;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Minio;
 using Minio.Exceptions;
 
@@ -13,8 +11,8 @@ public class S3FileStorage : IFileStorage
     private MinioClient _client;
 
     public FileStorageBackendType BackendType => FileStorageBackendType.S3;
-    public string? Name { get; }
-    public string? BaseUrl { get; }
+    public string Name { get; }
+    public string BaseUrl { get; }
     public int Version { get; }
 
     public S3FileStorage(ILogger<S3FileStorage> logger, IStorageInfo info, string settings)
@@ -23,9 +21,9 @@ public class S3FileStorage : IFileStorage
         _settings = new S3StorageSettings();
         _settings.Load(settings);
         _client = new MinioClient();
-
-        Name = info.Name;
-        BaseUrl = info.BaseUrl;
+        
+        Name = info.Name!;
+        BaseUrl = info.BaseUrl!;
         Version = info.Version;
     }
 
@@ -55,53 +53,42 @@ public class S3FileStorage : IFileStorage
             ct);
     }
 
-    public async Task<FileSaveResult> SaveAsync(Stream dataStream, string originalName, string hash, CancellationToken ct = default)
+    public async Task<FileUploadResult> UploadAsync(Stream dataStream, string destination, CancellationToken ct = default)
     {
+        dataStream.Position = 0;
         var size = dataStream.Length;
-        dataStream.Position = 0;
+        var s3DstFile = destination.Replace('\\', '/');
+        var putObjectArgs = new PutObjectArgs()
+            .WithBucket(_settings.BucketName)
+            .WithObject(s3DstFile)
+            .WithObjectSize(dataStream.Length)
+            .WithStreamData(dataStream);
+        await _client.PutObjectAsync(putObjectArgs, ct);
 
-        var fileType = MimeGuesser.GuessFileType(dataStream);
-        dataStream.Position = 0;
+        return new FileUploadResult(s3DstFile, size, Name);
+    }
 
-        var relPath = Path.Combine(hash[..2], $"{hash}.{fileType.Extension}");
-        var virtDstFile = Path.Combine("bins", relPath).Replace('\\', '/');
-        var s3DstFile = Path.Combine("bins", relPath).Replace('\\', '/');
-
-        bool alreadyUploaded;
+    public async Task<FileUploadResult?> FileExistAsync(string destination, CancellationToken ct = default)
+    {
+        var s3DstFile = destination.Replace('\\', '/');
         try
         {
             var stat = await _client.StatObjectAsync(new StatObjectArgs().WithBucket(_settings.BucketName).WithObject(s3DstFile), ct);
-            alreadyUploaded = true;
+            return new FileUploadResult(s3DstFile, stat.Size, Name);
         }
         catch (ObjectNotFoundException)
         {
-            alreadyUploaded = false;
+            return null;
         }
-
-        if (alreadyUploaded)
-        {
-            _logger.LogInformation("File with name {name} already uploaded. Skip", s3DstFile);
-        }
-        else
-        {
-            var putObjectArgs = new PutObjectArgs()
-                .WithBucket(_settings.BucketName)
-                .WithObject(s3DstFile)
-                .WithObjectSize(dataStream.Length)
-                .WithStreamData(dataStream);
-            await _client.PutObjectAsync(putObjectArgs, ct);
-        }
-
-        return new FileSaveResult(
-            hash,
-            virtDstFile,
-            Name!, size,
-            fileType.Extension, fileType.MimeType,
-            originalName);
     }
 
     public Task<bool> IsAvailableAsync(long requiredBytes = 0, CancellationToken ct = default)
     {
         return Task.FromResult(!_settings.Disabled);
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        return ValueTask.CompletedTask;
     }
 }

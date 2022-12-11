@@ -10,8 +10,8 @@ public class LocalFileStorage : IFileStorage
     private readonly LocalStorageSettings _settings;
 
     public FileStorageBackendType BackendType => FileStorageBackendType.LocalDir;
-    public string? Name { get; }
-    public string? BaseUrl { get; }
+    public string Name { get; }
+    public string BaseUrl { get; }
     public int Version { get; }
 
     public LocalFileStorage(ILogger<LocalFileStorage> logger, IStorageInfo info, string settings)
@@ -20,8 +20,8 @@ public class LocalFileStorage : IFileStorage
         _settings = new LocalStorageSettings();
         _settings.Load(settings);
 
-        Name = info.Name;
-        BaseUrl = info.BaseUrl;
+        Name = info.Name!;
+        BaseUrl = info.BaseUrl!;
         Version = info.Version;
     }
 
@@ -35,41 +35,33 @@ public class LocalFileStorage : IFileStorage
         return Task.CompletedTask;
     }
 
-    public async Task<FileSaveResult> SaveAsync(Stream dataStream, string originalName, string hash, CancellationToken ct = default)
+    public async Task<FileUploadResult> UploadAsync(Stream dataStream, string destination,
+        CancellationToken ct = default)
     {
-        var tmpFile = Path.Combine(_settings.TempPath!, Guid.NewGuid().ToString("N"));
-        var size = dataStream.Length;
+        dataStream.Position = 0;
+        var virtDstFile = Path.Combine(_settings.VirtualRoot!, destination);
+        var physDstFile = Path.Combine(_settings.PhysicalRoot!, destination);
+        await using var destFile = File.Create(physDstFile);
+        await dataStream.CopyToAsync(destFile, ct);
+        return new FileUploadResult(virtDstFile.Replace('\\', '/'), dataStream.Length, Name);
+    }
 
-        await using var tmpFileStream = File.Open(tmpFile, FileMode.CreateNew, FileAccess.ReadWrite);
-        await dataStream.CopyToAsync(tmpFileStream, ct);
-
-        var fileType = MimeGuesser.GuessFileType(tmpFile);
-        var relPath = Path.Combine(hash[..2], $"{hash}.{fileType.Extension}");
-        var virtDstFile = Path.Combine(_settings.VirtualRoot!, relPath);
-        var physDstFile = Path.Combine(_settings.PhysicalRoot!, relPath);
-
-        if (!File.Exists(physDstFile))
-        {
-            _logger.LogInformation("File with name {name} already uploaded. Skip", physDstFile);
-            var physDstDir = Path.GetDirectoryName(physDstFile)!;
-            if (!Directory.Exists(physDstDir))
-                Directory.CreateDirectory(physDstDir);
-
-            File.Move(tmpFile, physDstFile);
-        }
-
-        File.Delete(tmpFile);
-
-        return new FileSaveResult(
-            hash,
-            virtDstFile.Replace('\\', '/'),
-            Name!, size,
-            fileType.Extension, fileType.MimeType,
-            originalName);
+    public Task<FileUploadResult?> FileExistAsync(string destination, CancellationToken ct = default)
+    {
+        var physDstFile = Path.Combine(_settings.PhysicalRoot!, destination);
+        var fInfo = new FileInfo(physDstFile);
+        return fInfo.Exists
+            ? Task.FromResult<FileUploadResult?>(new FileUploadResult(destination, fInfo.Length, Name))
+            : Task.FromResult<FileUploadResult?>(null);
     }
 
     public Task<bool> IsAvailableAsync(long requiredBytes = 0, CancellationToken ct = default)
     {
         return Task.FromResult(!_settings.Disabled);
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        return ValueTask.CompletedTask;
     }
 }

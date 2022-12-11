@@ -74,7 +74,7 @@ public class Tiler
         var converts = new List<LayerConverts>(rowsCount * colsCount);
         var layer = new Layer() { Rows = rows, ZId = sourceLayer.ZId - 1, ConvertsList = converts };
 
-        var layerDir = Path.Combine(_options.LayersRoot!, layer.ZId.ToString());
+        layer.LayerDir = Path.Combine(_options.LayersRoot!, layer.ZId.ToString());
 
         for (int y = 0; y < rowsCount; y++)
         {
@@ -83,7 +83,7 @@ public class Tiler
 
             for (int x = 0; x < colsCount; x++)
             {
-                var destination = Path.Combine(layerDir, $"{x}_{y}.webp");
+                var destination = Path.Combine(layer.LayerDir, $"{x}_{y}.webp");
                 rowImages[x] = destination;
 
                 var eX = sourceCols - x * tilesInTopX;
@@ -155,6 +155,16 @@ public class Tiler
 
     public async Task ConvertLayerAsync(Layer layer)
     {
+        if (Directory.Exists(layer.LayerDir))
+        {
+            Console.WriteLine($"Dir for layer {layer.ZId} exist. Skip tiling");
+        }
+        else
+        {
+            Directory.CreateDirectory(layer.LayerDir!);
+            Console.WriteLine($"Building tiles for layer {layer.ZId}");
+        }
+
         var handled = 0;
         await Parallel.ForEachAsync(layer.ConvertsList, new ParallelOptions()
         {

@@ -50,6 +50,7 @@ public class UploadGridController : ControllerBase
 
     [HttpPost]
     [DisableRequestSizeLimit]
+    [RequestFormLimits(MultipartBodyLengthLimit = 1024 * 1024 * 1024 * 10L)]
     public async Task<UploadGridResponse> UploadGridAuth([FromForm] UploadGridRequest req,
         CancellationToken ct = default)
     {
@@ -99,10 +100,10 @@ public class UploadGridController : ControllerBase
         }
     }
 
+    // TODO когда нибудь я разберу эту махину, но не сегодня
     private async Task<UploadGridResponse> UploadAsync(UploadGridRequest req, int uploadedLastHour, UserEntity user,
         ImageUploaderEntity uploader, long albumId, CancellationToken ct = default)
     {
-        var ip = HttpContext.Connection.RemoteIpAddress!.ToString();
         var resp = new UploadGridResponse();
 
         if (req.File!.Length > user.Plan!.MaxGridArchiveSizeUpload * 1024)
@@ -229,36 +230,42 @@ public class UploadGridController : ControllerBase
             files.First(x => x.Hash == existedImage.OriginalImage!.Hash).Image = existedImage;
         }
 
-        foreach (var file in files)
-        {
-            if (file.Image != null)
-                continue;
-            var uploadResult =
-                await _fileProcessor.WriteFileToStorageAsync(file.TmpFile, file.OriginalName, file.Hash!, ct);
-            file.Image = new ImageEntity()
+        await Parallel.ForEachAsync(files,
+            new ParallelOptions()
             {
-                Name = "",
-                Description = "",
-                Owner = user,
-                DeletedAt = null,
-                ShortToken = GenerateShortToken(),
-                ManageToken = "",
-                UploaderId = uploader.Id,
-                RawMetadata = new ImageRawMetadataEntity()
+                MaxDegreeOfParallelism = 10,
+                CancellationToken = ct
+            }, async (file, ct) =>
+            {
+                if (file.Image != null)
+                    return;
+
+                await using var tmpFileStream = System.IO.File.OpenRead(file.TmpFile);
+                var hash = await _fileProcessor.CalculateHashAsync(tmpFileStream, ct);
+                var dstPath = _fileProcessor.MapToHashPath("img_src", hash, file.OriginalName);
+                var uploadResult = await _fileProcessor.UploadAsync(tmpFileStream, file.OriginalName, dstPath, ct);
+                file.Image = new ImageEntity()
                 {
-                    Directories = file.Metadata.RawDirectories
-                },
-                ParsedMetadata = new ImageParsedMetadataEntity()
-                {
-                    Tags = _mapper.Map<ImageParsedMetadataTagEntity[]>(file.Metadata.ParsedTags),
-                    Height = file.Metadata.Height,
-                    Width = file.Metadata.Width,
-                },
-                OriginalImage = _mapper.Map<FileEntity>(uploadResult),
-            };
-            _db.Images.Add(file.Image);
-        }
-        await _db.SaveChangesAsync(CancellationToken.None);
+                    Name = "",
+                    Description = "",
+                    Owner = user,
+                    DeletedAt = null,
+                    ShortToken = GenerateShortToken(),
+                    ManageToken = "",
+                    UploaderId = uploader.Id,
+                    RawMetadata = new ImageRawMetadataEntity()
+                    {
+                        Directories = file.Metadata.RawDirectories
+                    },
+                    ParsedMetadata = new ImageParsedMetadataEntity()
+                    {
+                        Tags = _mapper.Map<ImageParsedMetadataTagEntity[]>(file.Metadata.ParsedTags),
+                        Height = file.Metadata.Height,
+                        Width = file.Metadata.Width,
+                    },
+                    OriginalImage = _mapper.Map<FileEntity>(uploadResult),
+                };
+            });
 
         var grid = new GridEntity()
         {

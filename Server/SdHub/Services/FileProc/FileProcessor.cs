@@ -6,13 +6,10 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using HeyRed.Mime;
 using ImageMagick;
-using MetadataExtractor.Formats.Png;
-using MetadataExtractor.Formats.WebP;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using SdHub.Database;
 using SdHub.Database.Entities.Files;
 using SdHub.Models.Image;
 using SdHub.Options;
@@ -30,17 +27,15 @@ public class FileProcessor : IFileProcessor
     private readonly IFileStorageFactory _fileStorageFactory;
     private readonly IReadOnlyList<IMetadataSoftwareDetector> _softwareDetectors;
     private readonly IImageMetadataExtractor _imageMetadataExtractor;
-    private readonly SdHubDbContext _db;
     private readonly IMapper _mapper;
 
     public FileProcessor(ILogger<FileProcessor> logger, IFileStorageFactory fileStorageFactory,
         IImageMetadataExtractor imageMetadataExtractor, IOptions<FileProcessorOptions> options,
-        IEnumerable<IMetadataSoftwareDetector> softwareDetectors, SdHubDbContext db, IMapper mapper)
+        IEnumerable<IMetadataSoftwareDetector> softwareDetectors, IMapper mapper)
     {
         _logger = logger;
         _fileStorageFactory = fileStorageFactory;
         _imageMetadataExtractor = imageMetadataExtractor;
-        _db = db;
         _mapper = mapper;
         _softwareDetectors = softwareDetectors.ToArray();
         _options = options.Value;
@@ -60,8 +55,21 @@ public class FileProcessor : IFileProcessor
         return tmpFile;
     }
 
+    public string MapToHashPath(string? basePath, string hash, string originalName)
+    {
+        var extension = Path.GetExtension(originalName);
+        var path = Path.Combine(hash[..2], $"{hash}{extension}");
+        if (!string.IsNullOrWhiteSpace(basePath))
+            path = Path.Combine(basePath, path);
+        return path.Replace('\\', '/');
+    }
+
     public async Task<string> WriteToCacheAsync(Stream bytes, CancellationToken ct = default)
     {
+        if (bytes.CanSeek)
+        {
+            bytes.Position = 0;
+        }
         var tmpFile = GetNewTempFilePath();
         await using var tmpFileStream = File.OpenWrite(tmpFile);
         await bytes.CopyToAsync(tmpFileStream, ct);
@@ -76,10 +84,53 @@ public class FileProcessor : IFileProcessor
 
     public async Task<string> CalculateHashAsync(Stream bytes, CancellationToken ct = default)
     {
+        bytes.Position = 0;
         using var sha = SHA256.Create();
         var hashBytes = await sha.ComputeHashAsync(bytes, ct);
         var hash = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
         return hash;
+    }
+
+    public Task<FileType> DetectMimeTypeAsync(Stream dataStream, CancellationToken ct = default)
+    {
+        dataStream.Position = 0;
+        var fileType = MimeGuesser.GuessFileType(dataStream);
+        return Task.FromResult(fileType);
+    }
+
+    public Task<FileType> DetectMimeTypeAsync(string path, CancellationToken ct = default)
+    {
+        var fileType = MimeGuesser.GuessFileType(path);
+        return Task.FromResult(fileType);
+    }
+
+    public async Task<FileEntity> UploadAsync(Stream dataStream, string srcFileName, string destinationPath,
+        CancellationToken ct = default)
+    {
+        var storage = await GetStorageAsync(ct: ct);
+        return await UploadAsync(dataStream, srcFileName, destinationPath, storage, ct);
+    }
+
+    public async Task<FileEntity> UploadAsync(Stream dataStream, string srcFileName, string destinationPath,
+        IFileStorage storage,
+        CancellationToken ct = default)
+    {
+        var mime = await DetectMimeTypeAsync(dataStream, ct);
+        var hash = await CalculateHashAsync(dataStream, ct);
+        var uplResult = await storage.FileExistAsync(destinationPath, ct);
+        uplResult ??= await storage.UploadAsync(dataStream, destinationPath, ct);
+        var file = new FileEntity()
+        {
+            Name = srcFileName,
+            StorageName = uplResult.StorageName,
+            PathOnStorage = uplResult.PathOnStorage,
+            Size = uplResult.Size,
+            Extension = mime.Extension,
+            MimeType = mime.MimeType,
+            Hash = hash,
+        };
+
+        return file;
     }
 
     public async Task<ExtractImageMetadataResult> ExtractImageMetadataAsync(string tempFile,
@@ -117,7 +168,7 @@ public class FileProcessor : IFileProcessor
         return new ExtractImageMetadataResult(imageMetaTags, dirs, height, width);
     }
 
-    public Task DeleteTempFilesAsync(DateTime deleteBefore, CancellationToken ct = default)
+    public Task PruneCacheAsync(DateTime deleteBefore, CancellationToken ct = default)
     {
         if (_options.PreserveCache)
         {
@@ -128,41 +179,22 @@ public class FileProcessor : IFileProcessor
         foreach (var file in Directory.EnumerateFiles(_options.CacheDir!))
         {
             var fileInfo = new FileInfo(file);
-            if (fileInfo.LastAccessTimeUtc < deleteBefore) 
+            if (fileInfo.LastWriteTimeUtc < deleteBefore)
                 fileInfo.Delete();
         }
 
         foreach (var dir in Directory.EnumerateDirectories(_options.CacheDir!))
         {
             var dirInfo = new DirectoryInfo(dir);
-            if (dirInfo.LastAccessTimeUtc < deleteBefore)
-                dirInfo.Delete();
+            if (dirInfo.LastWriteTimeUtc < deleteBefore)
+                dirInfo.Delete(true);
         }
 
         return Task.CompletedTask;
     }
 
-    public async Task<FileSaveResult> WriteFileToStorageAsync(string tempFile, string originalName, string hash,
-        CancellationToken ct = default)
+    public Task<IFileStorage> GetStorageAsync(long requiredBytes = 0, CancellationToken ct = default)
     {
-        await using var stream = File.OpenRead(tempFile);
-        return await WriteFileToStorageAsync(stream, originalName, hash, ct);
-    }
-
-    public async Task<FileSaveResult> WriteFileToStorageAsync(Stream seekableStream, string originalName, string hash,
-        CancellationToken ct = default)
-    {
-        var storage = await _fileStorageFactory.GetStorageAsync(seekableStream.Length, ct);
-        var saveResult = await storage.SaveAsync(seekableStream, originalName, hash, ct);
-        return saveResult;
-    }
-
-    public async Task<FileEntity> SaveToDatabaseAsync(FileSaveResult saveResult, CancellationToken ct = default)
-    {
-        var entity = _mapper.Map<FileEntity>(saveResult);
-        entity.Storage = await _db.FileStorages.FirstAsync(x => x.Name == entity.StorageName, ct);
-        _db.Files.Add(entity);
-        await _db.SaveChangesAsync(CancellationToken.None);
-        return entity;
+        return _fileStorageFactory.GetStorageAsync(requiredBytes, ct);
     }
 }

@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using SdHub.Constants;
 using SdHub.Database;
 using SdHub.Database.Entities.Albums;
+using SdHub.Database.Entities.Files;
 using SdHub.Database.Entities.Images;
 using SdHub.Database.Entities.Users;
 using SdHub.Database.Extensions;
@@ -49,6 +50,7 @@ public class UploadController : ControllerBase
 
     [HttpPost]
     [DisableRequestSizeLimit]
+    [RequestFormLimits(MultipartBodyLengthLimit = 1024 * 1024 * 1024 * 10L)]
     public async Task<UploadResponse> UploadAuth([FromForm] UploadRequest req, CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
@@ -78,9 +80,8 @@ public class UploadController : ControllerBase
         }
 
         var uploadedLastHour = await _db.Images
-            .Where(x => x.DeletedAt == null
-                        && x.OwnerId == user.Id
-                        && x.CreatedAt > DateTimeOffset.Now.AddHours(-1))
+            .ApplyFilter(inGrid: false, ownerId: user.Id)
+            .Where(x => x.CreatedAt > DateTimeOffset.Now.AddHours(-1))
             .CountAsync(ct);
 
         return await UploadAsync(req, uploadedLastHour, user, uploader, albumId, ct);
@@ -89,6 +90,7 @@ public class UploadController : ControllerBase
 
     [HttpPost]
     [DisableRequestSizeLimit]
+    [RequestFormLimits(MultipartBodyLengthLimit = 1024*1024*1024*10L)]
     [AllowAnonymous]
     public async Task<UploadResponse> Upload([FromForm] UploadRequest req, CancellationToken ct = default)
     {
@@ -104,19 +106,17 @@ public class UploadController : ControllerBase
             .FirstAsync(ct);
 
         var uploadedLastHour = await _db.Images
-            .Where(x => x.DeletedAt == null
-                        && x.UploaderId == uploader.Id
-                        && x.CreatedAt > DateTimeOffset.Now.AddHours(-1))
+            .ApplyFilter(inGrid: false)
+            .Where(x => x.UploaderId == uploader.Id && x.CreatedAt > DateTimeOffset.Now.AddHours(-1))
             .CountAsync(ct);
 
         return await UploadAsync(req, uploadedLastHour, user, uploader, 0, ct);
     }
 
+    // TODO когда нибудь я разберу эту махину, но не сегодня
     private async Task<UploadResponse> UploadAsync(UploadRequest req, int uploadedLastHour, UserEntity user,
         ImageUploaderEntity uploader, long albumId, CancellationToken ct = default)
     {
-        var ip = HttpContext.Connection.RemoteIpAddress!.ToString();
-
         var manageToken = user.IsAnonymous ? $"mg_{Guid.NewGuid():N}" : "";
         var handledFiles = new List<UploadedFileModel>();
         var savedImages = new List<ImageEntity>();
@@ -152,9 +152,12 @@ public class UploadController : ControllerBase
                     continue;
                 }
 
-                using var formFileStream = formFile.OpenReadStream();
+                await using var formFileStream = formFile.OpenReadStream();
                 var tmpFile = await _fileProcessor.WriteToCacheAsync(formFileStream, ct);
-                _logger.LogInformation("Try upload {tmpFile} from {ip} as {name}", tmpFile, ip, formFile.FileName);
+                _logger.LogInformation("Try upload {tmpFile} as {name}", tmpFile, formFile.FileName);
+
+                await using var dataStream = System.IO.File.OpenRead(tmpFile);
+
                 var extractMetaResult = await _fileProcessor.ExtractImageMetadataAsync(tmpFile, ct);
                 if (extractMetaResult.ParsedTags.Count == 0 && user.Plan.OnlyWithMetadata)
                 {
@@ -163,25 +166,25 @@ public class UploadController : ControllerBase
                     continue;
                 }
 
-                var hash = await _fileProcessor.CalculateHashAsync(tmpFile, ct);
-                var uploadResult = await _fileProcessor.WriteFileToStorageAsync(tmpFile, formFile.FileName, hash, ct);
+                var hash = await _fileProcessor.CalculateHashAsync(dataStream, ct);
+                var dstPath = _fileProcessor.MapToHashPath("img_src", hash, formFile.FileName);
+                var file = await _fileProcessor.UploadAsync(dataStream, formFile.FileName, dstPath, ct);
+
                 if (await _db.Images.AnyAsync(x =>
                         x.Owner!.Id == user.Id
-                        && x.OriginalImage!.Hash == uploadResult.Hash
+                        && x.OriginalImage!.Hash == hash
                         && x.DeletedAt == null, ct))
                 {
                     uplFile.Uploaded = false;
-                    uplFile.Reason = "Already uploaded by you.";
+                    uplFile.Reason = "Already uploaded by you";
                     continue;
                 }
-                
-                var originalFileEntity = await _fileProcessor.SaveToDatabaseAsync(uploadResult, ct);
+
                 var imageEntity = new ImageEntity()
                 {
                     Name = "",
                     Description = "",
                     Owner = user,
-                    DeletedAt = null,
                     ShortToken = GenerateShortToken(),
                     ManageToken = manageToken,
                     UploaderId = uploader.Id,
@@ -195,7 +198,7 @@ public class UploadController : ControllerBase
                         Height = extractMetaResult.Height,
                         Width = extractMetaResult.Width,
                     },
-                    OriginalImage = originalFileEntity
+                    OriginalImage = file
                 };
                 if (albumId != 0)
                 {
@@ -205,7 +208,7 @@ public class UploadController : ControllerBase
                         Image = imageEntity
                     });
                 }
-                
+
                 uplFile.ManageToken = manageToken;
                 uplFile.Uploaded = true;
                 uplFile.Reason = "OK";

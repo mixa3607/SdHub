@@ -2,7 +2,7 @@
 
 public interface IStorageInfo
 {
-    public string? Name { get; }
-    public int Version { get; }
-    public string? BaseUrl { get; }
+    string? Name { get; }
+    int Version { get; }
+    string? BaseUrl { get; }
 }

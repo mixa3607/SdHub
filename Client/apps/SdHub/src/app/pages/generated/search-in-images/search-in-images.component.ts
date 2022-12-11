@@ -1,6 +1,5 @@
 import { HttpErrorResponse } from "@angular/common/http";
-import { Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import {
   ISearchImageResponse,
@@ -12,16 +11,8 @@ import {
 import { PerformType } from "apps/SdHub/src/app/pages/generated/search-page/search-page.component";
 import { httpErrorResponseHandler } from "apps/SdHub/src/app/shared/http-error-handling/handlers";
 import { ImageApi } from "apps/SdHub/src/app/shared/services/api/image.api";
-import { Dictionary, keyBy } from 'lodash';
 import { ToastrService } from "ngx-toastr";
-import { BehaviorSubject, combineLatest, filter, forkJoin, map, Observable } from "rxjs";
-import { switchMap } from "rxjs/operators";
-import { AuthStateService } from '../../../core/services/auth-state.service';
-import { ImageSelectionService } from '../../../core/services/image-selection.service';
-import { MyAlbumsService } from '../../../core/services/my-albums.service';
-import { IImageModel } from '../../../models/autogen/misc.models';
-import { ConfirmDialogComponent, ConfirmDialogModel } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
-import { AlbumApi } from '../../../shared/services/api/album.api';
+import { BehaviorSubject, Observable } from "rxjs";
 
 @UntilDestroy()
 @Component({
@@ -29,7 +20,7 @@ import { AlbumApi } from '../../../shared/services/api/album.api';
     templateUrl: './search-in-images.component.html',
     styleUrls: ['./search-in-images.component.scss'],
 })
-export class SearchInImagesComponent implements OnInit, OnDestroy {
+export class SearchInImagesComponent implements OnInit {
     public readonly orderBy: { name: string, field: SearchImageOrderByFieldType, order: SearchImageOrderByType | null, icon: string | null }[] = [
         {
             name: 'Upload date',
@@ -87,59 +78,12 @@ export class SearchInImagesComponent implements OnInit, OnDestroy {
     public page = 0;
     public totalPages = 1;
 
-    public myAlbums$ = this.myAlbumsService.myAlbums$;
-
-    public hasAlbums$ = this.myAlbumsService.hasAlbums$;
-
-    private displayedImagesByShortToken$ = this.searchResult$.pipe(
-      map((searchResult) => {
-        if(!searchResult?.images) {
-          return {} as Dictionary<IImageModel>;
-        }
-
-        return keyBy(searchResult.images, (img) => img.shortToken);
-      })
-    )
-
-    public areActionsUnavailable$ = this.authStateService.user$.pipe(
-      map((user) => !user)
-    );
-
-    public canDelete$ = combineLatest([
-      this.authStateService.user$,
-      this.displayedImagesByShortToken$,
-      this.imagesSelectionService.selectedImages$
-    ]).pipe(
-      map(([user, displayedImagesByShortToken, selectedImages]) => {
-        if (!user) {
-          return false;
-        }
-
-        return selectedImages
-          .every((shortImageToken) => {
-            const selectedImageInfo = displayedImagesByShortToken[shortImageToken];
-            return selectedImageInfo?.owner?.login === user.login
-          })
-      })
-    );
-
-    public hasSelectedImages$ = this.imagesSelectionService.hasSelectedImages$;
-
     constructor(
       private imageApi: ImageApi,
       private toastr: ToastrService,
-      private albumApi: AlbumApi,
-      private dialog: MatDialog,
-      private myAlbumsService: MyAlbumsService,
-      private authStateService: AuthStateService,
-      private imagesSelectionService: ImageSelectionService,
     ) { }
 
     ngOnInit(): void {
-    }
-
-    ngOnDestroy(): void {
-      this.imagesSelectionService.clearSelection();
     }
 
     private runSearch(type: PerformType): void {
@@ -181,7 +125,7 @@ export class SearchInImagesComponent implements OnInit, OnDestroy {
         });
     }
 
-    public onImageDeleted(): void {
+    public onReloadImages(): void {
         this.runSearch(PerformType.Search);
     }
 
@@ -204,51 +148,6 @@ export class SearchInImagesComponent implements OnInit, OnDestroy {
                 entry.icon = null;
             }
         }
-    }
-
-    public cancelSelection() {
-      this.imagesSelectionService.clearSelection();
-    }
-
-    public addSelectedImagesToAlbum(albumShortToken: string) {
-      this.albumApi
-        .addImages({
-          albumShortToken,
-          images: this.imagesSelectionService.getSelectedImages()
-        })
-        .subscribe(() => {
-          this.imagesSelectionService.clearSelection();
-          this.toastr.success('Images were added to the album');
-        });
-    }
-
-    public deleteSelectedImages() {
-      this.dialog
-        .open<ConfirmDialogComponent, ConfirmDialogModel, boolean>(
-          ConfirmDialogComponent, {
-            data: {
-              title: 'Delete image',
-              message: 'Are you sure you want to delete these images?'
-            }
-          }
-        )
-        .afterClosed()
-        .pipe(
-          filter((res) => !!res),
-          map(() => this.imagesSelectionService
-            .getSelectedImages()
-            .map((shortToken) => this.imageApi.delete({
-              shortToken: shortToken,
-              manageToken: null
-            }))
-          ),
-          switchMap((requests) => forkJoin(requests)),
-        )
-        .subscribe(() => {
-          this.imagesSelectionService.clearSelection();
-          this.toastr.success('Images were deleted');
-          this.runSearch(PerformType.Search);
-        });
     }
 }
 

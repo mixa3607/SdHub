@@ -72,6 +72,11 @@
       </mat-card>
     </ng-template>
 
+    <image-bunch-actions-panel
+      [displayedImages]="searchResult?.images ?? []"
+      [selectedAlbum]="album"
+      (needReloadImages)="onReloadImages()">
+    </image-bunch-actions-panel>
 
     <div #scrollTo
          style="display: flex; flex-direction: column; flex-grow: 1">
@@ -90,7 +95,10 @@
       <div *ngIf="(searchResult?.total ?? 0) > 0 && !loading"
            class="search-result-container">
         <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: .5rem">
-          <small-image-card *ngFor="let img of searchResult?.images ?? []" [imageInfo]="img">
+          <small-image-card
+            *ngFor="let img of searchResult?.images ?? []"
+            [imageInfo]="img"
+            [selectedAlbum]="album">
           </small-image-card>
         </div>
         <div style="flex-grow: 1"></div>

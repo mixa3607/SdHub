@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { map, shareReplay, switchMap } from 'rxjs/operators';
 import { AlbumApi } from '../../shared/services/api/album.api';
 import { AuthStateService } from './auth-state.service';
@@ -9,16 +9,11 @@ export class MyAlbumsService {
 
   private reloadAlbums$ = new BehaviorSubject(null);
 
-  private currentUsername$ = this.authStateService.user$.pipe(
-    map((user) => user?.login),
-    shareReplay(1)
-  );
-
   private myAlbumsRes$ = this.reloadAlbums$.pipe(
-    switchMap(() => this.currentUsername$),
-    switchMap((username) => username
-      ? this.albumsApi.search({ owner: username })
-      : []
+    switchMap(() => this.authStateService.user$),
+    switchMap((user) => user?.login
+      ? this.albumsApi.search({ owner: user.login })
+      : of({ albums: [], total: 0 })
     ),
     shareReplay(1)
   );

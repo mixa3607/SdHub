@@ -44,18 +44,63 @@
     <mat-icon>library_add_check</mat-icon>
     <span>Begin selection</span>
   </button>
-  <button *ngIf="hasAlbums$ | async" mat-menu-item [matMenuTriggerFor]="albumsMenu">
+  <button
+    *ngIf="(hasAlbums$ | async) && !(isOwnAlbumOpened$ | async)"
+    mat-menu-item
+    [matMenuTriggerFor]="addToAlbumMenu">
     <mat-icon>photo_library</mat-icon>
     <span>Add to album</span>
   </button>
-  <button *ngIf="canDelete$ | async" mat-menu-item (click)="deleteImage()">
+  <button
+    *ngIf="(isOwnAlbumOpened$ | async)"
+    mat-menu-item
+    [matMenuTriggerFor]="ownAlbumMenu">
+    <mat-icon>photo_library</mat-icon>
+    <span>Albums</span>
+  </button>
+  <button *ngIf="canDeleteImage$ | async" mat-menu-item (click)="deleteImage()">
     <mat-icon>delete</mat-icon>
     <span>Delete</span>
   </button>
 </mat-menu>
 
-<mat-menu #albumsMenu="matMenu">
+<mat-menu #addToAlbumMenu="matMenu">
   <button *ngFor="let album of myAlbums$ | async" mat-menu-item (click)="addImageToAlbum(album.shortToken)">
+    <mat-icon>photo_library</mat-icon>
+    <span>{{ album.name }}</span>
+  </button>
+</mat-menu>
+
+<mat-menu #ownAlbumMenu="matMenu">
+  <button mat-menu-item [matMenuTriggerFor]="addToAnotherAlbumMenu">
+    <mat-icon>add</mat-icon>
+    <span>Add to another</span>
+  </button>
+  <button mat-menu-item [matMenuTriggerFor]="moveToAnotherAlbumMenu">
+    <mat-icon>copy_all</mat-icon>
+    <span>Move to another</span>
+  </button>
+  <button mat-menu-item (click)="deleteImageFromCurrentAlbum()">
+    <mat-icon>clear</mat-icon>
+    <span>Delete from current</span>
+  </button>
+</mat-menu>
+
+<mat-menu #addToAnotherAlbumMenu="matMenu">
+  <button
+    *ngFor="let album of myAlbumsWithoutCurrent$ | async"
+    mat-menu-item
+    (click)="addImageToAlbum(album.shortToken)">
+    <mat-icon>photo_library</mat-icon>
+    <span>{{ album.name }}</span>
+  </button>
+</mat-menu>
+
+<mat-menu #moveToAnotherAlbumMenu="matMenu">
+  <button
+    *ngFor="let album of myAlbumsWithoutCurrent$ | async"
+    mat-menu-item
+    (click)="moveImageToAnotherAlbum(album.shortToken)">
     <mat-icon>photo_library</mat-icon>
     <span>{{ album.name }}</span>
   </button>

@@ -1,14 +1,14 @@
-import {Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import { HttpErrorResponse } from "@angular/common/http";
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import {
-    ISearchImageResponse,
-    SearchImageOrderByFieldType,
-    SearchImageOrderByType
+  ISearchImageResponse,
+  SearchImageOrderByFieldType,
+  SearchImageOrderByType
 } from "apps/SdHub/src/app/models/autogen/image.models";
-import {HttpErrorResponse} from "@angular/common/http";
-import {httpErrorResponseHandler} from "apps/SdHub/src/app/shared/http-error-handling/handlers";
-import {ImageApi} from "apps/SdHub/src/app/shared/services/api/image.api";
-import {ToastrService} from "ngx-toastr";
-import {PerformType} from "apps/SdHub/src/app/pages/generated/search-page/search-page.component";
+import { PerformType } from "apps/SdHub/src/app/pages/generated/search-page/search-page.component";
+import { httpErrorResponseHandler } from "apps/SdHub/src/app/shared/http-error-handling/handlers";
+import { ImageApi } from "apps/SdHub/src/app/shared/services/api/image.api";
+import { ToastrService } from "ngx-toastr";
 
 @Component({
     selector: 'user-images',
@@ -47,6 +47,10 @@ export class UserImagesComponent implements OnInit {
 
     public onPageChange(): void {
         this.runImageSearch(PerformType.Pagination);
+    }
+
+    public onReloadImages(): void {
+      this.runImageSearch(PerformType.Search);
     }
 
     private runImageSearch(type: PerformType): void {

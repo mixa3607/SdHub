@@ -2,11 +2,12 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { IImageModel } from "apps/SdHub/src/app/models/autogen/misc.models";
 import { ToastrService } from 'ngx-toastr';
-import { combineLatest, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { AuthStateService } from '../../../core/services/auth-state.service';
 import { ImageSelectionService } from '../../../core/services/image-selection.service';
 import { MyAlbumsService } from '../../../core/services/my-albums.service';
+import { IAlbumModel } from '../../../models/autogen/album.models';
 import { AlbumApi } from '../../services/api/album.api';
 import { ImageApi } from '../../services/api/image.api';
 import { ConfirmDialogComponent, ConfirmDialogModel } from '../confirm-dialog/confirm-dialog.component';
@@ -26,9 +27,15 @@ export class SmallImageCardComponent implements OnInit {
         this.loadImage(value);
     }
 
-    @Output() imageDeleted = new EventEmitter();
+    @Input() set selectedAlbum(val: IAlbumModel | null) {
+      this.selectedAlbum$.next(val);
+    }
+
+    @Output() needReloadImages = new EventEmitter();
 
     private _imageInfo: IImageModel | null = null;
+
+    public selectedAlbum$ = new BehaviorSubject<IAlbumModel | null>(null);
 
     public name: string = '';
     public uploadAt: string = '';
@@ -43,17 +50,36 @@ export class SmallImageCardComponent implements OnInit {
 
     public hasAlbums$ = this.myAlbumsService.hasAlbums$;
 
-    public canDelete$ = this.authStateService.user$.pipe(
+    public myAlbumsWithoutCurrent$ = combineLatest([this.myAlbums$, this.selectedAlbum$]).pipe(
+      map(([myAlbums, selectedAlbum]) =>
+        myAlbums.filter((album) => album.shortToken !== selectedAlbum?.shortToken)
+      )
+    );
+
+    public canDeleteImage$ = this.authStateService.user$.pipe(
       map((user) => user?.login === this.userName)
     );
 
-    public displayMenuButton$ = combineLatest([this.hasAlbums$, this.canDelete$]).pipe(
+    public displayMenuButton$ = combineLatest([this.hasAlbums$, this.canDeleteImage$]).pipe(
       map(([hasAlbums, canDelete]) => hasAlbums || canDelete)
     );
 
     public isSelected$: Observable<boolean> = null!;
 
     public isSelectionModeActivated$ = this.imageSelectionService.hasSelectedImages$;
+
+    public isOwnAlbumOpened$ = combineLatest([
+      this.authStateService.user$,
+      this.selectedAlbum$
+    ]).pipe(
+      map(([user, selectedAlbum]) => {
+        if (!user || !selectedAlbum) {
+          return false;
+        }
+
+        return selectedAlbum.owner.login === user.login;
+      })
+    );
 
     constructor(
       private dialog: MatDialog,
@@ -75,6 +101,46 @@ export class SmallImageCardComponent implements OnInit {
         .subscribe(() => this.toastr.success('Image was added to the album'));
     }
 
+    public moveImageToAnotherAlbum(albumShortToken: string) {
+      if (!this.selectedAlbum$.value) {
+        return;
+      }
+
+      const deleteImageFromAlbumRequest$ = this.albumApi
+        .deleteImages({
+          albumShortToken: this.selectedAlbum$.value.shortToken,
+          images: [this.shortToken]
+        });
+
+      const addImageToAlbumRequest$ = this.albumApi
+        .addImages({
+          albumShortToken,
+          images: [this.shortToken]
+        });
+
+      combineLatest([deleteImageFromAlbumRequest$, addImageToAlbumRequest$])
+        .subscribe(() => {
+          this.toastr.success('Image was moved to another album');
+          this.needReloadImages.emit();
+        });
+    }
+
+    public deleteImageFromCurrentAlbum() {
+      if (!this.selectedAlbum$.value) {
+        return;
+      }
+
+      this.albumApi
+        .deleteImages({
+          albumShortToken: this.selectedAlbum$.value.shortToken,
+          images: [this.shortToken]
+        })
+        .subscribe(() => {
+          this.toastr.success('Image was deleted from the album');
+          this.needReloadImages.emit();
+        });
+    }
+
     public deleteImage() {
       this.dialog
         .open<ConfirmDialogComponent, ConfirmDialogModel, boolean>(
@@ -94,7 +160,7 @@ export class SmallImageCardComponent implements OnInit {
         )
         .subscribe(() => {
           this.toastr.success('Image deleted');
-          this.imageDeleted.emit();
+          this.needReloadImages.emit();
         });
     }
 

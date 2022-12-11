@@ -3,6 +3,10 @@
      class="search-result-placeholder-container">
   <div>Nothing found ＞︿＜</div>
 </div>
+<image-bunch-actions-panel
+  [displayedImages]="searchImagesResult?.images ?? []"
+  (needReloadImages)="onReloadImages()">
+</image-bunch-actions-panel>
 <div *ngIf="loading"
      class="search-result-placeholder-container">
   <div style="display: flex; flex-direction: column">

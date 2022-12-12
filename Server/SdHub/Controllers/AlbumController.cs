@@ -91,7 +91,7 @@ public class AlbumController : ControllerBase
         }
 
         query = query
-            .Include(x => x.AlbumImages!.Take(1)).ThenInclude(x => x.Image).ThenInclude(x => x!.CompressedImage)
+            .Include(x => x.AlbumImages!.Where(y => y.Image!.DeletedAt == null).Take(1)).ThenInclude(x => x.Image).ThenInclude(x => x!.CompressedImage)
             .Include(x => x.ThumbImage)
             .Include(x => x.Owner)
             .Where(x => x.DeletedAt == null);
@@ -121,13 +121,17 @@ public class AlbumController : ControllerBase
     {
         ModelState.ThrowIfNotValid();
         var album = await _db.Albums
-            .Include(x => x.ThumbImage)
+            .Include(x => x.AlbumImages!.Where(y => y.Image!.DeletedAt == null).Take(1))
+            .ThenInclude(x => x.Image)
+            .ThenInclude(x => x!.CompressedImage)
             .Include(x => x.Owner)
             .Where(x => x.DeletedAt == null && x.ShortToken == req.ShortToken)
             .FirstOrDefaultAsync(ct);
         if (album == null)
             ModelState.AddError(ModelStateErrors.AlbumNotFound).ThrowIfNotValid();
 
+        if (album!.AlbumImages?.Count > 0)
+            album.ThumbImage = album.AlbumImages[0].Image?.CompressedImage;
         var totalImgs = await _db.AlbumImages.Where(x => x.AlbumId == album!.Id).CountAsync(ct);
 
         return new GetAlbumResponse()

@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, of } from 'rxjs';
-import { map, shareReplay, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, of, pipe } from 'rxjs';
+import { map, shareReplay, switchMap, tap } from 'rxjs/operators';
 import { AlbumApi } from '../../shared/services/api/album.api';
 import { AuthStateService } from './auth-state.service';
+import { ToastrService } from "ngx-toastr";
+import { httpErrorResponseHandler } from "apps/SdHub/src/app/shared/http-error-handling/handlers";
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class MyAlbumsService {
 
   private reloadAlbums$ = new BehaviorSubject(null);
@@ -12,19 +14,20 @@ export class MyAlbumsService {
   private myAlbumsRes$ = this.reloadAlbums$.pipe(
     switchMap(() => this.authStateService.user$),
     switchMap((user) => user?.login
-      ? this.albumsApi.search({ owner: user.login })
-      : of({ albums: [], total: 0 })
+      ? this.albumsApi.search({owner: user.login})
+      : of({albums: [], total: 0})
     ),
+    tap({error: err => httpErrorResponseHandler(err, this.toastr)}),
     shareReplay(1)
   );
 
   public myAlbums$ = this.myAlbumsRes$.pipe(
-    map(({ albums }) => albums),
+    map(({albums}) => albums),
     shareReplay(1)
   )
 
   public myAlbumsTotal$ = this.myAlbumsRes$.pipe(
-    map(({ total }) => total),
+    map(({total}) => total),
     shareReplay(1)
   );
 
@@ -33,7 +36,10 @@ export class MyAlbumsService {
     shareReplay(1)
   );
 
-  constructor(private authStateService: AuthStateService, private albumsApi: AlbumApi) { }
+  constructor(private authStateService: AuthStateService,
+              private albumsApi: AlbumApi,
+              private toastr: ToastrService,) {
+  }
 
   public reloadAlbums() {
     this.reloadAlbums$.next(null);

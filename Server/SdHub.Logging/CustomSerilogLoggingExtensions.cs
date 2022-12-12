@@ -114,25 +114,32 @@ public static class CustomSerilogLoggingExtensions
                     {
                         var blob = MemoryPool<byte>.Shared.Rent(maxLoggingBodyLen).Memory[..(maxLoggingBodyLen)];
 
-                        var origPos = context.Request.Body.Position;
-                        context.Request.Body.Position = 0;
-                        var read = context.Request.Body.ReadAsync(blob, CancellationToken.None).Result;
-                        bodyStr = Encoding.UTF8.GetString(blob[..read].Span);
-                        context.Request.Body.Position = origPos;
-                        if (context.Request.Body.Length > maxLoggingBodyLen)
+                        try
                         {
-                            body = $"Body len more than {maxLoggingBodyLen}. Cant deserialize";
+                            var origPos = context.Request.Body.Position;
+                            context.Request.Body.Position = 0;
+                            var read = context.Request.Body.ReadAsync(blob, CancellationToken.None).Result;
+                            bodyStr = Encoding.UTF8.GetString(blob[..read].Span);
+                            context.Request.Body.Position = origPos;
+                            if (context.Request.Body.Length > maxLoggingBodyLen)
+                            {
+                                body = $"Body len more than {maxLoggingBodyLen}. Cant deserialize";
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    body = JsonConvert.DeserializeObject<ExpandoObject?>(bodyStr);
+                                }
+                                catch (Exception e)
+                                {
+                                    body = e.ToString();
+                                }
+                            }
                         }
-                        else
+                        catch (Exception)
                         {
-                            try
-                            {
-                                body = JsonConvert.DeserializeObject<ExpandoObject?>(bodyStr);
-                            }
-                            catch (Exception e)
-                            {
-                                body = e.ToString();
-                            }
+                            //ignore
                         }
                     }
 

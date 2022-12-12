@@ -3,7 +3,7 @@ import { IAlbumModel } from "apps/SdHub/src/app/models/autogen/album.models";
 import { keyBy } from 'lodash';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, combineLatest, forkJoin } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { IImageModel } from '../../../models/autogen/misc.models';
 
 import { MatDialog } from '@angular/material/dialog';
@@ -11,8 +11,12 @@ import { ImageApi } from "apps/SdHub/src/app/shared/services/api/image.api";
 import { AuthStateService } from '../../../core/services/auth-state.service';
 import { ImageSelectionService } from '../../../core/services/image-selection.service';
 import { MyAlbumsService } from '../../../core/services/my-albums.service';
-import { ConfirmDialogComponent, ConfirmDialogModel } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogModel
+} from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { AlbumApi } from '../../services/api/album.api';
+import { httpErrorResponseHandler } from "apps/SdHub/src/app/shared/http-error-handling/handlers";
 
 @Component({
   selector: 'image-bunch-actions-panel',
@@ -95,7 +99,8 @@ export class ImageBunchActionsPanelComponent implements OnDestroy {
     private myAlbumsService: MyAlbumsService,
     private authStateService: AuthStateService,
     private imageSelectionService: ImageSelectionService,
-  ) {}
+  ) {
+  }
 
   public ngOnDestroy() {
     this.imageSelectionService.clearSelection();
@@ -114,7 +119,7 @@ export class ImageBunchActionsPanelComponent implements OnDestroy {
       .subscribe(() => {
         this.imageSelectionService.clearSelection();
         this.toastr.success('Images were added to the album');
-      });
+      }, err => httpErrorResponseHandler(err, this.toastr));
   }
 
   public moveSelectedImagesToAnotherAlbum(albumShortToken: string) {
@@ -138,7 +143,7 @@ export class ImageBunchActionsPanelComponent implements OnDestroy {
       .subscribe(() => {
         this.toastr.success('Images were moved to another album');
         this.needReloadImages.emit();
-      });
+      }, err => httpErrorResponseHandler(err, this.toastr));
   }
 
   public deleteSelectedImagesFromCurrentAlbum() {
@@ -153,18 +158,18 @@ export class ImageBunchActionsPanelComponent implements OnDestroy {
       .subscribe(() => {
         this.toastr.success('Images were deleted from the album');
         this.needReloadImages.emit();
-      });
+      }, err => httpErrorResponseHandler(err, this.toastr));
   }
 
   public deleteSelectedImages() {
     this.dialog
       .open<ConfirmDialogComponent, ConfirmDialogModel, boolean>(
         ConfirmDialogComponent, {
-        data: {
-          title: 'Delete images',
-          message: 'Are you sure you want to delete these images?'
+          data: {
+            title: 'Delete images',
+            message: 'Are you sure you want to delete these images?'
+          }
         }
-      }
       )
       .afterClosed()
       .pipe(
@@ -181,6 +186,6 @@ export class ImageBunchActionsPanelComponent implements OnDestroy {
       .subscribe(() => {
         this.toastr.success('Images were deleted');
         this.needReloadImages.emit();
-      });
+      }, err => httpErrorResponseHandler(err, this.toastr));
   }
 }

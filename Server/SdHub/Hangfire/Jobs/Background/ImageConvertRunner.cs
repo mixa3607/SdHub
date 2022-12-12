@@ -39,32 +39,13 @@ public class ImageConvertRunner : IImageConvertRunnerV1
             return;
 
         var imageModel = _mapper.Map<ImageModel>(image);
-        using var srcImgStream = new MemoryStream();
-        if (image.ThumbImageId == null || image.CompressedImageId == null || force)
+        if (image.CompressedImageId == null || force)
         {
+            using var srcImgStream = new MemoryStream();
             var dwnStream = await imageModel.OriginalImage!.DirectUrl.GetStreamAsync(ct);
             await dwnStream.CopyToAsync(srcImgStream, ct);
             srcImgStream.Position = 0;
-        }
 
-        if (image.ThumbImageId == null || force)
-        {
-            using var srcImage = new MagickImage(srcImgStream);
-            if (srcImage.Width > 512 || srcImage.Height > 512)
-                srcImage.Resize(new MagickGeometry("512x512>"));
-
-            using var dstImgStream = new MemoryStream();
-            await srcImage.WriteAsync(dstImgStream, MagickFormat.WebP, ct);
-            dstImgStream.Position = 0;
-
-            var result = await _fileProcessor.WriteFileToStorageAsync(dstImgStream, $"{imageId}_thumb.webp", ct);
-            var file = await _fileProcessor.SaveToDatabaseAsync(result, CancellationToken.None);
-            image.ThumbImage = file;
-            await _db.SaveChangesAsync(CancellationToken.None);
-        }
-
-        if (image.CompressedImageId == null || force)
-        {
             using var srcImage = new MagickImage(srcImgStream);
             using var dstImgStream = new MemoryStream();
             await srcImage.WriteAsync(dstImgStream, MagickFormat.WebP, ct);

@@ -6,14 +6,8 @@
     (click)="toggleSelection()">
   </div>
   <mat-card-content style="display: flex; flex-direction: column; gap: .4rem">
-    <a class="card-container">
-      <a *ngIf="thumbUrl != ''; else noThumb" [href]="compressedUrl">
-        <a [routerLink]="'/i/' + shortToken">
-          <img class="thumbnail"
-            [attr.src]="thumbUrl"
-            [attr.data-src]="compressedUrl">
-        </a>
-      </a>
+    <a class="card-container" [routerLink]="'/i/' + shortToken">
+      <img *ngIf="compressedUrl != ''; else noThumb" class="thumbnail" [src]="compressedUrl">
       <button
         *ngIf="displayMenuButton$ | async"
         class="menu-button"

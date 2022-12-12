@@ -42,7 +42,6 @@ export class SmallImageCardComponent implements OnInit {
   public uploadAt: string = '';
   public userName: string = '';
   public software: string = '';
-  public thumbUrl: string = '';
   public compressedUrl: string = '';
   public dims: string = '';
   public shortToken: string = '';
@@ -185,7 +184,6 @@ export class SmallImageCardComponent implements OnInit {
     this.uploadAt = value?.createdAt ?? '';
     this.userName = value?.owner?.login ?? '';
     this.software = value?.parsedMetadata?.tags?.[0]?.software ?? 'unknown';
-    this.thumbUrl = value?.thumbImage?.directUrl ?? '';
     this.compressedUrl = value?.compressedImage?.directUrl ?? '';
     this.dims = value?.parsedMetadata?.width != null && value?.parsedMetadata?.height != null
       ? `${value?.parsedMetadata?.width}x${value?.parsedMetadata?.height}`

@@ -99,7 +99,7 @@ public class OgInjectorMiddleware
 
                 var description = sb.ToString();
                 var url = _options.BaseUrl;
-                var imageFile = imageModel.CompressedImage ?? imageModel.ThumbImage ?? imageModel.OriginalImage;
+                var imageFile = imageModel.CompressedImage ?? imageModel.OriginalImage;
                 var imageUrl = imageFile!.DirectUrl!;
 
                 var injection = @$"

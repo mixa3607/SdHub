@@ -47,7 +47,6 @@ export interface IImageModel
 	owner: IImageOwnerModel;
 	originalImage: IFileModel;
 	compressedImage: IFileModel;
-	thumbImage: IFileModel;
 	shortUrl: string;
 	shortToken: string;
 	deletedAt: string|null;

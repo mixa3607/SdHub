@@ -41,11 +41,15 @@
   </mat-menu>
 
   <mat-menu #ownAlbumMenu="matMenu">
-    <button mat-menu-item [matMenuTriggerFor]="addToAnotherAlbumMenu">
+    <button mat-menu-item
+            [matMenuTriggerFor]="addToAnotherAlbumMenu"
+            [disabled]="(myAlbumsWithoutCurrent$ | async)!.length === 0">
       <mat-icon>add</mat-icon>
       <span>Add to another</span>
     </button>
-    <button mat-menu-item [matMenuTriggerFor]="moveToAnotherAlbumMenu">
+    <button mat-menu-item
+            [matMenuTriggerFor]="moveToAnotherAlbumMenu"
+            [disabled]="(myAlbumsWithoutCurrent$ | async)!.length === 0">
       <mat-icon>copy_all</mat-icon>
       <span>Move to another</span>
     </button>

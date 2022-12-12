@@ -91,11 +91,20 @@ public class AlbumController : ControllerBase
         }
 
         query = query
+            .Include(x => x.AlbumImages!.Take(1)).ThenInclude(x => x.Image).ThenInclude(x => x!.CompressedImage)
             .Include(x => x.ThumbImage)
             .Include(x => x.Owner)
             .Where(x => x.DeletedAt == null);
         var total = await query.CountAsync(ct);
         var albums = await query.Skip(req.Skip).Take(req.Take).ToArrayAsync(ct);
+        foreach (var albumEntity in albums)
+        {
+            if (albumEntity.AlbumImages?.Count > 0)
+            {
+                albumEntity.ThumbImage = albumEntity.AlbumImages[0].Image?.CompressedImage;
+            }
+        }
+
         var albumModels = _mapper.Map<AlbumModel[]>(albums);
 
         return new SearchAlbumResponse()

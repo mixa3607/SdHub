@@ -46,6 +46,8 @@ export class SmallImageCardComponent implements OnInit {
     public dims: string = '';
     public shortToken: string = '';
 
+    public isMenuOpened: boolean = false;
+
     public myAlbums$ = this.myAlbumsService.myAlbums$;
 
     public hasAlbums$ = this.myAlbumsService.hasAlbums$;
@@ -164,8 +166,16 @@ export class SmallImageCardComponent implements OnInit {
         });
     }
 
-    toggleSelection() {
+    public toggleSelection() {
       this.imageSelectionService.toggleSelected(this.shortToken);
+    }
+
+    public onMenuOpened() {
+      this.isMenuOpened = true;
+    }
+
+    public onMenuClosed() {
+      this.isMenuOpened = false;
     }
 
     private loadImage(value: IImageModel | null): void {

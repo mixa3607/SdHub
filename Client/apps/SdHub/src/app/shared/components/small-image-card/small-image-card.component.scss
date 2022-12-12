@@ -18,6 +18,17 @@
     top: 0;
     right: 0;
     color: rgba(0, 0, 0, .87);
+    background: white;
+    display: none;
+
+    &_opened {
+      display: block;
+    }
+  }
+}
+
+:host:hover {
+  .menu-button {
     display: block;
   }
 }

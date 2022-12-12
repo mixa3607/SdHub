@@ -17,8 +17,10 @@
       <button
         *ngIf="displayMenuButton$ | async"
         class="menu-button"
+        [class.menu-button_opened]="isMenuOpened"
         mat-icon-button
-        [matMenuTriggerFor]="cardMenu">
+        [matMenuTriggerFor]="cardMenu"
+        (click)="onMenuOpened()">
         <mat-icon>more_vert</mat-icon>
       </button>
       <ng-template #noThumb>
@@ -40,7 +42,7 @@
   </mat-card-content>
 </mat-card>
 
-<mat-menu #cardMenu="matMenu">
+<mat-menu #cardMenu="matMenu" (closed)="onMenuClosed()">
   <button mat-menu-item (click)="toggleSelection()">
     <mat-icon>library_add_check</mat-icon>
     <span>Begin selection</span>

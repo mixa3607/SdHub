@@ -70,10 +70,10 @@ export class ImageBunchActionsPanelComponent implements OnDestroy {
   public canDeleteImages$ = combineLatest([
     this.authStateService.user$,
     this.displayedImagesByShortToken$,
-    this.imagesSelectionService.selectedImages$
+    this.imageSelectionService.selectedImages$
   ]).pipe(
     map(([user, displayedImagesByShortToken, selectedImages]) => {
-      if (!user) {
+      if (!user || selectedImages.length === 0) {
         return false;
       }
 
@@ -85,7 +85,7 @@ export class ImageBunchActionsPanelComponent implements OnDestroy {
     })
   );
 
-  public hasSelectedImages$ = this.imagesSelectionService.hasSelectedImages$;
+  public hasSelectedImages$ = this.imageSelectionService.hasSelectedImages$;
 
   constructor(
     private imageApi: ImageApi,
@@ -94,25 +94,25 @@ export class ImageBunchActionsPanelComponent implements OnDestroy {
     private dialog: MatDialog,
     private myAlbumsService: MyAlbumsService,
     private authStateService: AuthStateService,
-    private imagesSelectionService: ImageSelectionService,
+    private imageSelectionService: ImageSelectionService,
   ) {}
 
   public ngOnDestroy() {
-    this.imagesSelectionService.clearSelection();
+    this.imageSelectionService.clearSelection();
   }
 
   public cancelSelection() {
-    this.imagesSelectionService.clearSelection();
+    this.imageSelectionService.clearSelection();
   }
 
   public addSelectedImagesToAlbum(albumShortToken: string) {
     this.albumApi
       .addImages({
         albumShortToken,
-        images: this.imagesSelectionService.getSelectedImages()
+        images: this.imageSelectionService.getSelectedImages()
       })
       .subscribe(() => {
-        this.imagesSelectionService.clearSelection();
+        this.imageSelectionService.clearSelection();
         this.toastr.success('Images were added to the album');
       });
   }
@@ -125,20 +125,18 @@ export class ImageBunchActionsPanelComponent implements OnDestroy {
     const deleteImagesFromAlbumRequest$ = this.albumApi
       .deleteImages({
         albumShortToken: this.selectedAlbum$.value.shortToken,
-        images: this.imagesSelectionService.getSelectedImages()
+        images: this.imageSelectionService.getSelectedImages()
       });
 
     const addImagesToAlbumRequest$ = this.albumApi
       .addImages({
         albumShortToken,
-        images: this.imagesSelectionService.getSelectedImages()
+        images: this.imageSelectionService.getSelectedImages()
       });
 
     combineLatest([deleteImagesFromAlbumRequest$, addImagesToAlbumRequest$])
       .subscribe(() => {
-        this.imagesSelectionService.clearSelection();
         this.toastr.success('Images were moved to another album');
-
         this.needReloadImages.emit();
       });
   }
@@ -150,12 +148,10 @@ export class ImageBunchActionsPanelComponent implements OnDestroy {
     this.albumApi
       .deleteImages({
         albumShortToken: this.selectedAlbum$.value.shortToken,
-        images: this.imagesSelectionService.getSelectedImages()
+        images: this.imageSelectionService.getSelectedImages()
       })
       .subscribe(() => {
-        this.imagesSelectionService.clearSelection();
         this.toastr.success('Images were deleted from the album');
-
         this.needReloadImages.emit();
       });
   }
@@ -173,7 +169,7 @@ export class ImageBunchActionsPanelComponent implements OnDestroy {
       .afterClosed()
       .pipe(
         filter((res) => !!res),
-        map(() => this.imagesSelectionService
+        map(() => this.imageSelectionService
           .getSelectedImages()
           .map((shortToken) => this.imageApi.delete({
             shortToken: shortToken,
@@ -183,9 +179,7 @@ export class ImageBunchActionsPanelComponent implements OnDestroy {
         switchMap((requests) => forkJoin(requests)),
       )
       .subscribe(() => {
-        this.imagesSelectionService.clearSelection();
         this.toastr.success('Images were deleted');
-
         this.needReloadImages.emit();
       });
   }

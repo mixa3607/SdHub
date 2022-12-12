@@ -1,11 +1,16 @@
-.actions {
+:host {
   position: sticky;
-  top: 15px;
+  top: 0;
+  z-index: 2;
+  margin: -0.5rem 0 -0.5rem;
+}
+
+.actions {
   display: flex;
   gap: 10px;
-  z-index: 2;
   visibility: hidden;
-
+  padding: 10px 0 10px;
+  background: rgb(229, 229, 229);
   // margin-bottom: 10px; // ??
 
   &_visible {
@@ -15,4 +20,8 @@
   &_unavailable {
     display: none;
   }
+}
+
+button .mat-icon {
+  margin-right: 5px;
 }

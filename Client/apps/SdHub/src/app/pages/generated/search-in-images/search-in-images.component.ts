@@ -13,6 +13,7 @@ import { httpErrorResponseHandler } from "apps/SdHub/src/app/shared/http-error-h
 import { ImageApi } from "apps/SdHub/src/app/shared/services/api/image.api";
 import { ToastrService } from "ngx-toastr";
 import { BehaviorSubject, Observable } from "rxjs";
+import { ImageSelectionService } from '../../../core/services/image-selection.service';
 
 @UntilDestroy()
 @Component({
@@ -81,6 +82,7 @@ export class SearchInImagesComponent implements OnInit {
     constructor(
       private imageApi: ImageApi,
       private toastr: ToastrService,
+      private imageSelectionService: ImageSelectionService,
     ) { }
 
     ngOnInit(): void {
@@ -107,6 +109,7 @@ export class SearchInImagesComponent implements OnInit {
             searchText: this.searchText,
         }).subscribe({
             next: resp => {
+                this.imageSelectionService.clearSelection();
                 this.loading = false;
                 this.searchResult$.next(resp);
                 this.totalPages = Math.floor(resp.total / this.pageSize) + ((resp.total % this.pageSize) === 0 ? 0 : 1);

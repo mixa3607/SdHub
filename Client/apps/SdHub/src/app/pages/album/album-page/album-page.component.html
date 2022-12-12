@@ -98,7 +98,8 @@
           <small-image-card
             *ngFor="let img of searchResult?.images ?? []"
             [imageInfo]="img"
-            [selectedAlbum]="album">
+            [selectedAlbum]="album"
+            (needReloadImages)="onReloadImages()">
           </small-image-card>
         </div>
         <div style="flex-grow: 1"></div>

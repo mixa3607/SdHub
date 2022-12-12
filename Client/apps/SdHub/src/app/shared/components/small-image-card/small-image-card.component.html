@@ -7,11 +7,12 @@
   </div>
   <mat-card-content style="display: flex; flex-direction: column; gap: .4rem">
     <a class="card-container">
-      <a *ngIf="thumbUrl != ''; else noThumb"
-        [routerLink]="'/i/' + shortToken">
-        <img class="thumbnail"
-             [attr.src]="thumbUrl"
-             [attr.data-src]="compressedUrl">
+      <a *ngIf="thumbUrl != ''; else noThumb" [href]="compressedUrl">
+        <a [routerLink]="'/i/' + shortToken">
+          <img class="thumbnail"
+            [attr.src]="thumbUrl"
+            [attr.data-src]="compressedUrl">
+        </a>
       </a>
       <button
         *ngIf="displayMenuButton$ | async"

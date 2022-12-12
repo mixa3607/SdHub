@@ -9,6 +9,7 @@ import { PerformType } from "apps/SdHub/src/app/pages/generated/search-page/sear
 import { httpErrorResponseHandler } from "apps/SdHub/src/app/shared/http-error-handling/handlers";
 import { ImageApi } from "apps/SdHub/src/app/shared/services/api/image.api";
 import { ToastrService } from "ngx-toastr";
+import { ImageSelectionService } from '../../../core/services/image-selection.service';
 
 @Component({
     selector: 'user-images',
@@ -38,9 +39,11 @@ export class UserImagesComponent implements OnInit {
     public totalPages = 1;
     public loading: boolean = false;
 
-    constructor(private imageApi: ImageApi,
-                private toastr: ToastrService,) {
-    }
+    constructor(
+      private imageApi: ImageApi,
+      private toastr: ToastrService,
+      private imageSelectionService: ImageSelectionService,
+    ) {}
 
     ngOnInit(): void {
     }
@@ -71,6 +74,7 @@ export class UserImagesComponent implements OnInit {
             fields: []
         }).subscribe({
             next: resp => {
+                this.imageSelectionService.clearSelection();
                 this.loading = false;
                 this.searchImagesResult = resp;
                 this.totalPages = Math.floor(resp.total / this.pageSize) + ((resp.total % this.pageSize) === 0 ? 0 : 1);

@@ -4,6 +4,7 @@
   <div>Nothing found ＞︿＜</div>
 </div>
 <image-bunch-actions-panel
+  class="actions-panel"
   [displayedImages]="searchImagesResult?.images ?? []"
   (needReloadImages)="onReloadImages()">
 </image-bunch-actions-panel>
@@ -17,7 +18,10 @@
 <div *ngIf="(searchImagesResult?.total ?? 0) > 0 && !loading"
      class="search-result-container">
   <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: .5rem">
-    <small-image-card *ngFor="let img of searchImagesResult?.images ?? []" [imageInfo]="img">
+    <small-image-card
+      *ngFor="let img of searchImagesResult?.images ?? []"
+      [imageInfo]="img"
+      (needReloadImages)="onReloadImages()">
     </small-image-card>
   </div>
   <div style="flex-grow: 1"></div>

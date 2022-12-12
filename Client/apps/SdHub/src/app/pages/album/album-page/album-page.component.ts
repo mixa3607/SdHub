@@ -17,6 +17,8 @@ import { httpErrorResponseHandler } from 'apps/SdHub/src/app/shared/http-error-h
 import { AlbumApi } from 'apps/SdHub/src/app/shared/services/api/album.api';
 import { ImageApi } from 'apps/SdHub/src/app/shared/services/api/image.api';
 import { ToastrService } from 'ngx-toastr';
+import { ImageSelectionService } from '../../../core/services/image-selection.service';
+import { MyAlbumsService } from '../../../core/services/my-albums.service';
 
 interface IAlbumEdit {
   name: string | null;
@@ -54,6 +56,8 @@ export class AlbumPageComponent implements OnInit {
   constructor(private imageApi: ImageApi,
               private albumApi: AlbumApi,
               private toastr: ToastrService,
+              private myAlbumsService: MyAlbumsService,
+              private imageSelectionService: ImageSelectionService,
               private route: ActivatedRoute,
               private router: Router,
               private clipboard: Clipboard,
@@ -130,6 +134,7 @@ export class AlbumPageComponent implements OnInit {
       next: resp => {
         this.editMode = false;
         this.applyLoadedAlbum(resp);
+        this.myAlbumsService.reloadAlbums();
         this.toastr.success('All changes saved');
       },
       error: (err: HttpErrorResponse) => {
@@ -145,6 +150,7 @@ export class AlbumPageComponent implements OnInit {
     }).subscribe({
       next: resp => {
         this.editMode = false;
+        this.myAlbumsService.reloadAlbums();
         this.toastr.success('Deleted (┬┬﹏┬┬)');
         void this.router.navigate(['/']);
       },
@@ -174,6 +180,7 @@ export class AlbumPageComponent implements OnInit {
       album: this.shortToken,
     }).subscribe({
       next: resp => {
+        this.imageSelectionService.clearSelection();
         this.loadingImages = false;
         this.searchResult = resp;
         this.totalPages = Math.floor(resp.total / this.pageSize) + ((resp.total % this.pageSize) === 0 ? 0 : 1);

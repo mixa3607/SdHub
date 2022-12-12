@@ -27,10 +27,8 @@
   }
 }
 
-:host:hover {
-  .menu-button {
-    display: block;
-  }
+:host:hover .common-mode .menu-button {
+  display: block;
 }
 
 .gray-value {

@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card [class.common-mode]="!(isSelectionModeActivated$ | async)">
   <div
     *ngIf="isSelectionModeActivated$ | async"
     class="image-selection-overlay"

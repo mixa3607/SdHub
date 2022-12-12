@@ -1,17 +1,18 @@
 :host {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  margin: -0.5rem 0 -0.5rem;
+  display: contents;
 }
 
 .actions {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+
   display: flex;
   gap: 10px;
   visibility: hidden;
   padding: 10px 0 10px;
+  margin: -5px 0 -5px;
   background: rgb(229, 229, 229);
-  // margin-bottom: 10px; // ??
 
   &_visible {
     visibility: visible;
@@ -19,6 +20,7 @@
 
   &_unavailable {
     display: none;
+    margin: 0;
   }
 }
 

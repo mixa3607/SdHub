@@ -1,10 +1,8 @@
-<div #scrollTo></div>
 <div *ngIf="(searchImagesResult?.total ?? 0) === 0 && !loading"
      class="search-result-placeholder-container">
   <div>Nothing found ＞︿＜</div>
 </div>
 <image-bunch-actions-panel
-  class="actions-panel"
   [displayedImages]="searchImagesResult?.images ?? []"
   (needReloadImages)="onReloadImages()">
 </image-bunch-actions-panel>
@@ -17,6 +15,7 @@
 </div>
 <div *ngIf="(searchImagesResult?.total ?? 0) > 0 && !loading"
      class="search-result-container">
+  <div #scrollTo></div>
   <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: .5rem">
     <small-image-card
       *ngFor="let img of searchImagesResult?.images ?? []"

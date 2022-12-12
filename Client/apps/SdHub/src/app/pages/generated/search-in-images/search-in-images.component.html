@@ -37,11 +37,11 @@
   </div>
 
   <image-bunch-actions-panel
-    [displayedImages]="(searchResult$ | async)?.images ?? []"
+    [displayedImages]="searchResult?.images ?? []"
     (needReloadImages)="onReloadImages()">
   </image-bunch-actions-panel>
 
-  <div *ngIf="((searchResult$ | async)?.total ?? 0) === 0 && !loading"
+  <div *ngIf="(searchResult?.total ?? 0) === 0 && !loading"
        class="search-result-placeholder-container">
     <div>Nothing found ＞︿＜</div>
   </div>
@@ -52,12 +52,12 @@
       <mat-progress-bar mode="query"></mat-progress-bar>
     </div>
   </div>
-  <div *ngIf="((searchResult$ | async)?.total ?? 0) > 0 && !loading"
+  <div *ngIf="(searchResult?.total ?? 0) > 0 && !loading"
        #scrollTo
        class="search-result-container">
     <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: .5rem">
       <small-image-card
-        *ngFor="let img of (searchResult$ | async)?.images ?? []"
+        *ngFor="let img of searchResult?.images ?? []"
         [imageInfo]="img"
         (needReloadImages)="onReloadImages()">
       </small-image-card>

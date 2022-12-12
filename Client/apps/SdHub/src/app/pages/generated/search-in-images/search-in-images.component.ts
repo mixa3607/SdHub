@@ -12,7 +12,7 @@ import { PerformType } from "apps/SdHub/src/app/pages/generated/search-page/sear
 import { httpErrorResponseHandler } from "apps/SdHub/src/app/shared/http-error-handling/handlers";
 import { ImageApi } from "apps/SdHub/src/app/shared/services/api/image.api";
 import { ToastrService } from "ngx-toastr";
-import { BehaviorSubject, Observable } from "rxjs";
+import { Observable } from "rxjs";
 import { ImageSelectionService } from '../../../core/services/image-selection.service';
 
 @UntilDestroy()
@@ -74,7 +74,7 @@ export class SearchInImagesComponent implements OnInit {
     public onlyFromRegisteredUsers = true;
     public searchAsRegexp = false;
     public loading = false;
-    public searchResult$ = new BehaviorSubject<ISearchImageResponse | null>(null);
+    public searchResult: ISearchImageResponse | null = null;
     public pageSize = 50;
     public page = 0;
     public totalPages = 1;
@@ -111,7 +111,7 @@ export class SearchInImagesComponent implements OnInit {
             next: resp => {
                 this.imageSelectionService.clearSelection();
                 this.loading = false;
-                this.searchResult$.next(resp);
+                this.searchResult = resp;
                 this.totalPages = Math.floor(resp.total / this.pageSize) + ((resp.total % this.pageSize) === 0 ? 0 : 1);
                 if (type === PerformType.Search) {
                     this.page = 0;
@@ -122,7 +122,7 @@ export class SearchInImagesComponent implements OnInit {
             },
             error: (err: HttpErrorResponse) => {
                 this.loading = false;
-                this.searchResult$.next(null);
+                this.searchResult = null;
                 httpErrorResponseHandler(err, this.toastr);
             }
         });

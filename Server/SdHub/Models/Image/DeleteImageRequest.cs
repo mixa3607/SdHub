@@ -6,6 +6,6 @@ public class DeleteImageRequest
 {
     public string? ShortToken { get; set; }
 
-    [TsProperty(ForceNullable = true)]
+    [TsProperty(Type = "string | null")]
     public string? ManageToken { get; set; }
 }

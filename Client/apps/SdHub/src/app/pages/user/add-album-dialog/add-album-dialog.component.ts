@@ -1,12 +1,13 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {getErrorMessage} from '../../../shared/form-error-handling/handlers';
-import {HttpErrorResponse} from "@angular/common/http";
-import {httpErrorResponseHandler} from "apps/SdHub/src/app/shared/http-error-handling/handlers";
-import {IAlbumModel, ICreateAlbumRequest} from "apps/SdHub/src/app/models/autogen/album.models";
-import {AlbumApi} from "apps/SdHub/src/app/shared/services/api/album.api";
-import {ToastrService} from "ngx-toastr";
-import {MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef} from "@angular/material/dialog";
+import { HttpErrorResponse } from "@angular/common/http";
+import { Component, Inject, OnInit } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { MatDialog, MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { IAlbumModel, ICreateAlbumRequest } from "apps/SdHub/src/app/models/autogen/album.models";
+import { httpErrorResponseHandler } from "apps/SdHub/src/app/shared/http-error-handling/handlers";
+import { AlbumApi } from "apps/SdHub/src/app/shared/services/api/album.api";
+import { ToastrService } from "ngx-toastr";
+import { MyAlbumsService } from '../../../core/services/my-albums.service';
+import { getErrorMessage } from '../../../shared/form-error-handling/handlers';
 
 export interface IAddAlbumDialogData {
 
@@ -27,6 +28,7 @@ export class AddAlbumDialogComponent implements OnInit {
 
     constructor(private formBuilder: FormBuilder,
                 private albumApi: AlbumApi,
+                private myAlbumsService: MyAlbumsService,
                 private toastr: ToastrService,
                 public dialogRef: MatDialogRef<AddAlbumDialogComponent, IAddAlbumDialogResult>,
                 @Inject(MAT_DIALOG_DATA) public data: IAddAlbumDialogData) {
@@ -56,6 +58,7 @@ export class AddAlbumDialogComponent implements OnInit {
         this.albumApi.create(req).subscribe({
             next: x => {
                 this.loading = false;
+                this.myAlbumsService.reloadAlbums();
                 this.toastr.success('Album created');
                 this.dialogRef.close({createdAlbum: x});
             },

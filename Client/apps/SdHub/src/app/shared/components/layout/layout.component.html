@@ -41,10 +41,13 @@
         </a>
 
         <h3 mat-subheader>Models/Vae/...</h3>
-        <a mat-list-item [routerLink]="['/bin/search']" routerLinkActive="active">
-          <mat-icon mat-list-icon>folder_zip</mat-icon>
-          <p mat-line>All</p>
-        </a>
+        <div matTooltip="not implemented"
+             matTooltipPosition="right">
+          <a mat-list-item [routerLink]="['/bin/search']" routerLinkActive="active" disabled>
+            <mat-icon mat-list-icon>folder_zip</mat-icon>
+            <p mat-line>All</p>
+          </a>
+        </div>
 
         <mat-divider></mat-divider>
 

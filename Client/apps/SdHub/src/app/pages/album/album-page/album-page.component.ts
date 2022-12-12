@@ -1,22 +1,24 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {PerformType} from "apps/SdHub/src/app/pages/generated/search-page/search-page.component";
+import { Clipboard } from '@angular/cdk/clipboard';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { AuthStateService } from 'apps/SdHub/src/app/core/services/auth-state.service';
+import { IAlbumModel } from 'apps/SdHub/src/app/models/autogen/album.models';
 import {
   ISearchImageResponse,
   SearchImageOrderByFieldType,
   SearchImageOrderByType
-} from "apps/SdHub/src/app/models/autogen/image.models";
-import {HttpErrorResponse} from "@angular/common/http";
-import {httpErrorResponseHandler} from "apps/SdHub/src/app/shared/http-error-handling/handlers";
-import {ImageApi} from "apps/SdHub/src/app/shared/services/api/image.api";
-import {AlbumApi} from "apps/SdHub/src/app/shared/services/api/album.api";
-import {ToastrService} from "ngx-toastr";
-import {ActivatedRoute, Router} from "@angular/router";
-import {Clipboard} from "@angular/cdk/clipboard";
-import {AuthStateService} from "apps/SdHub/src/app/core/services/auth-state.service";
-import {MatDialog} from "@angular/material/dialog";
-import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
-import {IImageOwnerModel} from "apps/SdHub/src/app/models/autogen/misc.models";
-import {IAlbumModel} from "apps/SdHub/src/app/models/autogen/album.models";
+} from 'apps/SdHub/src/app/models/autogen/image.models';
+import { IImageOwnerModel } from 'apps/SdHub/src/app/models/autogen/misc.models';
+import { PerformType } from 'apps/SdHub/src/app/pages/generated/search-page/search-page.component';
+import { httpErrorResponseHandler } from 'apps/SdHub/src/app/shared/http-error-handling/handlers';
+import { AlbumApi } from 'apps/SdHub/src/app/shared/services/api/album.api';
+import { ImageApi } from 'apps/SdHub/src/app/shared/services/api/image.api';
+import { ToastrService } from 'ngx-toastr';
+import { ImageSelectionService } from '../../../core/services/image-selection.service';
+import { MyAlbumsService } from '../../../core/services/my-albums.service';
 
 interface IAlbumEdit {
   name: string | null;
@@ -41,6 +43,7 @@ export class AlbumPageComponent implements OnInit {
   public description = '';
   public shortToken = '';
   public albumOwner: IImageOwnerModel | null = null;
+  public album: IAlbumModel | null = null;
 
   @ViewChild('scrollTo', {read: ElementRef}) scrollTo?: ElementRef;
 
@@ -53,6 +56,8 @@ export class AlbumPageComponent implements OnInit {
   constructor(private imageApi: ImageApi,
               private albumApi: AlbumApi,
               private toastr: ToastrService,
+              private myAlbumsService: MyAlbumsService,
+              private imageSelectionService: ImageSelectionService,
               private route: ActivatedRoute,
               private router: Router,
               private clipboard: Clipboard,
@@ -96,6 +101,7 @@ export class AlbumPageComponent implements OnInit {
     this.name = album.name;
     this.thumbUrl = album.thumbImage?.directUrl ?? '';
     this.shortToken = album.shortToken;
+    this.album = album;
 
     this.canEdit = this.currentUser === this.albumOwner?.login;
   }
@@ -115,6 +121,10 @@ export class AlbumPageComponent implements OnInit {
     this.editMode = false;
   }
 
+  public onReloadImages(): void {
+    this.runImageSearch(PerformType.Search);
+  }
+
   public onSaveClick(): void {
     this.albumApi.edit({
       shortToken: this.shortToken,
@@ -124,6 +134,7 @@ export class AlbumPageComponent implements OnInit {
       next: resp => {
         this.editMode = false;
         this.applyLoadedAlbum(resp);
+        this.myAlbumsService.reloadAlbums();
         this.toastr.success('All changes saved');
       },
       error: (err: HttpErrorResponse) => {
@@ -139,6 +150,7 @@ export class AlbumPageComponent implements OnInit {
     }).subscribe({
       next: resp => {
         this.editMode = false;
+        this.myAlbumsService.reloadAlbums();
         this.toastr.success('Deleted (┬┬﹏┬┬)');
         void this.router.navigate(['/']);
       },
@@ -168,6 +180,7 @@ export class AlbumPageComponent implements OnInit {
       album: this.shortToken,
     }).subscribe({
       next: resp => {
+        this.imageSelectionService.clearSelection();
         this.loadingImages = false;
         this.searchResult = resp;
         this.totalPages = Math.floor(resp.total / this.pageSize) + ((resp.total % this.pageSize) === 0 ? 0 : 1);
@@ -175,7 +188,7 @@ export class AlbumPageComponent implements OnInit {
           this.page = 0;
         }
         if (type === PerformType.Pagination) {
-          this.scrollTo?.nativeElement?.scrollIntoView({behavior: "smooth"});
+          this.scrollTo?.nativeElement?.scrollIntoView({behavior: 'smooth'});
         }
       },
       error: (err: HttpErrorResponse) => {

@@ -1,18 +1,19 @@
-import {Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import { HttpErrorResponse } from "@angular/common/http";
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import {
-    ISearchImageResponse,
-    SearchImageInFieldType,
-    SearchImageOrderByFieldType,
-    SearchImageOrderByType,
-    SoftwareGeneratedTypes
+  ISearchImageResponse,
+  SearchImageInFieldType,
+  SearchImageOrderByFieldType,
+  SearchImageOrderByType,
+  SoftwareGeneratedTypes
 } from "apps/SdHub/src/app/models/autogen/image.models";
-import {Observable} from "rxjs";
-import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
-import {ImageApi} from "apps/SdHub/src/app/shared/services/api/image.api";
-import {HttpErrorResponse} from "@angular/common/http";
-import {httpErrorResponseHandler} from "apps/SdHub/src/app/shared/http-error-handling/handlers";
-import {ToastrService} from "ngx-toastr";
-import {PerformType} from "apps/SdHub/src/app/pages/generated/search-page/search-page.component";
+import { PerformType } from "apps/SdHub/src/app/pages/generated/search-page/search-page.component";
+import { httpErrorResponseHandler } from "apps/SdHub/src/app/shared/http-error-handling/handlers";
+import { ImageApi } from "apps/SdHub/src/app/shared/services/api/image.api";
+import { ToastrService } from "ngx-toastr";
+import { Observable } from "rxjs";
+import { ImageSelectionService } from '../../../core/services/image-selection.service';
 
 @UntilDestroy()
 @Component({
@@ -78,9 +79,11 @@ export class SearchInImagesComponent implements OnInit {
     public page = 0;
     public totalPages = 1;
 
-    constructor(private imageApi: ImageApi,
-                private toastr: ToastrService,) {
-    }
+    constructor(
+      private imageApi: ImageApi,
+      private toastr: ToastrService,
+      private imageSelectionService: ImageSelectionService,
+    ) { }
 
     ngOnInit(): void {
     }
@@ -106,6 +109,7 @@ export class SearchInImagesComponent implements OnInit {
             searchText: this.searchText,
         }).subscribe({
             next: resp => {
+                this.imageSelectionService.clearSelection();
                 this.loading = false;
                 this.searchResult = resp;
                 this.totalPages = Math.floor(resp.total / this.pageSize) + ((resp.total % this.pageSize) === 0 ? 0 : 1);
@@ -122,6 +126,10 @@ export class SearchInImagesComponent implements OnInit {
                 httpErrorResponseHandler(err, this.toastr);
             }
         });
+    }
+
+    public onReloadImages(): void {
+        this.runSearch(PerformType.Search);
     }
 
     public onPageChange(): void {
@@ -145,3 +153,4 @@ export class SearchInImagesComponent implements OnInit {
         }
     }
 }
+

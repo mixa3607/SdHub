@@ -121,7 +121,7 @@ public class AlbumController : ControllerBase
     {
         ModelState.ThrowIfNotValid();
         var album = await _db.Albums
-            .Include(x => x.AlbumImages!.Where(y => y.Image!.DeletedAt == null).Take(1))
+            .Include(x => x.AlbumImages!.Where(y =>  y.Image!.DeletedAt == null).Take(1))
             .ThenInclude(x => x.Image)
             .ThenInclude(x => x!.CompressedImage)
             .Include(x => x.Owner)

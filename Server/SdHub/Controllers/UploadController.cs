@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using SdHub.Constants;
 using SdHub.Database;
 using SdHub.Database.Entities.Albums;
@@ -20,6 +21,7 @@ using SdHub.Extensions;
 using SdHub.Hangfire.Jobs;
 using SdHub.Models.Image;
 using SdHub.Models.Upload;
+using SdHub.Options;
 using SdHub.Services.FileProc;
 using SdHub.Services.User;
 using SimpleBase;
@@ -31,19 +33,21 @@ namespace SdHub.Controllers;
 public class UploadController : ControllerBase
 {
     private readonly SdHubDbContext _db;
+    private readonly AppInfoOptions _appInfo;
     private readonly IUserFromTokenService _userFromToken;
     private readonly ILogger<UploadController> _logger;
     private readonly IFileProcessor _fileProcessor;
     private readonly IMapper _mapper;
 
     public UploadController(SdHubDbContext db, IUserFromTokenService userFromToken, ILogger<UploadController> logger,
-        IFileProcessor fileProcessor, IMapper mapper)
+        IFileProcessor fileProcessor, IMapper mapper, IOptions<AppInfoOptions> appInfo)
     {
         _db = db;
         _userFromToken = userFromToken;
         _logger = logger;
         _fileProcessor = fileProcessor;
         _mapper = mapper;
+        _appInfo = appInfo.Value;
     }
 
     [HttpPost]
@@ -51,6 +55,8 @@ public class UploadController : ControllerBase
     public async Task<UploadResponse> UploadAuth([FromForm] UploadRequest req, CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
+        if (_appInfo.DisableImageUploadAuth) 
+            ModelState.AddError("Uploading disabled by administrator").ThrowIfNotValid();
         var uploader = await GetUploaderAsync(ct);
 
         var jwtUser = _userFromToken.Get();
@@ -92,6 +98,8 @@ public class UploadController : ControllerBase
     public async Task<UploadResponse> Upload([FromForm] UploadRequest req, CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
+        if (_appInfo.DisableImageUploadAnon)
+            ModelState.AddError("Uploading disabled by administrator").ThrowIfNotValid();
         var uploader = await GetUploaderAsync(ct);
 
         if (!string.IsNullOrWhiteSpace(req.AlbumShortToken))

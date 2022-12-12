@@ -7,6 +7,9 @@ export interface IFrontendSettings
 	recaptchaSiteKey: string;
 	disableUsersRegistration: boolean;
 	disableCaptcha: boolean;
+	disableImageUploadAnon: boolean;
+	disableImageUploadAuth: boolean;
+	disableGridUploadAuth: boolean;
 }
 export interface IImageOwnerModel
 {

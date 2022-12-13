@@ -32,6 +32,64 @@ export interface IGridImageModel
 	order: number;
 	image: IImageModel;
 }
+export interface IGetGridRequest
+{
+	shortToken: string;
+}
+export interface IGetGridResponse
+{
+	grid: IGridModel;
+}
+export interface ISearchGridRequest
+{
+	searchText: string;
+	owner: string;
+	album: string;
+	fields: SearchGridInFieldType[];
+	orderByField: SearchGridOrderByFieldType;
+	orderBy: SearchGridOrderByType;
+	skip: number;
+	take: number;
+}
+export interface ISearchGridResponse
+{
+	grids: IGridModel[];
+	total: number;
+}
+export interface IEditGridRequest
+{
+	shortToken: string;
+	name?: string;
+	description?: string;
+}
+export interface IEditGridResponse
+{
+	grid: IGridModel;
+	success: boolean;
+	reason: string;
+}
+export interface IDeleteGridRequest
+{
+	shortToken: string;
+}
+export interface IDeleteGridResponse
+{
+	success: boolean;
+	reason: string;
+}
+export enum SearchGridInFieldType {
+	Name = 0,
+	Description = 1,
+	User = 2
+}
+export enum SearchGridOrderByFieldType {
+	UploadDate = 0,
+	UserName = 1
+}
+export enum SearchGridOrderByType {
+	Asc = 0,
+	Desc = 1
+}
 export interface IUploadGridRequest
 {
 	albumShortToken: string;

@@ -19,6 +19,14 @@ public class GridTsConfigurator : ITsConfigurator
                 typeof(GridImageModel),
                 typeof(UploadGridRequest),
                 typeof(UploadGridResponse),
+                typeof(GetGridRequest),
+                typeof(GetGridResponse),
+                typeof(SearchGridRequest),
+                typeof(SearchGridResponse),
+                typeof(EditGridRequest),
+                typeof(EditGridResponse),
+                typeof(DeleteGridRequest),
+                typeof(DeleteGridResponse),
             }, c => c
                 .SubsDatetimeOffsetToStr()
                 .SubsTimespanToStr()
@@ -28,6 +36,9 @@ public class GridTsConfigurator : ITsConfigurator
             ;
         builder.ExportAsEnums(new Type[]
         {
+            typeof(SearchGridInFieldType),
+            typeof(SearchGridOrderByFieldType),
+            typeof(SearchGridOrderByType),
         }, c => c.ExportTo(outFile));
     }
 }

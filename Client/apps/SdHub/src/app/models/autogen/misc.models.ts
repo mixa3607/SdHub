@@ -118,4 +118,6 @@ export abstract class ModelStateErrors
 	public static ImageIsPartOfGrid: string = `IMAGE_IS_PART_OF_GRID`;
 	public static AlbumNotFound: string = `ALBUM_NOT_FOUND`;
 	public static NotAlbumOwner: string = `NOT_ALBUM_OWNER`;
+	public static GridNotFound: string = `GRID_NOT_FOUND`;
+	public static NotGridOwner: string = `NOT_GRID_OWNER`;
 }

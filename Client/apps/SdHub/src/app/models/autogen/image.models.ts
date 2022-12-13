@@ -8,7 +8,7 @@ import { IImageModel } from './misc.models';
 export interface IDeleteImageRequest
 {
 	shortToken: string;
-	manageToken: string;
+	manageToken: string | null;
 }
 export interface IDeleteImageResponse
 {

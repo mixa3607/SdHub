@@ -44,6 +44,8 @@ import { AlbumAutocompleteComponent } from './components/album-autocomplete/albu
     GridViewerComponent,
     ImageViewerDialogComponent,
     AlbumAutocompleteComponent,
+        ImageBunchActionsPanelComponent,
+        ImageViewerDialogComponent,
   ],
     exports: [
         FormsModule,
@@ -57,6 +59,7 @@ import { AlbumAutocompleteComponent } from './components/album-autocomplete/albu
         LocalDatePipe,
         YesNoPipe,
         GridViewerComponent,
+        ImageBunchActionsPanelComponent,
         PaginatorComponent,
         AlbumAutocompleteComponent,
     ],

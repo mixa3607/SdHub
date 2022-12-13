@@ -92,11 +92,20 @@ public class AlbumController : ControllerBase
         }
 
         query = query
+            .Include(x => x.AlbumImages!.Where(y => y.Image!.DeletedAt == null).Take(1)).ThenInclude(x => x.Image).ThenInclude(x => x!.CompressedImage)
             .Include(x => x.ThumbImage)
             .Include(x => x.Owner)
             .ApplyFilter();
         var total = await query.CountAsync(ct);
         var albums = await query.Skip(req.Skip).Take(req.Take).ToArrayAsync(ct);
+        foreach (var albumEntity in albums)
+        {
+            if (albumEntity.AlbumImages?.Count > 0)
+            {
+                albumEntity.ThumbImage = albumEntity.AlbumImages[0].Image?.CompressedImage;
+            }
+        }
+
         var albumModels = _mapper.Map<AlbumModel[]>(albums);
 
         return new SearchAlbumResponse()
@@ -113,13 +122,17 @@ public class AlbumController : ControllerBase
     {
         ModelState.ThrowIfNotValid();
         var album = await _db.Albums
-            .Include(x => x.ThumbImage)
+            .Include(x => x.AlbumImages!.Where(y =>  y.Image!.DeletedAt == null).Take(1))
+            .ThenInclude(x => x.Image)
+            .ThenInclude(x => x!.CompressedImage)
             .Include(x => x.Owner)
             .Where(x => x.DeletedAt == null && x.ShortToken == req.ShortToken)
             .FirstOrDefaultAsync(ct);
         if (album == null)
             ModelState.AddError(ModelStateErrors.AlbumNotFound).ThrowIfNotValid();
 
+        if (album!.AlbumImages?.Count > 0)
+            album.ThumbImage = album.AlbumImages[0].Image?.CompressedImage;
         var totalImgs = await _db.AlbumImages.Where(x => x.AlbumId == album!.Id).CountAsync(ct);
 
         return new GetAlbumResponse()
@@ -204,12 +217,23 @@ public class AlbumController : ControllerBase
         CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
-        var album = await _db.Albums.FirstAsync(x => x.ShortToken == req.AlbumShortToken, ct);
+        var userJwt = _fromTokenService.Get()!;
+
+        var album = await _db.Albums
+            .Include(x => x.Owner)
+            .FirstOrDefaultAsync(x => x.ShortToken == req.AlbumShortToken, ct);
+        if (album == null)
+            ModelState.AddError(ModelStateErrors.AlbumNotFound).ThrowIfNotValid();
+        if (album!.Owner!.Guid != userJwt.Guid)
+            ModelState.AddError(ModelStateErrors.NotAlbumOwner).ThrowIfNotValid();
+
         var images = await _db.Images
             .Where(x =>
-                x.DeletedAt == null && req.Images.Contains(x.ShortToken) &&
-                x.AlbumImages!.All(y => y.AlbumId != album.Id))
+                x.DeletedAt == null
+                && req.Images.Contains(x.ShortToken)
+                && (x.AlbumImages!.Count == 0 || x.AlbumImages!.All(y => y.AlbumId != album.Id)))
             .ToArrayAsync(ct);
+
         foreach (var image in images)
         {
             var albumImage = new AlbumImageEntity()
@@ -233,27 +257,31 @@ public class AlbumController : ControllerBase
         CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
-        var album = await _db.Albums.FirstAsync(x => x.ShortToken == req.AlbumShortToken, ct);
-        var images = await _db.Images
+        var userJwt = _fromTokenService.Get()!;
+
+        var album = await _db.Albums
+            .Include(x => x.Owner)
+            .FirstOrDefaultAsync(x => x.ShortToken == req.AlbumShortToken, ct);
+        if (album == null)
+            ModelState.AddError(ModelStateErrors.AlbumNotFound).ThrowIfNotValid();
+        if (album!.Owner!.Guid != userJwt.Guid)
+            ModelState.AddError(ModelStateErrors.NotAlbumOwner).ThrowIfNotValid();
+
+        var albImages = await _db.AlbumImages
+            .Include(x => x.Image)
             .Where(x =>
-                x.DeletedAt == null && req.Images.Contains(x.ShortToken) &&
-                x.AlbumImages!.All(y => y.AlbumId != album.Id))
+                x.Image!.DeletedAt == null
+                && req.Images.Contains(x.Image.ShortToken)
+                && x.AlbumId == album.Id)
             .ToArrayAsync(ct);
 
-        foreach (var image in images)
-        {
-            var albumImage = new AlbumImageEntity()
-            {
-                AlbumId = album.Id,
-                ImageId = image.Id,
-            };
-            _db.AlbumImages.Remove(albumImage);
-        }
+
+        _db.AlbumImages.RemoveRange(albImages);
 
         await _db.SaveChangesAsync(CancellationToken.None);
         return new DeleteAlbumImagesResponse
         {
-            DeletedImages = images.Select(x => x.ShortToken!).ToArray()
+            DeletedImages = albImages.Select(x => x.Image!.ShortToken!).ToArray()
         };
     }
 

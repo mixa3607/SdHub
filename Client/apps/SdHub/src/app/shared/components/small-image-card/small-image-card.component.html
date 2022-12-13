@@ -1,12 +1,26 @@
-<mat-card>
+<mat-card [class.common-mode]="!(isSelectionModeActivated$ | async)">
+  <div
+    *ngIf="isSelectionModeActivated$ | async"
+    class="image-selection-overlay"
+    [class.image-selection-overlay_selected]="isSelected$ | async"
+    (click)="toggleSelection()">
+  </div>
   <mat-card-content style="display: flex; flex-direction: column; gap: .4rem">
-    <a class="card-container" [routerLink]="'/i/' + shortToken">
-      <a *ngIf="thumbUrl != ''; else noThumb"
-         [href]="compressedUrl">
-        <img class="thumbnail"
-             [attr.src]="thumbUrl"
-             [attr.data-src]="compressedUrl">
+    <a class="card-container">
+      <a *ngIf="compressedUrl != ''; else noThumb" [href]="compressedUrl">
+        <a [routerLink]="'/i/' + shortToken">
+          <img class="thumbnail" [src]="compressedUrl">
+        </a>
       </a>
+      <button
+        *ngIf="displayMenuButton$ | async"
+        class="menu-button"
+        [class.menu-button_opened]="isMenuOpened"
+        mat-icon-button
+        [matMenuTriggerFor]="cardMenu"
+        (click)="onMenuOpened()">
+        <mat-icon>more_vert</mat-icon>
+      </button>
       <ng-template #noThumb>
         <span style="font-style: italic">Preview not available</span>
       </ng-template>
@@ -25,3 +39,74 @@
     <div>Dims: <span class="gray-value">{{dims}}</span></div>
   </mat-card-content>
 </mat-card>
+
+<mat-menu #cardMenu="matMenu" (closed)="onMenuClosed()">
+  <button mat-menu-item (click)="toggleSelection()">
+    <mat-icon>library_add_check</mat-icon>
+    <span>Begin selection</span>
+  </button>
+  <button
+    *ngIf="(hasAlbums$ | async) && !(isOwnAlbumOpened$ | async)"
+    mat-menu-item
+    [matMenuTriggerFor]="addToAlbumMenu">
+    <mat-icon>photo_library</mat-icon>
+    <span>Add to album</span>
+  </button>
+  <button
+    *ngIf="(isOwnAlbumOpened$ | async)"
+    mat-menu-item
+    [matMenuTriggerFor]="ownAlbumMenu">
+    <mat-icon>photo_library</mat-icon>
+    <span>Albums</span>
+  </button>
+  <button *ngIf="canDeleteImage$ | async" mat-menu-item (click)="deleteImage()">
+    <mat-icon>delete</mat-icon>
+    <span>Delete</span>
+  </button>
+</mat-menu>
+
+<mat-menu #addToAlbumMenu="matMenu">
+  <button *ngFor="let album of myAlbums$ | async" mat-menu-item (click)="addImageToAlbum(album.shortToken)">
+    <mat-icon>photo_library</mat-icon>
+    <span>{{ album.name }}</span>
+  </button>
+</mat-menu>
+
+<mat-menu #ownAlbumMenu="matMenu">
+  <button mat-menu-item
+          [matMenuTriggerFor]="addToAnotherAlbumMenu"
+          [disabled]="(myAlbumsWithoutCurrent$ | async)!.length === 0">
+    <mat-icon>add</mat-icon>
+    <span>Add to another</span>
+  </button>
+  <button mat-menu-item
+          [matMenuTriggerFor]="moveToAnotherAlbumMenu"
+          [disabled]="(myAlbumsWithoutCurrent$ | async)!.length === 0">
+    <mat-icon>copy_all</mat-icon>
+    <span>Move to another</span>
+  </button>
+  <button mat-menu-item (click)="deleteImageFromCurrentAlbum()">
+    <mat-icon>clear</mat-icon>
+    <span>Delete from current</span>
+  </button>
+</mat-menu>
+
+<mat-menu #addToAnotherAlbumMenu="matMenu">
+  <button
+    *ngFor="let album of myAlbumsWithoutCurrent$ | async"
+    mat-menu-item
+    (click)="addImageToAlbum(album.shortToken)">
+    <mat-icon>photo_library</mat-icon>
+    <span>{{ album.name }}</span>
+  </button>
+</mat-menu>
+
+<mat-menu #moveToAnotherAlbumMenu="matMenu">
+  <button
+    *ngFor="let album of myAlbumsWithoutCurrent$ | async"
+    mat-menu-item
+    (click)="moveImageToAnotherAlbum(album.shortToken)">
+    <mat-icon>photo_library</mat-icon>
+    <span>{{ album.name }}</span>
+  </button>
+</mat-menu>

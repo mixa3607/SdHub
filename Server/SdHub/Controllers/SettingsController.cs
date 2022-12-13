@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using SdHub.Models;
 using SdHub.Options;
 
@@ -37,6 +36,9 @@ public class SettingsController : ControllerBase
             DisableUsersRegistration = _appInfo.DisableUsersRegistration,
             DisableCaptcha = _recaptcha.Bypass,
             RecaptchaSiteKey = _recaptcha.SiteKey,
+            DisableGridUploadAuth = _appInfo.DisableGridUploadAuth,
+            DisableImageUploadAnon = _appInfo.DisableImageUploadAnon,
+            DisableImageUploadAuth = _appInfo.DisableImageUploadAuth,
         };
 
         //Response.Headers.ContentType = "text/javascript";

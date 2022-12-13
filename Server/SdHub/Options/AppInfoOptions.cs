@@ -34,4 +34,8 @@ public class AppInfoOptions
     /// Disable user registration
     /// </summary>
     public bool DisableUsersRegistration { get; set; } = true;
+
+    public bool DisableImageUploadAnon { get; set; }
+    public bool DisableImageUploadAuth { get; set; }
+    public bool DisableGridUploadAuth { get; set; }
 }

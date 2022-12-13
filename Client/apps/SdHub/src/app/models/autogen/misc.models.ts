@@ -7,6 +7,9 @@ export interface IFrontendSettings
 	recaptchaSiteKey: string;
 	disableUsersRegistration: boolean;
 	disableCaptcha: boolean;
+	disableImageUploadAnon: boolean;
+	disableImageUploadAuth: boolean;
+	disableGridUploadAuth: boolean;
 }
 export interface IImageOwnerModel
 {
@@ -47,7 +50,6 @@ export interface IImageModel
 	owner: IImageOwnerModel;
 	originalImage: IFileModel;
 	compressedImage: IFileModel;
-	thumbImage: IFileModel;
 	shortUrl: string;
 	shortToken: string;
 	deletedAt: string|null;

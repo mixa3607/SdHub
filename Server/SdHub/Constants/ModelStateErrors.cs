@@ -19,4 +19,7 @@ public static class ModelStateErrors
 
     public const string AlbumNotFound = "ALBUM_NOT_FOUND";
     public const string NotAlbumOwner = "NOT_ALBUM_OWNER";
+
+    public const string GridNotFound = "GRID_NOT_FOUND";
+    public const string NotGridOwner = "NOT_GRID_OWNER";
 }

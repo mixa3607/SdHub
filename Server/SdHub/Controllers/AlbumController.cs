@@ -92,18 +92,20 @@ public class AlbumController : ControllerBase
         }
 
         query = query
-            .Include(x => x.AlbumImages!.Where(y => y.Image!.DeletedAt == null).Take(1)).ThenInclude(x => x.Image).ThenInclude(x => x!.CompressedImage)
             .Include(x => x.ThumbImage)
             .Include(x => x.Owner)
             .ApplyFilter();
+
+        query = IncludeFirstImageOrGrid(query);
+
         var total = await query.CountAsync(ct);
         var albums = await query.Skip(req.Skip).Take(req.Take).ToArrayAsync(ct);
         foreach (var albumEntity in albums)
         {
-            if (albumEntity.AlbumImages?.Count > 0)
-            {
-                albumEntity.ThumbImage = albumEntity.AlbumImages[0].Image?.CompressedImage;
-            }
+            if (!(albumEntity.AlbumImages?.Count > 0))
+                continue;
+            albumEntity.ThumbImage ??= albumEntity.AlbumImages[0].Image?.CompressedImage;
+            albumEntity.ThumbImage ??= albumEntity.AlbumImages[0].Grid?.ThumbImage;
         }
 
         var albumModels = _mapper.Map<AlbumModel[]>(albums);
@@ -121,25 +123,46 @@ public class AlbumController : ControllerBase
     public async Task<GetAlbumResponse> Get([FromQuery] GetAlbumRequest req, CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
-        var album = await _db.Albums
-            .Include(x => x.AlbumImages!.Where(y =>  y.Image!.DeletedAt == null).Take(1))
-            .ThenInclude(x => x.Image)
-            .ThenInclude(x => x!.CompressedImage)
+        var query = _db.Albums
             .Include(x => x.Owner)
-            .Where(x => x.DeletedAt == null && x.ShortToken == req.ShortToken)
-            .FirstOrDefaultAsync(ct);
+            .Where(x => x.DeletedAt == null && x.ShortToken == req.ShortToken);
+
+        query = IncludeFirstImageOrGrid(query);
+
+        var album = await query.FirstOrDefaultAsync(ct);
         if (album == null)
             ModelState.AddError(ModelStateErrors.AlbumNotFound).ThrowIfNotValid();
 
         if (album!.AlbumImages?.Count > 0)
-            album.ThumbImage = album.AlbumImages[0].Image?.CompressedImage;
-        var totalImgs = await _db.AlbumImages.Where(x => x.AlbumId == album!.Id).CountAsync(ct);
+        {
+            album.ThumbImage ??= album.AlbumImages[0].Image?.CompressedImage;
+            album.ThumbImage ??= album.AlbumImages[0].Grid?.ThumbImage;
+        }
+
+        var totalImgs = await _db.AlbumImages.Where(x => x.AlbumId == album!.Id
+                                                         && (x.Grid != null && x.Grid.DeletedAt == null ||
+                                                             x.Image != null && x.Image.DeletedAt == null))
+            .CountAsync(ct);
 
         return new GetAlbumResponse()
         {
             Album = _mapper.Map<AlbumModel>(album),
             ImagesCount = totalImgs
         };
+    }
+
+    private IQueryable<AlbumEntity> IncludeFirstImageOrGrid(IQueryable<AlbumEntity> query)
+    {
+        query = query.Include(x =>
+            x.AlbumImages!.Where(y =>
+                y.Grid != null && y.Grid.DeletedAt == null || y.Image != null && y.Image.DeletedAt == null).Take(1));
+        query = query.Include(x => x.AlbumImages!)
+            .ThenInclude(x => x.Image)
+            .ThenInclude(x => x!.CompressedImage);
+        query = query.Include(x => x.AlbumImages!)
+            .ThenInclude(x => x.Grid)
+            .ThenInclude(x => x!.ThumbImage);
+        return query;
     }
 
     [HttpPost]

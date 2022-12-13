@@ -12,13 +12,20 @@ import { CustomMaterialModule } from '../custom-material/custom-material.module'
 import { OverlayModule } from '@angular/cdk/overlay';
 import { A11yModule } from '@angular/cdk/a11y';
 import { PaginatorComponent } from './components/paginator/paginator.component';
-import { SmallImageCardComponent } from 'apps/SdHub/src/app/shared/components/small-image-card/small-image-card.component';
+import {
+  SmallImageCardComponent
+} from 'apps/SdHub/src/app/shared/components/small-image-card/small-image-card.component';
 import { ImageViewerComponent } from './components/image-viewer/image-viewer.component';
 import { ImageViewerDialogComponent } from './components/image-viewer-dialog/image-viewer-dialog.component';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { GridViewerComponent } from 'apps/SdHub/src/app/shared/components/grid-viewer/grid-viewer.component';
-import { SmallAlbumCardComponent } from 'apps/SdHub/src/app/shared/components/small-album-card/small-album-card.component';
+import {
+  SmallAlbumCardComponent
+} from 'apps/SdHub/src/app/shared/components/small-album-card/small-album-card.component';
 import { AlbumAutocompleteComponent } from './components/album-autocomplete/album-autocomplete.component';
+import {
+  ImageBunchActionsPanelComponent
+} from "apps/SdHub/src/app/shared/components/image-bunch-actions-panel/image-bunch-actions-panel.component";
 
 @NgModule({
   imports: [
@@ -44,24 +51,25 @@ import { AlbumAutocompleteComponent } from './components/album-autocomplete/albu
     GridViewerComponent,
     ImageViewerDialogComponent,
     AlbumAutocompleteComponent,
-        ImageBunchActionsPanelComponent,
-        ImageViewerDialogComponent,
+    ImageBunchActionsPanelComponent,
+    ImageViewerDialogComponent,
   ],
-    exports: [
-        FormsModule,
-        ReactiveFormsModule,
-        FlexLayoutModule,
-        CustomMaterialModule,
-        LimitToPipe,
-        ConfirmDialogComponent,
-        SmallImageCardComponent,
-        SmallAlbumCardComponent,
-        LocalDatePipe,
-        YesNoPipe,
-        GridViewerComponent,
-        ImageBunchActionsPanelComponent,
-        PaginatorComponent,
-        AlbumAutocompleteComponent,
-    ],
+  exports: [
+    FormsModule,
+    ReactiveFormsModule,
+    FlexLayoutModule,
+    CustomMaterialModule,
+    LimitToPipe,
+    ConfirmDialogComponent,
+    SmallImageCardComponent,
+    SmallAlbumCardComponent,
+    LocalDatePipe,
+    YesNoPipe,
+    GridViewerComponent,
+    ImageBunchActionsPanelComponent,
+    PaginatorComponent,
+    AlbumAutocompleteComponent,
+  ],
 })
-export class SharedModule {}
+export class SharedModule {
+}

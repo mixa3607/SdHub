@@ -8,6 +8,7 @@ using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using SdHub.Constants;
 using SdHub.Database;
 using SdHub.Database.Entities.Albums;
@@ -20,6 +21,7 @@ using SdHub.Extensions;
 using SdHub.Hangfire.Jobs;
 using SdHub.Models.Grid;
 using SdHub.Models.Upload;
+using SdHub.Options;
 using SdHub.Services.FileProc;
 using SdHub.Services.User;
 using SharpCompress.Readers;
@@ -32,6 +34,7 @@ namespace SdHub.Controllers;
 public class UploadGridController : ControllerBase
 {
     private readonly SdHubDbContext _db;
+    private readonly AppInfoOptions _appInfo;
     private readonly IUserFromTokenService _userFromToken;
     private readonly ILogger<UploadController> _logger;
     private readonly IFileProcessor _fileProcessor;
@@ -39,13 +42,14 @@ public class UploadGridController : ControllerBase
 
     public UploadGridController(SdHubDbContext db, IUserFromTokenService userFromToken,
         ILogger<UploadController> logger,
-        IFileProcessor fileProcessor, IMapper mapper)
+        IFileProcessor fileProcessor, IMapper mapper, IOptions<AppInfoOptions> appInfo)
     {
         _db = db;
         _userFromToken = userFromToken;
         _logger = logger;
         _fileProcessor = fileProcessor;
         _mapper = mapper;
+        _appInfo = appInfo.Value;
     }
 
     [HttpPost]
@@ -55,6 +59,9 @@ public class UploadGridController : ControllerBase
         CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
+        if (_appInfo.DisableGridUploadAuth)
+            ModelState.AddError("Uploading disabled by administrator").ThrowIfNotValid();
+
         var uploader = await GetUploaderAsync(ct);
 
         var jwtUser = _userFromToken.Get();

@@ -1,11 +1,12 @@
 ﻿using FluentValidation;
 
-namespace SdHub.Models.Image;
+namespace SdHub.Models.Grid;
 
-public class GetImageRequest
+public class DeleteGridRequest
 {
     public string? ShortToken { get; set; }
-    public class Validator : AbstractValidator<GetImageRequest>
+
+    public class Validator : AbstractValidator<DeleteGridRequest>
     {
         public Validator()
         {

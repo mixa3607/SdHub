@@ -1,16 +1,16 @@
-import {Injectable} from "@angular/core";
-import {HttpClient} from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
 import {
-    ICheckManageTokenRequest,
-    ICheckManageTokenResponse,
-    IDeleteImageRequest,
-    IDeleteImageResponse,
-    IEditImageRequest,
-    IEditImageResponse,
-    IGetImageRequest,
-    IGetImageResponse,
-    ISearchImageRequest,
-    ISearchImageResponse
+  ICheckManageTokenRequest,
+  ICheckManageTokenResponse,
+  IDeleteImageRequest,
+  IDeleteImageResponse,
+  IEditImageRequest,
+  IEditImageResponse,
+  IGetImageRequest,
+  IGetImageResponse,
+  ISearchImageRequest,
+  ISearchImageResponse
 } from "apps/SdHub/src/app/models/autogen/image.models";
 
 @Injectable({

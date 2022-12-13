@@ -19,6 +19,14 @@ const appRoutes: Routes = [
     loadChildren: () => import('./pages/album/album.module').then(m => m.AlbumModule),
   },
   {
+    path: 'g',
+    loadChildren: () => import('./pages/grid/grid.module').then(m => m.GridModule),
+  },
+  {
+    path: 'grid',
+    loadChildren: () => import('./pages/grid/grid.module').then(m => m.GridModule),
+  },
+  {
     path: 'gen',
     loadChildren: () => import('./pages/generated/generated.module').then(m => m.GeneratedModule),
   },
@@ -33,10 +41,6 @@ const appRoutes: Routes = [
   {
     path: 'user',
     loadChildren: () => import('./pages/user/user.module').then(m => m.UserModule),
-  },
-  {
-    path: 'grid',
-    loadChildren: () => import('./pages/grid/grid.module').then(m => m.GridModule),
   },
   {
     path: 'upload',

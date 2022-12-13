@@ -100,8 +100,8 @@ public class ImageConvertRunner : IImageConvertRunnerV1
             .ToArrayAsync(ct);
         var imageModels = _mapper.Map<ImageModel[]>(images).OrderBy(x => x.OriginalImage!.Name).ToArray();
         var tmpDir = _fileProcessor.GetNewTempDirPath();
-        var srcFilesPath = Path.Combine(tmpDir, "src");
-        var layersPath = Path.Combine(tmpDir, "layers");
+        var srcFilesPath = Path.Combine(tmpDir, "src").Replace('\\', '/');
+        var layersPath = Path.Combine(tmpDir, "layers").Replace('\\', '/');
 
         await Parallel.ForEachAsync(imageModels.Select((x, i) => (model: x, idx: i)), new ParallelOptions()
             {

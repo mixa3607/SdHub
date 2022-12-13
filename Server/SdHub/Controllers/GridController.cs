@@ -121,6 +121,7 @@ public class GridController : ControllerBase
         ModelState.ThrowIfNotValid();
 
         var grid = await IncludeImages(_db.Grids)
+            .Include(x => x.LayersDirectory)
             .Include(x => x.ThumbImage)
             .Include(x => x.Owner)
             .ApplyFilter(shortCode: req.ShortToken!.Trim())
@@ -169,6 +170,7 @@ public class GridController : ControllerBase
         var userJwt = _fromTokenService.Get()!;
 
         var grid = await IncludeImages(_db.Grids)
+            .Include(x => x.LayersDirectory)
             .Include(x => x.ThumbImage)
             .Include(x => x.Owner)
             .ApplyFilter(shortCode: req.ShortToken!.Trim())
@@ -210,6 +212,10 @@ public class GridController : ControllerBase
             .Include(x => x.GridImages!)
             .ThenInclude(x => x.Image!)
             .ThenInclude(x => x.OriginalImage);
+        query = query
+            .Include(x => x.GridImages!)
+            .ThenInclude(x => x.Image!)
+            .ThenInclude(x => x.ParsedMetadata);
         return query;
     }
 }

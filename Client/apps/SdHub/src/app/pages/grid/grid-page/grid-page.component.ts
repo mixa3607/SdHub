@@ -1,199 +1,167 @@
-import {Component, OnInit} from '@angular/core';
-import {CRS, geoJSON, latLngBounds, Layer, Map, MapOptions, point, tileLayer} from "leaflet";
-import {FeatureCollection} from "geojson";
+import { Component, OnInit } from '@angular/core';
+import {
+  IImageModel,
+  IImageOwnerModel,
+  IUserModel
+} from "apps/SdHub/src/app/models/autogen/misc.models";
+import { BehaviorSubject } from "rxjs";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Clipboard } from "@angular/cdk/clipboard";
+import { ToastrService } from "ngx-toastr";
+import { AuthStateService } from "apps/SdHub/src/app/core/services/auth-state.service";
+import { MatDialog } from "@angular/material/dialog";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { IGetImageRequest } from "apps/SdHub/src/app/models/autogen/image.models";
+import { HttpErrorResponse } from "@angular/common/http";
+import { httpErrorResponseHandler } from "apps/SdHub/src/app/shared/http-error-handling/handlers";
+import { GridApi } from "apps/SdHub/src/app/shared/services/api/grid.api";
+import { IGridModel } from "apps/SdHub/src/app/models/autogen/grid.models";
+import {
+  ImageViewerDialogComponent
+} from "apps/SdHub/src/app/shared/components/image-viewer-dialog/image-viewer-dialog.component";
 
-
-interface IGridLegendTitle {
-    name: string;
-    background: string;
+interface IEditGrid {
+  name?: string;
+  description?: string;
 }
 
-interface IGridOptions {
-    xTiles: number;
-    yTiles: number;
-    tileWidth: number;
-    tileHeight: number;
-    fromLayer: number;
-    toLayer: number;
-    tilesUrlTemplate: string;
-    xLegend: IGridLegendTitle[];
-    yLegend: IGridLegendTitle[];
-}
-
+@UntilDestroy()
 @Component({
-    selector: 'app-grid-page',
-    templateUrl: './grid-page.component.html',
-    styleUrls: ['./grid-page.component.scss'],
+  selector: 'app-grid-page',
+  templateUrl: './grid-page.component.html',
+  styleUrls: ['./grid-page.component.scss'],
 })
 export class GridPageComponent implements OnInit {
-    private map?: Map;
+  public user: IUserModel | null = null;
+  public loading$ = new BehaviorSubject<boolean>(false);
+  public loadType: 'ok' | 'error' | null = null;
 
-    public mapOptions: MapOptions = {
-        layers: [],
-        attributionControl: false,
-        crs: CRS.Simple
-    };
-    public mapLayers: Layer[] = [];
+  public editMode: boolean = false;
+  public editData: IEditGrid = {};
+  public showEditButton = false;
 
-    public gridOptions: IGridOptions;
-    public xElemWidth = 0;
-    public xElemMarginLeft = 0;
-    public yElemHeight = 0;
-    public yElemMarginTop = 0;
+  public name: string = '';
+  public description: string = '';
+  public thumbnailUrl: string = '';
+  public createdAt: string = '';
+  public shortUrl: string = '';
+  public shortToken: string = '';
+  public owner: IImageOwnerModel | null = null;
+  public xTiles: number = -1;
+  public yTiles: number = -1;
+  public info: IGridModel | null = null;
 
+  constructor(private route: ActivatedRoute,
+              private router: Router,
+              private clipboard: Clipboard,
+              private toastr: ToastrService,
+              private authState: AuthStateService,
+              private dialog: MatDialog,
+              private gridApi: GridApi) {
+    route.paramMap
+      .pipe(untilDestroyed(this))
+      .subscribe(x => this.loadGridCard(x.get('shortCode')));
+    authState.user$
+      .pipe(untilDestroyed(this))
+      .subscribe(x => {
+        this.user = x;
+      });
+  }
 
-    constructor() {
-        const opts: IGridOptions = {
-            xTiles: 11,
-            yTiles: 11,
-            tileWidth: 512,
-            tileHeight: 896,
-            fromLayer: 18,
-            toLayer: 11,
-            tilesUrlTemplate: '/layers/{z}/{x}_{y}.webp',
-            yLegend: [],
-            xLegend: [],
+  ngOnInit(): void {
+  }
+
+  private loadGridCard(shortCode: string | null): void {
+    if (shortCode == null)
+      return;
+    this.loading$.next(true);
+    const req: IGetImageRequest = {
+      shortToken: shortCode
+    }
+    this.gridApi.get(req).subscribe({
+      next: resp => {
+        this.loadType = "ok";
+        this.applyLoadedGrid(resp.grid);
+        this.loading$.next(false);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.showEditButton = false;
+        this.loadType = "error";
+        this.loading$.next(false);
+        httpErrorResponseHandler(err, this.toastr);
+      }
+    })
+  }
+
+  private applyLoadedGrid(grid: IGridModel): void {
+    this.info = grid;
+    this.name = grid.name ?? '';
+    this.shortToken = grid.shortToken ?? '';
+    this.description = grid.description ?? '';
+    this.thumbnailUrl = grid.thumbImage?.directUrl ?? '';
+    this.shortUrl = grid.shortUrl ?? '';
+    this.createdAt = grid.createdAt;
+    this.owner = grid.owner;
+    this.xTiles = grid.xTiles;
+    this.yTiles = grid.yTiles;
+    this.showEditButton = this.user?.guid === grid.owner.guid;
+  }
+
+  public onCopyShortLinkClick(): void {
+    if (this.shortUrl == '')
+      return;
+    this.clipboard.copy(this.shortUrl);
+    this.toastr.success('Short link copy to clipboard');
+  }
+
+  public onEditClick(): void {
+    this.editData.name = this.name;
+    this.editData.description = this.description;
+    this.editMode = true;
+  }
+
+  public onSaveClick(): void {
+    const req = {...this.editData, shortToken: this.shortToken};
+    this.gridApi.edit(req).subscribe({
+      next: resp => {
+        if (resp.success) {
+          this.editMode = false;
+          this.applyLoadedGrid(resp.grid);
+          this.toastr.success(resp.reason, 'All changes saved');
+        } else {
+          this.toastr.error(resp.reason, 'Can\'t save changes');
         }
-        const xPrompts = [
-            'sitting',
-            'standing',
-            'squatting',
-            'rabbit pose',
-            'bent over',
-            'leaning forward',
-            'paw pose',
-            'claw pose',
-            'crossed legs',
-            'ojou-sama pose',
-            'fighting stance',
-            'legs apart',
-            'arms up',
-            'arms behind back',
-            'arms behind head',
-            'hands on hips',
-            'hands up',
-            'all fours',
-            'hands between legs',
-            'covering mouth',
-            'outstretched arms',
-            'top-down bottom-up',
-            'on back',
-            'on stomach',
-            'lying',
-            'on side',
-            'standing on one leg',
-        ]
-        const yPrompts = Array.from({length: 151 - 70}, (v, k) => k + 70).map(x => x.toString());
-        opts.xTiles = xPrompts.length;
-        opts.yTiles = yPrompts.length;
+      },
+      error: (err: HttpErrorResponse) => {
+        this.editMode = false;
+        httpErrorResponseHandler(err, this.toastr);
+      }
+    });
+  }
 
-        for (let i = 0; i < opts.xTiles; i++) {
-            const background = i % 2 == 0 ? 'rgba(238,238,238,0.9)' : 'rgba(218,218,218,0.9)';
-            opts.xLegend.push({name: xPrompts[i], background});
+  public onCancelClick(): void {
+    this.editMode = false;
+  }
+
+  public onDeleteClick(): void {
+    this.gridApi.delete({shortToken: this.shortToken}).subscribe({
+      next: resp => {
+        if (resp.success) {
+          this.editMode = false;
+          this.toastr.success('Grid deleted');
+          void this.router.navigate(['/']);
+        } else {
+          this.toastr.error(resp.reason, 'Can\'t save changes');
         }
-        for (let i = 0; i < opts.yTiles; i++) {
-            const background = i % 2 == 0 ? 'rgba(238,238,238,0.9)' : 'rgba(218,218,218,0.9)';
-            opts.yLegend.push({name: yPrompts[i], background});
-        }
-        this.gridOptions = opts;
-        console.log(opts);
-    }
+      },
+      error: (err: HttpErrorResponse) => {
+        this.editMode = false;
+        httpErrorResponseHandler(err, this.toastr);
+      }
+    });
+  }
 
-    ngOnInit(): void {
-    }
-
-    onMapMove(evt: any) {
-        if (this.map == null)
-            return;
-        const zoom = this.map.getZoom();
-        const layersDiff = this.gridOptions.fromLayer - zoom;
-
-        let mapCenter = this.map.project(this.map.getCenter(), zoom);
-        let mapSize = this.map.getSize();
-
-        this.xElemMarginLeft = mapSize.x / 2 - mapCenter.x;
-        this.xElemWidth = this.gridOptions.tileWidth / Math.pow(2, layersDiff);
-
-        this.yElemMarginTop = mapSize.y / 2 - mapCenter.y;
-        this.yElemHeight = this.gridOptions.tileHeight / Math.pow(2, layersDiff);
-        //console.log(mapSize, mapCenter, this.map.getCenter(), this.yElemMarginTop)
-    }
-
-    onMapReady(map: Map) {
-        this.map = map;
-
-        const geoJson1: FeatureCollection = {
-            "type": "FeatureCollection",
-            "features": [
-                {
-                    "type": "Feature",
-                    "properties": {
-                        "name": "GeoJSON",
-                        "popupContent": "This is GeoJSON test"
-                    },
-                    "geometry": {
-                        "coordinates": [
-                            [
-                                [
-                                    map.unproject([0, 0], 18).lng,
-                                    map.unproject([0, 0], 18).lat,
-                                ],
-                                [
-                                    map.unproject([0, 896], 18).lng,
-                                    map.unproject([0, 896], 18).lat,
-                                ],
-                                [
-                                    map.unproject([512, 896], 18).lng,
-                                    map.unproject([512, 896], 18).lat,
-                                ],
-                                [
-                                    map.unproject([512, 0], 18).lng,
-                                    map.unproject([512, 0], 18).lat,
-                                ],
-                            ]
-                        ],
-                        "type": "Polygon"
-                    }
-                }
-            ]
-        };
-        const myStyle = {
-            "opacity": .5,
-            "fillOpacity": 0
-        };
-        const geoLayer = geoJSON(geoJson1, {
-                onEachFeature: function (feature, layer) {
-                    layer.bindPopup('<h1>' + feature.properties.name + '</h1><p>name: ' + feature.properties.popupContent + '</p>');
-                },
-                style: myStyle,
-            }
-        );
-        this.mapLayers.push(geoLayer);
-
-        const totalWidth = this.gridOptions.tileWidth * this.gridOptions.xTiles;
-        const totalLength = this.gridOptions.tileHeight * this.gridOptions.yTiles;
-        const layerBounds = latLngBounds(
-            map.unproject([0, 0], this.gridOptions.fromLayer),
-            map.unproject([totalWidth, totalLength], this.gridOptions.fromLayer));
-
-        const centerX = this.gridOptions.tileWidth * this.gridOptions.xTiles / 2;
-        const centerY = this.gridOptions.tileHeight * this.gridOptions.yTiles / 2;
-        map.setView(map.unproject([this.gridOptions.tileWidth * 2, this.gridOptions.tileHeight * 2], this.gridOptions.fromLayer), this.gridOptions.toLayer + 2);
-
-        const layer = tileLayer(this.gridOptions.tilesUrlTemplate, {
-            attribution: '',
-            tileSize: point(this.gridOptions.tileWidth, this.gridOptions.tileHeight),
-            maxNativeZoom: this.gridOptions.fromLayer,
-            maxZoom: this.gridOptions.fromLayer + 1,
-            minZoom: this.gridOptions.toLayer,
-            bounds: layerBounds
-        });
-        this.mapLayers.push(layer);
-
-        //TODO change logic
-        const mapBounds = latLngBounds(
-            map.unproject([-totalWidth, -totalLength], this.gridOptions.fromLayer),
-            map.unproject([totalWidth * 1.5, totalLength * 1.5], this.gridOptions.fromLayer));
-        this.map.setMaxBounds(mapBounds);
-    }
+  public onOpenImageViewerClick(): void {
+    ImageViewerDialogComponent.open({gridInfo: this.info!}, this.dialog);
+  }
 }

@@ -5,9 +5,11 @@ import {
   ImageViewerComponent
 } from "apps/SdHub/src/app/shared/components/image-viewer/image-viewer.component";
 import { IImageModel } from "apps/SdHub/src/app/models/autogen/misc.models";
+import { IGridModel } from "apps/SdHub/src/app/models/autogen/grid.models";
 
 export interface IImageViewerDialogData {
-  imageInfo: IImageModel;
+  imageInfo?: IImageModel;
+  gridInfo?: IGridModel;
 }
 
 export interface IImageViewerDialogResult {
@@ -28,22 +30,42 @@ export class ImageViewerDialogComponent implements OnInit {
   ngOnInit(): void {
     if (this.imageViewer == null)
       return;
-    const opts: IGridOptions = {
-      xTiles: 1,
-      yTiles: 1,
-      tileWidth: this.data.imageInfo.parsedMetadata.width,
-      tileHeight: this.data.imageInfo.parsedMetadata.height,
-      maxNativeZoom: 18,
-      minNativeZoom: 18,
-      maxZoom: 19,
-      minZoom: 18,
+    if (this.data.imageInfo != null) {
+      const opts: IGridOptions = {
+        xTiles: 1,
+        yTiles: 1,
+        tileWidth: this.data.imageInfo.parsedMetadata.width,
+        tileHeight: this.data.imageInfo.parsedMetadata.height,
+        maxNativeZoom: 18,
+        minNativeZoom: 18,
+        maxZoom: 19,
+        minZoom: 18,
 
-      tilesUrlTemplate: this.data.imageInfo.originalImage.directUrl,
-      yLegend: [],
-      xLegend: [],
-      showLegend: false,
+        tilesUrlTemplate: this.data.imageInfo.originalImage.directUrl,
+        yLegend: [],
+        xLegend: [],
+        showLegend: false,
+      }
+      this.imageViewer.initOptions(opts);
+    } else if (this.data.gridInfo != null) {
+      const grid = this.data.gridInfo;
+      const opts: IGridOptions = {
+        xTiles: grid.xTiles,
+        yTiles: grid.yTiles,
+        tileWidth: grid.gridImages[0].image.parsedMetadata.width,
+        tileHeight: grid.gridImages[0].image.parsedMetadata.height,
+        maxNativeZoom: grid.maxLayer,
+        minNativeZoom: grid.minLayer,
+        maxZoom: grid.maxLayer + 1,
+        minZoom: grid.minLayer,
+
+        tilesUrlTemplate: grid.layersDirectory.directUrl + '/layers/{z}/{x}_{y}.webp',
+        xLegend: grid.xValues.map(x => ({name: x, background: 'white'})),
+        yLegend: grid.yValues.map(x => ({name: x, background: 'white'})),
+        showLegend: true,
+      }
+      this.imageViewer.initOptions(opts);
     }
-    this.imageViewer.initOptions(opts);
   }
 
   public static open(data: IImageViewerDialogData, dialog: MatDialog) {

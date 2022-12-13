@@ -62,7 +62,6 @@ export class ImagePageComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe(x => {
         this.user = x;
-
       });
   }
 

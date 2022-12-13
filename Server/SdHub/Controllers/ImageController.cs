@@ -140,7 +140,7 @@ public class ImageController : ControllerBase
             .Include(x => x.ThumbImage)
             .Include(x => x.Owner);
 
-        query = query.ApplyFilter(anonymousUser: !req.OnlyFromRegisteredUsers ? true : null,
+        query = query.ApplyFilter(anonymousUser: req.OnlyFromRegisteredUsers ? false : null,
             inGrid: req.AlsoFromGrids ? null : false);
 
         var total = await query.CountAsync(ct);

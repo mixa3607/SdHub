@@ -48,6 +48,10 @@
                         style="flex-grow: 1"
                         [(searchText)]="searchText"
                         [searchButtonClick]="performSearch$"></search-in-albums>
+      <search-in-grids *ngSwitchCase="searchInType.Grids"
+                       style="flex-grow: 1"
+                       [(searchText)]="searchText"
+                       [searchButtonClick]="performSearch$"></search-in-grids>
       <div *ngSwitchDefault
            style="display: flex; flex-direction: column; align-items: center; flex-grow: 1; justify-content: center; font-size: 4rem">
         <div>This search type not supported yet</div>

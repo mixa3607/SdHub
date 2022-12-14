@@ -6,6 +6,8 @@ import {
 } from "apps/SdHub/src/app/shared/components/image-viewer/image-viewer.component";
 import { IImageModel } from "apps/SdHub/src/app/models/autogen/misc.models";
 import { IGridModel } from "apps/SdHub/src/app/models/autogen/grid.models";
+import { filter } from "rxjs";
+import { NavigationStart, Router, RouterEvent } from "@angular/router";
 
 export interface IImageViewerDialogData {
   imageInfo?: IImageModel;
@@ -24,10 +26,16 @@ export class ImageViewerDialogComponent implements OnInit {
   @ViewChild('imageViewer', {static: true}) imageViewer?: ImageViewerComponent;
 
   constructor(public dialogRef: MatDialogRef<ImageViewerDialogComponent, IImageViewerDialogResult>,
+              public router: Router,
               @Inject(MAT_DIALOG_DATA) public data: IImageViewerDialogData) {
   }
 
   ngOnInit(): void {
+    this.router.events
+      .subscribe(() => {
+        this.dialogRef.close();
+      });
+
     if (this.imageViewer == null)
       return;
     if (this.data.imageInfo != null) {
@@ -60,12 +68,29 @@ export class ImageViewerDialogComponent implements OnInit {
         minZoom: grid.minLayer,
 
         tilesUrlTemplate: grid.layersDirectory.directUrl + '/layers/{z}/{x}_{y}.webp',
-        xLegend: grid.xValues.map(x => ({name: x, background: 'white'})),
-        yLegend: grid.yValues.map(x => ({name: x, background: 'white'})),
+        xLegend: grid.xValues.map((x, i) => ({
+          name: x,
+          background: i % 2 == 0 ? 'rgba(238,238,238,0.9)' : 'rgba(218,218,218,0.9)'
+        })),
+        yLegend: grid.yValues.map((x, i) => ({
+          name: x,
+          background: i % 2 == 0 ? 'rgba(238,238,238,0.9)' : 'rgba(218,218,218,0.9)'
+        })),
         showLegend: true,
       }
+      this.fillGeoJson(grid, opts);
       this.imageViewer.initOptions(opts);
     }
+  }
+
+  private fillGeoJson(grid: IGridModel, options: IGridOptions): void {
+    options.tiles = grid.gridImages.map(x => x.image).map(x => ({
+      name: x.name ?? '',
+      description: x.description ?? '',
+      shortUrl: x.shortUrl,
+      shortCode: x.shortToken,
+      props: x.parsedMetadata.tags.map(x => ({name: x.name, value: x.value})),
+    }));
   }
 
   public static open(data: IImageViewerDialogData, dialog: MatDialog) {
@@ -78,6 +103,7 @@ export class ImageViewerDialogComponent implements OnInit {
     dialogConfig.height = 'calc(100% - 2rem)';
     dialogConfig.width = 'calc(100% - 2rem)';
     dialogConfig.panelClass = 'md-fill-space';
+    dialogConfig.closeOnNavigation = true;
 
     return dialog.open<ImageViewerDialogComponent, IImageViewerDialogData, IImageViewerDialogResult>(ImageViewerDialogComponent, dialogConfig);
   }

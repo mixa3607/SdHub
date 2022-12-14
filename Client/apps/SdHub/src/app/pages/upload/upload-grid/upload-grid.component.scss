@@ -1,6 +1,26 @@
-.example-chip-list {
-  width: 100%;
+.file-drop-area-wrap {
+  position: relative
 }
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.file-drop-area {
+  &_disabled {
+    filter: blur(4px);
+  }
+}
+
 .actions {
   display: flex;
   flex-direction: row;

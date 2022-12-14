@@ -100,8 +100,8 @@ public class ImageConvertRunner : IImageConvertRunnerV1
             .ToArrayAsync(ct);
         var imageModels = _mapper.Map<ImageModel[]>(images).OrderBy(x => x.OriginalImage!.Name).ToArray();
         var tmpDir = _fileProcessor.GetNewTempDirPath();
-        var srcFilesPath = Path.Combine(tmpDir, "src").Replace('\\', '/');
-        var layersPath = Path.Combine(tmpDir, "layers").Replace('\\', '/');
+        var srcFilesPath = Path.Combine(tmpDir, "src");
+        var layersPath = Path.Combine(tmpDir, "layers");
 
         await Parallel.ForEachAsync(imageModels.Select((x, i) => (model: x, idx: i)), new ParallelOptions()
             {
@@ -163,7 +163,7 @@ public class ImageConvertRunner : IImageConvertRunnerV1
         grid.LayersDirectory = new DirectoryEntity()
         {
             Name = $"grid_{gridId}_layers",
-            PathOnStorage = dstDir,
+            PathOnStorage = dstDir.Replace('\\', '/'),
             Size = totalSize,
             StorageName = storage.Name,
         };

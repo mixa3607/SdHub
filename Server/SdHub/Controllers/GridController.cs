@@ -197,6 +197,8 @@ public class GridController : ControllerBase
     private IQueryable<GridEntity> IncludeImages(IQueryable<GridEntity> query)
     {
         query = query
+            .Include(x => x.GridImages!.OrderBy(y => y.Order));
+        query = query
             .Include(x => x.GridImages!)
             .ThenInclude(x => x.Image!)
             .ThenInclude(x => x.Owner);
@@ -215,7 +217,8 @@ public class GridController : ControllerBase
         query = query
             .Include(x => x.GridImages!)
             .ThenInclude(x => x.Image!)
-            .ThenInclude(x => x.ParsedMetadata);
+            .ThenInclude(x => x.ParsedMetadata!)
+            .ThenInclude(x => x.Tags);
         return query;
     }
 }

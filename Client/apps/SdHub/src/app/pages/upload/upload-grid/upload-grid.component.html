@@ -3,7 +3,15 @@
     <h1>Upload grid</h1>
     <div style="display: flex; flex-direction: column; gap: 1rem;">
       <div class="file-drop-area-wrap">
+        <div *ngIf="uploadingStatus$ | async as uploadingStatus" class="loading-overlay">
+          <mat-spinner
+            [mode]="uploadingStatus.type === 'uploading' ? 'determinate' : 'indeterminate'"
+            [value]="uploadingStatus.type === 'uploading' ? uploadingStatus.progress : 0"
+            diameter="60">
+          </mat-spinner>
+        </div>
         <ngx-file-drop class="file-drop-area"
+                       [class.file-drop-area_disabled]="uploading"
                        (onFileDrop)="dropped($event)"
                        dropZoneLabel="Drop archive with images here">
           <ng-template let-openFileSelector="openFileSelector" ngx-file-drop-content-tmp>
@@ -64,8 +72,8 @@
   </mat-card-content>
 
   <div class="actions">
-    <album-autocomplete *ngIf="isAuthenticated" [userLogin]="userLogin"
-                        (uploadToAlbumChange)="uploadToAlbum = $event"></album-autocomplete>
+    <!--<album-autocomplete *ngIf="isAuthenticated" [userLogin]="userLogin"
+                        (uploadToAlbumChange)="uploadToAlbum = $event"></album-autocomplete>-->
     <button (click)="onUploadClick()" [disabled]="fileForUpload == null || uploading || !xForm.valid || !yForm.valid"
             color="primary"
             mat-raised-button

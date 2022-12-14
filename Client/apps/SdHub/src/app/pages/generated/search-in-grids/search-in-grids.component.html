@@ -1,0 +1,46 @@
+<div fxFlex class="container">
+  <div class="filters">
+    <mat-card style="display: flex; flex-direction: column; gap:.2rem">
+      <mat-card-subtitle>Order</mat-card-subtitle>
+      <button *ngFor="let btn of orderBy"
+              mat-stroked-button
+              (click)="onOrderBtnClick(btn.field)">
+        <div style="display: flex; align-items: center">
+          <mat-icon>{{btn.icon}}</mat-icon>
+          {{btn.name}}</div>
+      </button>
+    </mat-card>
+    <mat-card style="display: flex; flex-direction: column">
+      <mat-card-subtitle>Fields</mat-card-subtitle>
+      <mat-checkbox *ngFor="let cb of searchFieldsCheckboxes"
+                    [(ngModel)]="cb.checked">
+        {{cb.value}}
+      </mat-checkbox>
+    </mat-card>
+  </div>
+
+  <div *ngIf="(searchResult?.total ?? 0) === 0 && !loading"
+       class="search-result-placeholder-container">
+    <div>Nothing found ＞︿＜</div>
+  </div>
+  <div *ngIf="loading"
+       class="search-result-placeholder-container">
+    <div style="display: flex; flex-direction: column">
+      <div>Search (_　_)。゜zｚＺ</div>
+      <mat-progress-bar mode="query"></mat-progress-bar>
+    </div>
+  </div>
+  <div *ngIf="(searchResult?.total ?? 0) > 0 && !loading"
+       #scrollTo
+       class="search-result-container">
+    <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: .5rem">
+      <small-grid-card *ngFor="let album of searchResult?.grids ?? []" [info]="album">
+      </small-grid-card>
+    </div>
+    <div style="flex-grow: 1"></div>
+    <paginator [(page)]="page"
+               [totalPages]="totalPages"
+               (pageChange)="onPageChange()"></paginator>
+  </div>
+
+</div>

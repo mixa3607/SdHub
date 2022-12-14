@@ -2,11 +2,11 @@
   <div>
     <mat-card>
       <ng-container *ngIf="loading$ | async; else loaded">
-        <h1>Image loading...</h1>
+        <h1>Grid loading...</h1>
       </ng-container>
       <ng-template #loaded>
         <mat-card-content *ngIf="loadType == 'error'" class="content-card">
-          <h1>Can't load image</h1>
+          <h1>Can't load grid</h1>
           <p>Maybe it has been deleted 🤔</p>
           <p>Or never existed 🚧</p>
           <p style="font-weight: bold">But you always can upload your for share the world 🌍
@@ -16,7 +16,7 @@
         <mat-card-content *ngIf="loadType == 'ok'" class="content-card" fxFlex fxLayout="column">
           <div class="header">
             <div *ngIf="!editMode; else editName" style="font-size: 2rem">
-              Image name:
+              Grid name:
               <ng-container>
                 <span *ngIf="name; else nameNotSet">{{name}}</span>
                 <ng-template #nameNotSet><span style="font-style: italic">not set</span></ng-template>
@@ -26,7 +26,7 @@
               <mat-form-field appearance="outline"
                               class="form-no-bottom-padding"
                               style="font-size: medium; width: 100%">
-                <mat-label>Image name</mat-label>
+                <mat-label>Grid name</mat-label>
                 <input matInput [(ngModel)]="editData.name">
               </mat-form-field>
             </ng-template>

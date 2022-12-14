@@ -18,7 +18,6 @@ import {
 import { ImageViewerComponent } from './components/image-viewer/image-viewer.component';
 import { ImageViewerDialogComponent } from './components/image-viewer-dialog/image-viewer-dialog.component';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
-import { GridViewerComponent } from 'apps/SdHub/src/app/shared/components/grid-viewer/grid-viewer.component';
 import {
   SmallAlbumCardComponent
 } from 'apps/SdHub/src/app/shared/components/small-album-card/small-album-card.component';
@@ -26,6 +25,10 @@ import { AlbumAutocompleteComponent } from './components/album-autocomplete/albu
 import {
   ImageBunchActionsPanelComponent
 } from "apps/SdHub/src/app/shared/components/image-bunch-actions-panel/image-bunch-actions-panel.component";
+import { SmallGridCardComponent } from "apps/SdHub/src/app/shared/components/small-grid-card/small-grid-card.component";
+import {
+  MapImagePopupComponent
+} from "apps/SdHub/src/app/shared/components/image-viewer/map-image-popup/map-image-popup.component";
 
 @NgModule({
   imports: [
@@ -42,17 +45,18 @@ import {
     ConfirmDialogComponent,
     SmallImageCardComponent,
     SmallAlbumCardComponent,
+    SmallGridCardComponent,
     LimitToPipe,
     LocalDatePipe,
     YesNoPipe,
     LayoutComponent,
     PaginatorComponent,
     ImageViewerComponent,
-    GridViewerComponent,
     ImageViewerDialogComponent,
     AlbumAutocompleteComponent,
     ImageBunchActionsPanelComponent,
     ImageViewerDialogComponent,
+    MapImagePopupComponent,
   ],
   exports: [
     FormsModule,
@@ -63,9 +67,9 @@ import {
     ConfirmDialogComponent,
     SmallImageCardComponent,
     SmallAlbumCardComponent,
+    SmallGridCardComponent,
     LocalDatePipe,
     YesNoPipe,
-    GridViewerComponent,
     ImageBunchActionsPanelComponent,
     PaginatorComponent,
     AlbumAutocompleteComponent,

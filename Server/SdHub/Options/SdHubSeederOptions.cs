@@ -12,4 +12,6 @@ public class SdHubSeederOptions
     /// </summary>
     [Required]
     public string? AdminPassword { get; set; }
+
+    public bool OverwriteUserPlans { get; set; } = true;
 }

@@ -53,62 +53,64 @@ public class SdHubDbSeeder : IDbSeeder<SdHubDbContext>
         }
 
         //plans
-        if (!await db.UserPlans.AnyAsync(x => x.Name == RatesPlanTypes.AdminPlan))
+        var adminPlan = await db.UserPlans.FirstOrDefaultAsync(x => x.Name == RatesPlanTypes.AdminPlan);
+        
+        var anonPlan = await db.UserPlans.FirstOrDefaultAsync(x => x.Name == RatesPlanTypes.AnonUserPlan);
+        var regUserPlan = await db.UserPlans.FirstOrDefaultAsync(x => x.Name == RatesPlanTypes.RegUserPlan);
+
+        if (adminPlan == null || _options.OverwriteUserPlans)
         {
-            var plan = new UserPlanEntity()
+            if (adminPlan == null)
             {
-                Name = RatesPlanTypes.AdminPlan,
-                OnlyWithMetadata = false,
+                adminPlan = new UserPlanEntity();
+                db.UserPlans.Add(adminPlan);
+            }
 
-                ImagesPerHour = 5000,
-                MaxImageSizeUpload = 15 * 1024,
-                ImagesPerUpload = 100,
-
-                GridsPerHour = 200,
-                ImagesPerGrid = 25000,
-                MaxGridArchiveSizeUpload = 5L * 1024 * 1024, //5gb
-            };
-            db.UserPlans.Add(plan);
-            await db.SaveChangesAsync();
+            adminPlan.Name = RatesPlanTypes.AdminPlan;
+            adminPlan.OnlyWithMetadata = false;
+            adminPlan.ImagesPerHour = 5000;
+            adminPlan.MaxImageSizeUpload = 15 * 1024;
+            adminPlan.ImagesPerUpload = 100;
+            adminPlan.GridsPerHour = 200;
+            adminPlan.ImagesPerGrid = 25000;
+            adminPlan.MaxGridArchiveSizeUpload = 5L * 1024 * 1024; //5gb
         }
 
-        if (!await db.UserPlans.AnyAsync(x => x.Name == RatesPlanTypes.AnonUserPlan))
+        if (anonPlan == null || _options.OverwriteUserPlans)
         {
-            var plan = new UserPlanEntity()
+            if (anonPlan == null)
             {
-                Name = RatesPlanTypes.AnonUserPlan,
-                OnlyWithMetadata = true,
-
-                ImagesPerHour = 50,
-                MaxImageSizeUpload = 3 * 1024,
-                ImagesPerUpload = 10,
-
-                GridsPerHour = 20,
-                ImagesPerGrid = 2500,
-                MaxGridArchiveSizeUpload = 1L * 1024 * 1024, //1gb
-            };
-            db.UserPlans.Add(plan);
-            await db.SaveChangesAsync();
+                anonPlan = new UserPlanEntity();
+                db.UserPlans.Add(anonPlan);
+            }
+            anonPlan.Name = RatesPlanTypes.AnonUserPlan;
+            anonPlan.OnlyWithMetadata = true;
+            anonPlan.ImagesPerHour = 50;
+            anonPlan.MaxImageSizeUpload = 3 * 1024;
+            anonPlan.ImagesPerUpload = 10;
+            anonPlan.GridsPerHour = 0;
+            anonPlan.ImagesPerGrid = 0;
+            anonPlan.MaxGridArchiveSizeUpload = 0;
         }
 
-        if (!await db.UserPlans.AnyAsync(x => x.Name == RatesPlanTypes.RegUserPlan))
+        if (regUserPlan == null || _options.OverwriteUserPlans)
         {
-            var plan = new UserPlanEntity()
+            if (regUserPlan == null)
             {
-                Name = RatesPlanTypes.RegUserPlan,
-                OnlyWithMetadata = false,
+                regUserPlan = new UserPlanEntity();
+                db.UserPlans.Add(regUserPlan);
+            }
 
-                ImagesPerHour = 500,
-                MaxImageSizeUpload = 5 * 1024,
-                ImagesPerUpload = 20,
-
-                GridsPerHour = 0,
-                ImagesPerGrid = 0,
-                MaxGridArchiveSizeUpload = 0
-            };
-            db.UserPlans.Add(plan);
-            await db.SaveChangesAsync();
+            regUserPlan.Name = RatesPlanTypes.RegUserPlan;
+            regUserPlan.OnlyWithMetadata = false;
+            regUserPlan.ImagesPerHour = 500;
+            regUserPlan.MaxImageSizeUpload = 10 * 1024;
+            regUserPlan.ImagesPerUpload = 20;
+            regUserPlan.GridsPerHour = 20;
+            regUserPlan.ImagesPerGrid = 2500;
+            regUserPlan.MaxGridArchiveSizeUpload = 1L * 1024 * 1024; //1gb
         }
+        await db.SaveChangesAsync();
 
         //users
         if (!await db.Users.AnyAsync(x => x.Roles.Contains(UserRoleTypes.Admin)))

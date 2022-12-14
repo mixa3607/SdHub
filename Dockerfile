@@ -18,7 +18,10 @@ RUN sed -i -e "s|clientBranch: '.*'|clientBranch: '$COMMIT_REF_NAME'|1" -e "s|cl
 RUN npm run-script build -- --output-path /out
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS app
-RUN apt update && apt install -y wget unzip
+RUN apt update && apt install -y wget unzip cabextract wget xfonts-utils \
+    && curl -s -o ttf-mscorefonts-installer_3.7_all.deb http://ftp.us.debian.org/debian/pool/contrib/m/msttcorefonts/ttf-mscorefonts-installer_3.7_all.deb \
+    && sh -c "echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections" \
+    && dpkg -i ttf-mscorefonts-installer_3.7_all.deb
 WORKDIR /app
 ARG COMMIT_SHA=none
 ARG COMMIT_REF_NAME=none

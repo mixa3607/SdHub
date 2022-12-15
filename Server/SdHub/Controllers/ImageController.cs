@@ -189,7 +189,7 @@ public class ImageController : ControllerBase
             .Include(x => x.CompressedImage)
             .Include(x => x.ThumbImage)
             .Include(x => x.Owner)
-            .ApplyFilter(shortCode: req.ShortToken!.Trim())
+            .ApplyFilter(shortCode: req.ShortToken!.Trim(), anonymousUser: null)
             .FirstOrDefaultAsync(ct);
         if (imageEnt == null)
             ModelState.AddError(ModelStateErrors.ImageNotFound).ThrowIfNotValid();

@@ -5,13 +5,13 @@ using SdHub.Database.Entities.Files;
 
 namespace SdHub.Automapper.Converters;
 
-public class DirectLinkConverterDir : IValueConverter<DirectoryEntity, string>
+public class DirectLinkConverterDir : IValueConverter<DirectoryEntity, string?>
 {
-    public string Convert(DirectoryEntity entity, ResolutionContext context)
+    public string? Convert(DirectoryEntity entity, ResolutionContext context)
     {
         if (string.IsNullOrWhiteSpace(entity.Storage?.BaseUrl))
         {
-            throw new Exception("BaseUrl is null. Can't convert to direct link");
+            return null;
         }
 
         return entity.Storage.BaseUrl.AppendPathSegment(entity.PathOnStorage);

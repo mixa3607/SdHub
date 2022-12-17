@@ -8,6 +8,7 @@ public class GridConfigurator : IEntityTypeConfiguration<GridEntity>
 {
     public void Configure(EntityTypeBuilder<GridEntity> builder)
     {
+        builder.HasIndex(x => x.ShortToken).IsUnique();
         builder.Property(x => x.ShortToken).IsRequired();
     }
 }

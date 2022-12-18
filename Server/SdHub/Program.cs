@@ -23,6 +23,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Npgsql;
 using SdHub.Attributes;
@@ -288,6 +289,22 @@ app.UseMiddleware<OgInjectorMiddleware>();
 app.UseSpa(c =>
 {
     c.Options.SourcePath = "./spa_dist";
+    c.Options.DefaultPageStaticFileOptions = new StaticFileOptions()
+    {
+        OnPrepareResponse = ctx =>
+        {
+            if (ctx.File.Name != "index.html")
+                return;
+            var headers = ctx.Context.Response.GetTypedHeaders();
+            headers.CacheControl = new CacheControlHeaderValue
+            {
+                NoCache = true,
+                NoStore = true,
+                MustRevalidate = true,
+                MaxAge = TimeSpan.Zero
+            };
+        }
+    };
     if (!string.IsNullOrWhiteSpace(appInfo.FrontDevServer))
     {
         Console.WriteLine("Use proxy to frontend!!!");

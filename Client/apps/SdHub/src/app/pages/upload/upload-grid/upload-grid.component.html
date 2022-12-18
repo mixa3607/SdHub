@@ -1,4 +1,4 @@
-<mat-card style="display: flex; flex-direction: column; gap: 1rem">
+<mat-card style="display: flex; flex-direction: column; gap: 1rem; min-width: min-content;">
   <mat-card-content>
     <h1>Upload grid</h1>
     <div style="display: flex; flex-direction: column; gap: 1rem;">
@@ -81,8 +81,7 @@
     </button>
     <button (click)="onClearClick()" [disabled]="uploading"
             color="warn"
-            mat-raised-button
-            style="flex-grow: 20">Clear
+            mat-raised-button><mat-icon>clear</mat-icon>
     </button>
   </div>
 </mat-card>

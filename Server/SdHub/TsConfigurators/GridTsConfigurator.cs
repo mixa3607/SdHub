@@ -26,6 +26,7 @@ public class GridTsConfigurator : ITsConfigurator
                 typeof(EditGridResponse),
                 typeof(DeleteGridRequest),
                 typeof(DeleteGridResponse),
+                typeof(UploadGridCheckInputRequest),
             }, c => c
                 .SubsDatetimeOffsetToStr()
                 .SubsTimespanToStr()

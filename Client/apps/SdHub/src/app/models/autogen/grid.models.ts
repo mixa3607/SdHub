@@ -91,12 +91,19 @@ export interface IUploadGridRequest
 	file: any;
 	xTiles: number;
 	yTiles: number;
-	xValues: string[];
-	yValues: string[];
+	xValues: string;
+	yValues: string;
 }
 export interface IUploadGridResponse
 {
 	uploaded: boolean;
 	reason: string;
 	grid: IGridModel;
+}
+export interface IUploadGridCheckInputRequest
+{
+	xTiles: number;
+	yTiles: number;
+	xValues: string;
+	yValues: string;
 }

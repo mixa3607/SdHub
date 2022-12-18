@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using CsvHelper;
+using CsvHelper.Configuration;
 using Hangfire;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -50,6 +55,104 @@ public class UploadGridController : ControllerBase
         _fileProcessor = fileProcessor;
         _mapper = mapper;
         _appInfo = appInfo.Value;
+    }
+
+    //https://github.com/AUTOMATIC1111/stable-diffusion-webui/blob/685f9631b56ff8bd43bce24ff5ce0f9a0e9af490/scripts/xy_grid.py#L287
+    private static readonly Regex ReRange =
+        new Regex(@"\s*([+-]?\s*\d+)\s*-\s*([+-]?\s*\d+)(?:\s*\(([+-]\d+)\s*\))?\s*");
+
+    private static readonly Regex ReRangeFloat =
+        new Regex(@"\s*([+-]?\s*\d+(?:.\d*)?)\s*-\s*([+-]?\s*\d+(?:.\d*)?)(?:\s*\(([+-]\d+(?:.\d*)?)\s*\))?\s*");
+
+    private static readonly Regex ReRangeCount =
+        new Regex(@"\s*([+-]?\s*\d+)\s*-\s*([+-]?\s*\d+)(?:\s*\[(\d+)\s*\])?\s*");
+
+    private static readonly Regex ReRangeCountFloat =
+        new Regex(@"\s*([+-]?\s*\d+(?:.\d*)?)\s*-\s*([+-]?\s*\d+(?:.\d*)?)(?:\s*\[(\d+(?:.\d*)?)\s*\])?\s*");
+
+    private List<int> CreateRange(int start, int stop, int step)
+    {
+        var list = new List<int>();
+        if (step > 0)
+        {
+            for (; start < stop; start += step)
+            {
+                list.Add(start);
+            }
+        }
+        else
+        {
+            for (; start > stop; start += step)
+            {
+                list.Add(start);
+            }
+        }
+
+        return list;
+    }
+
+    private List<string> MapPlotToValues(string src)
+    {
+        var values = new List<string>();
+        var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+        {
+            HasHeaderRecord = false
+        };
+        using var reader = new StringReader(src);
+        using var csv = new CsvParser(reader, config);
+        while (csv.Read())
+        {
+            var csvVals = csv.Record;
+            if (csvVals == null || csvVals.Length == 0)
+                continue;
+            foreach (var csvVal in csvVals)
+            {
+                var m = ReRange.Match(csvVal);
+                var mc = ReRangeCount.Match(csvVal);
+                //if (m.Success)
+                //{
+                //    var start = int.Parse(m.Groups[1].Value);
+                //    var end = int.Parse(m.Groups[2].Value);
+                //    var step = m.Groups[3].Success ? int.Parse(m.Groups[3].Value) : 1;
+                //    var vals = Enumerable.Range(start, end).Where(x => x % step == 0).Select(x => x.ToString());
+                //    values.AddRange(vals);
+                //}
+                //else if (mc.Success)
+                //{
+                //    var start = int.Parse(mc.Groups[1].Value);
+                //    var end = int.Parse(mc.Groups[2].Value);
+                //    var step = mc.Groups[3].Success ? int.Parse(mc.Groups[3].Value) : 1;
+                //    var vals = CreateRange(start, end, step).Select(x => x.ToString());
+                //    values.AddRange(vals);
+                //}
+                //else
+                {
+                    values.Add(csvVal);
+                }
+            }
+        }
+
+        return values;
+    }
+
+    [HttpPost]
+    public async Task UploadGridCheckInput([FromBody] UploadGridCheckInputRequest req, CancellationToken ct = default)
+    {
+        ModelState.ThrowIfNotValid();
+        if (_appInfo.DisableGridUploadAuth)
+            ModelState.AddError("Uploading disabled by administrator").ThrowIfNotValid();
+
+        if (req.XTiles * req.YTiles < 2)
+            ModelState.AddError("Grid must contain minimum 2 images");
+
+        var xVals = MapPlotToValues(req.XValues!);
+        var yVals = MapPlotToValues(req.YValues!);
+        if (xVals.Count != req.XTiles)
+            ModelState.AddError($"Found {xVals.Count} values on X but expected {req.XTiles}");
+        if (yVals.Count != req.YTiles)
+            ModelState.AddError($"Found {yVals.Count} values on Y but expected {req.YTiles}");
+
+        ModelState.ThrowIfNotValid();
     }
 
     [HttpPost]
@@ -148,6 +251,13 @@ public class UploadGridController : ControllerBase
                 {
                     resp.Uploaded = false;
                     resp.Reason = $"Max images per grid is {user.Plan!.ImagesPerGrid}";
+                    return resp;
+                }
+
+                if (count < 1)
+                {
+                    resp.Uploaded = false;
+                    resp.Reason = $"Min images per grid is 2";
                     return resp;
                 }
             }
@@ -282,8 +392,8 @@ public class UploadGridController : ControllerBase
             Description = "",
             XTiles = req.XTiles,
             YTiles = req.YTiles,
-            XValues = req.XValues,
-            YValues = req.YValues,
+            XValues = MapPlotToValues(req.XValues),
+            YValues = MapPlotToValues(req.YValues),
             GridImages = files.Select(x => new GridImageEntity() { Order = x.Order, Image = x.Image }).ToList(),
         };
         if (albumId != 0)

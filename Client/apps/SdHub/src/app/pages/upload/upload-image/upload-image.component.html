@@ -1,4 +1,4 @@
-<mat-card style="display: flex; flex-direction: column; gap: 1rem">
+<mat-card style="display: flex; flex-direction: column; gap: 1rem;min-width: min-content;">
   <mat-card-content>
     <h1>Upload images</h1>
     <div class="file-drop-area-wrap">
@@ -34,8 +34,7 @@
     </button>
     <button (click)="onClearClick()" [disabled]="files.length == 0 || uploading"
             color="warn"
-            mat-raised-button
-            style="flex-grow: 20">Clear
+            mat-raised-button><mat-icon>clear</mat-icon>
     </button>
   </div>
   <div class="preview-cards-container">

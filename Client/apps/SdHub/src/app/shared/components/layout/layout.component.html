@@ -1,14 +1,16 @@
 <div class="navbar-container">
   <mat-toolbar class="navbar" color="primary">
-    <!--<button [routerLink]="['/upload']" mat-raised-button>
-      <mat-icon>upload_file</mat-icon>
-      <span fxHide.xs fxShow>
-        Upload
-      </span>
-    </button>-->
+    <button mat-icon-button *ngIf="sidenav?.mode === 'over'" (click)="sidenav?.toggle()">
+      <mat-icon *ngIf="!sidenav.opened">
+        menu
+      </mat-icon>
+      <mat-icon *ngIf="sidenav.opened">
+        close
+      </mat-icon>
+    </button>
     <a [routerLink]="['/']" class="navbar-brand" matTooltip="Home">
       <h1>
-        Stable Diffusion hub
+        {{isMobile ? 'SdHub' : 'Stable Diffusion hub'}}
       </h1>
     </a>
     <span class="navbar-spacer"></span>

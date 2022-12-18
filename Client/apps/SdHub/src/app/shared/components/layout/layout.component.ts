@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { combineLatest, takeUntil } from "rxjs";
 import { AuthStateService } from "apps/SdHub/src/app/core/services/auth-state.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { IUserModel } from "apps/SdHub/src/app/models/autogen/misc.models";
 import { AuthService } from "apps/SdHub/src/app/core/services/auth.service";
 import { environment } from "apps/SdHub/src/environments/environment";
+import { BreakpointObserver, MediaMatcher } from "@angular/cdk/layout";
+import { MatSidenav } from "@angular/material/sidenav";
 
 @UntilDestroy()
 @Component({
@@ -12,7 +14,10 @@ import { environment } from "apps/SdHub/src/environments/environment";
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.scss']
 })
-export class LayoutComponent implements OnInit {
+export class LayoutComponent implements OnInit, AfterViewInit {
+  @ViewChild(MatSidenav) sidenav!: MatSidenav;
+  public isMobile = false;
+
   public userName: string = 'Anon';
   public isAnonymous = true;
   public userInfoIsOpen = false;
@@ -20,6 +25,8 @@ export class LayoutComponent implements OnInit {
   public registrationEnabled = !environment.settings.disableUsersRegistration;
 
   constructor(
+    private observer: BreakpointObserver,
+    private media: MediaMatcher,
     public authService: AuthService,
     public authStateService: AuthStateService,) {
 
@@ -38,6 +45,19 @@ export class LayoutComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  ngAfterViewInit() {
+    this.observer.observe(['(max-width: 1000px)']).subscribe((res) => {
+      this.isMobile = res.matches;
+      if (this.isMobile) {
+        this.sidenav.mode = 'over';
+        void this.sidenav.close();
+      } else {
+        this.sidenav.mode = 'side';
+        void this.sidenav.open();
+      }
+    });
   }
 
   public onLogoutClick(): void {

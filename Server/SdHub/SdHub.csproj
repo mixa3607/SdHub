@@ -9,6 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CsvHelper" Version="30.0.1" />
 		<PackageReference Include="FluentEmail.Liquid" Version="3.0.2" />
 		<PackageReference Include="FluentEmail.Smtp" Version="3.0.2" />
 		<PackageReference Include="FluentValidation" Version="11.2.2" />

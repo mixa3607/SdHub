@@ -1,7 +1,7 @@
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {IUploadResponse} from "apps/SdHub/src/app/models/autogen/upload.models";
-import {IUploadGridResponse} from "apps/SdHub/src/app/models/autogen/grid.models";
+import { IUploadGridCheckInputRequest, IUploadGridResponse } from "apps/SdHub/src/app/models/autogen/grid.models";
 
 @Injectable({
   providedIn: "root"
@@ -22,6 +22,10 @@ export class UploadApi {
 
   public uploadGridAuth(form: FormData) {
     return this.http.post<IUploadGridResponse>(this.base + '/uploadGridAuth', form, {reportProgress: true, observe: 'events'});
+  }
+
+  public uploadGridCheckInput(req: IUploadGridCheckInputRequest) {
+    return this.http.post(this.base + '/UploadGridCheckInput', req);
   }
 }
 

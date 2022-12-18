@@ -1,8 +1,10 @@
-import {Component, OnInit} from '@angular/core';
-import {UntilDestroy, untilDestroyed} from '@ngneat/until-destroy';
+import { Component, OnInit } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { AuthStateService } from "apps/SdHub/src/app/core/services/auth-state.service";
 
 
 type UploadTabType = 'image' | 'grid';
+
 @UntilDestroy()
 @Component({
   selector: 'app-upload-page',
@@ -16,9 +18,12 @@ export class UploadPageComponent implements OnInit {
   ];
   public activeTab: UploadTabType = this.tabs.find(x => x.enable)!.type;
 
-  ngOnInit(): void {
+  public constructor(private authState: AuthStateService) {
+    authState.isAuthenticated$.pipe(untilDestroyed(this)).subscribe(x => this.tabs.find(y => y.type === 'grid')!.enable = x)
   }
 
+  ngOnInit(): void {
+  }
 
 
   public onTabChange(tabName: UploadTabType): void {

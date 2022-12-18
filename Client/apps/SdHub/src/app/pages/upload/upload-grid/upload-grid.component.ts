@@ -1,17 +1,21 @@
-import {Component, OnInit} from '@angular/core';
-import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
-import {AbstractControl, FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {getErrorMessage} from '../../../shared/form-error-handling/handlers';
-import {filter, map, Observable, of, shareReplay} from "rxjs";
-import {NgxFileDropEntry} from "ngx-file-drop";
-import {bytesToHuman} from "apps/SdHub/src/app/shared/utils/bytes";
-import {Clipboard} from "@angular/cdk/clipboard";
-import {ToastrService} from "ngx-toastr";
-import {AuthStateService} from "apps/SdHub/src/app/core/services/auth-state.service";
-import {HttpErrorResponse, HttpEventType, HttpResponse} from "@angular/common/http";
-import {UploadApi} from "apps/SdHub/src/app/shared/services/api/upload.api";
-import {httpErrorResponseHandler} from "apps/SdHub/src/app/shared/http-error-handling/handlers";
-import {IGridModel, IUploadGridResponse} from "apps/SdHub/src/app/models/autogen/grid.models";
+import { Component, OnInit } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { AbstractControl, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { getErrorMessage } from '../../../shared/form-error-handling/handlers';
+import { filter, map, Observable, of, shareReplay, switchMap } from "rxjs";
+import { NgxFileDropEntry } from "ngx-file-drop";
+import { bytesToHuman } from "apps/SdHub/src/app/shared/utils/bytes";
+import { Clipboard } from "@angular/cdk/clipboard";
+import { ToastrService } from "ngx-toastr";
+import { AuthStateService } from "apps/SdHub/src/app/core/services/auth-state.service";
+import { HttpErrorResponse, HttpEventType, HttpResponse } from "@angular/common/http";
+import { UploadApi } from "apps/SdHub/src/app/shared/services/api/upload.api";
+import { httpErrorResponseHandler } from "apps/SdHub/src/app/shared/http-error-handling/handlers";
+import {
+  IGridModel,
+  IUploadGridCheckInputRequest,
+  IUploadGridResponse
+} from "apps/SdHub/src/app/models/autogen/grid.models";
 
 type UploadingStatus =
   | null
@@ -116,25 +120,28 @@ export class UploadGridComponent implements OnInit {
 
   public onUploadClick(): void {
     this.uploading = true;
-    const formData = new FormData();
     this.fileForUpload!.uploaded = 'in_progress';
+    const req: IUploadGridCheckInputRequest = {
+      xTiles: this.xForm.get('xTiles')?.value,
+      xValues: this.xForm.get('xValues')?.value,
+      yTiles: this.yForm.get('yTiles')?.value,
+      yValues: this.yForm.get('yValues')?.value,
+    }
+
+    const formData = new FormData();
     formData.append('file', this.fileForUpload!.file!, this.fileForUpload!.fileEntry.relativePath);
     formData.append('AlbumShortToken', this.uploadToAlbum ?? '');
-    formData.append('XTiles', this.xForm.get('xTiles')?.value);
-    formData.append('YTiles', this.yForm.get('yTiles')?.value);
-
-    const xValues = (this.xForm.get('xValues')?.value as string).split(',').map(x=>x.trim());
-    for (const xValue of xValues) {
-      formData.append('XValues', xValue);
-    }
-
-    const yValues = (this.yForm.get('yValues')?.value as string).split(',').map(x=>x.trim());
-    for (const yValue of yValues) {
-      formData.append('YValues', yValue);
-    }
+    formData.append('XTiles', req.xTiles as any);
+    formData.append('XValues', req.xValues);
+    formData.append('YTiles', req.yTiles as any);
+    formData.append('YValues', req.yValues);
 
     this.toastr.info('Begin upload grid');
-    const request$ = this.uploadApi.uploadGridAuth(formData).pipe(untilDestroyed(this), shareReplay());
+    const request$ = this.uploadApi.uploadGridCheckInput(req)
+      .pipe(switchMap(() => this.uploadApi.uploadGridAuth(formData)),
+        untilDestroyed(this),
+        shareReplay()
+      );
 
     this.uploadingStatus$ = request$.pipe(
       map(data => {

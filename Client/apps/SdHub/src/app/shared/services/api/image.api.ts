@@ -9,9 +9,9 @@ import {
   IEditImageResponse,
   IGetImageRequest,
   IGetImageResponse,
-  ISearchImageRequest,
-  ISearchImageResponse
+  ISearchImageRequest
 } from "apps/SdHub/src/app/models/autogen/image.models";
+import { IImageModel, IPaginationResponse } from "apps/SdHub/src/app/models/autogen/misc.models";
 
 @Injectable({
     providedIn: "root"
@@ -43,7 +43,7 @@ export class ImageApi {
     }
 
     public search(req: Partial<ISearchImageRequest>) {
-        return this.http.post<ISearchImageResponse>(this.base + '/search', req);
+        return this.http.post<IPaginationResponse<IImageModel>>(this.base + '/search', req);
     }
 }
 

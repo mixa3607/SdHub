@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import {
-  ISearchImageResponse,
   SearchImageOrderByFieldType,
   SearchImageOrderByType
 } from "apps/SdHub/src/app/models/autogen/image.models";
@@ -10,6 +9,7 @@ import { httpErrorResponseHandler } from "apps/SdHub/src/app/shared/http-error-h
 import { ImageApi } from "apps/SdHub/src/app/shared/services/api/image.api";
 import { ToastrService } from "ngx-toastr";
 import { ImageSelectionService } from '../../../core/services/image-selection.service';
+import { IImageModel, IPaginationResponse } from "apps/SdHub/src/app/models/autogen/misc.models";
 
 @Component({
     selector: 'user-images',
@@ -34,7 +34,7 @@ export class UserImagesComponent implements OnInit {
 
     public readonly pageSize = 50;
     public loadingImages = false;
-    public searchImagesResult: ISearchImageResponse | null = null;
+    public searchImagesResult: IPaginationResponse<IImageModel> | null = null;
     public page = 0;
     public totalPages = 1;
     public loading: boolean = false;

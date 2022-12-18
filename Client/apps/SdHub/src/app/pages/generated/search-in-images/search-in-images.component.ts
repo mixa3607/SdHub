@@ -2,7 +2,6 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import {
-  ISearchImageResponse,
   SearchImageInFieldType,
   SearchImageOrderByFieldType,
   SearchImageOrderByType,
@@ -14,6 +13,7 @@ import { ImageApi } from "apps/SdHub/src/app/shared/services/api/image.api";
 import { ToastrService } from "ngx-toastr";
 import { Observable } from "rxjs";
 import { ImageSelectionService } from '../../../core/services/image-selection.service';
+import { IImageModel, IPaginationResponse } from "apps/SdHub/src/app/models/autogen/misc.models";
 
 @UntilDestroy()
 @Component({
@@ -74,7 +74,7 @@ export class SearchInImagesComponent implements OnInit {
   public onlyFromRegisteredUsers = true;
   public searchAsRegexp = false;
   public loading = false;
-  public searchResult: ISearchImageResponse | null = null;
+  public searchResult: IPaginationResponse<IImageModel> | null = null;
   public pageSize = 50;
   public page = 0;
   public totalPages = 1;

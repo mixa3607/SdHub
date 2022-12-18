@@ -2,6 +2,8 @@
 //     Changes to this file may cause incorrect behavior and will be lost if
 //     the code is regenerated.
 
+import { IFileModel } from './file.models';
+
 export interface IFrontendSettings
 {
 	recaptchaSiteKey: string;
@@ -25,6 +27,13 @@ export interface IUserModel
 	createdAt: string;
 	roles: string[];
 	about: string;
+}
+export interface IPaginationResponse<T>
+{
+	skip: number;
+	take: number;
+	total: number;
+	items: T[];
 }
 export interface IEditImageModel
 {
@@ -57,25 +66,6 @@ export interface IImageModel
 	name: string;
 	description: string;
 	parsedMetadata: IImageParsedMetadataModel;
-}
-export interface IFileModel
-{
-	id: number;
-	name: string;
-	hash: string;
-	mimeType: string;
-	extension: string;
-	size: number;
-	createdAt: string;
-	directUrl: string;
-}
-export interface IDirectoryModel
-{
-	id: number;
-	name: string;
-	size: number;
-	createdAt: string;
-	directUrl: string;
 }
 export interface IUploadedFileModel
 {
@@ -120,6 +110,7 @@ export abstract class ModelStateErrors
 	public static NotAlbumOwner: string = `NOT_ALBUM_OWNER`;
 	public static GridNotFound: string = `GRID_NOT_FOUND`;
 	public static NotGridOwner: string = `NOT_GRID_OWNER`;
+	public static FileNotFound: string = `FILE_NOT_FOUND`;
 	public static ModelNotFound: string = `MODEL_NOT_FOUND`;
 	public static ModelVersionNotFound: string = `MODEL_VERSION_NOT_FOUND`;
 }

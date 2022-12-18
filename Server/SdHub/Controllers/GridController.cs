@@ -12,6 +12,7 @@ using SdHub.Database;
 using SdHub.Database.Entities.Grids;
 using SdHub.Database.Extensions;
 using SdHub.Extensions;
+using SdHub.Models;
 using SdHub.Models.Grid;
 using SdHub.Services.User;
 
@@ -34,7 +35,7 @@ public class GridController : ControllerBase
 
     [HttpPost("[action]")]
     [AllowAnonymous]
-    public async Task<SearchGridResponse> Search([FromBody] SearchGridRequest req, CancellationToken ct = default)
+    public async Task<PaginationResponse<GridModel>> Search([FromBody] SearchGridRequest req, CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
 
@@ -107,10 +108,12 @@ public class GridController : ControllerBase
         var gridModels = _mapper.Map<GridModel[]>(grids);
 
 
-        return new SearchGridResponse()
+        return new PaginationResponse<GridModel>()
         {
-            Grids = gridModels,
+            Items = gridModels,
             Total = total,
+            Skip = req.Skip,
+            Take = req.Take,
         };
     }
 

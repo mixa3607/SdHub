@@ -3,7 +3,7 @@
 //     the code is regenerated.
 
 import { IImageOwnerModel } from './misc.models';
-import { IFileModel } from './misc.models';
+import { IFileModel } from './file.models';
 import { IImageModel } from './misc.models';
 import { IGridModel } from './grid.models';
 
@@ -72,11 +72,6 @@ export interface ISearchAlbumRequest
 	orderBy: SearchAlbumOrderByType;
 	skip: number;
 	take: number;
-}
-export interface ISearchAlbumResponse
-{
-	albums: IAlbumModel[];
-	total: number;
 }
 export interface IEditAlbumRequest
 {

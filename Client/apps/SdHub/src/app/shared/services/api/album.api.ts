@@ -12,9 +12,9 @@ import {
     IEditAlbumRequest,
     IGetAlbumRequest,
     IGetAlbumResponse,
-    ISearchAlbumRequest,
-    ISearchAlbumResponse
+    ISearchAlbumRequest
 } from "apps/SdHub/src/app/models/autogen/album.models";
+import { IPaginationResponse } from "apps/SdHub/src/app/models/autogen/misc.models";
 
 @Injectable({
     providedIn: "root"
@@ -26,7 +26,7 @@ export class AlbumApi {
     }
 
     public search(req: Partial<ISearchAlbumRequest>) {
-        return this.http.post<ISearchAlbumResponse>(this.base + '/search', req);
+        return this.http.post<IPaginationResponse<IAlbumModel>>(this.base + '/search', req);
     }
 
     public get(req: IGetAlbumRequest) {

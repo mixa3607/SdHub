@@ -26,7 +26,6 @@ public class AlbumTsConfigurator : ITsConfigurator
                 typeof(DeleteAlbumImagesRequest),
                 typeof(DeleteAlbumImagesResponse),
                 typeof(SearchAlbumRequest),
-                typeof(SearchAlbumResponse),
                 typeof(EditAlbumRequest),
             }, c => c
                 .SubsDatetimeOffsetToStr()

@@ -36,7 +36,7 @@
   </div>
 
   <image-bunch-actions-panel
-    [displayedImages]="searchResult?.images ?? []"
+    [displayedImages]="searchResult?.items ?? []"
     (needReloadImages)="onReloadImages()">
   </image-bunch-actions-panel>
 
@@ -56,7 +56,7 @@
        class="search-result-container">
     <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: .5rem">
       <small-image-card
-        *ngFor="let img of searchResult?.images ?? []"
+        *ngFor="let img of searchResult?.items ?? []"
         [imageInfo]="img"
         (needReloadImages)="onReloadImages()">
       </small-image-card>

@@ -3,14 +3,15 @@ import {HttpErrorResponse} from "@angular/common/http";
 import {httpErrorResponseHandler} from "apps/SdHub/src/app/shared/http-error-handling/handlers";
 import {ToastrService} from "ngx-toastr";
 import {
-    ISearchAlbumResponse,
-    SearchAlbumOrderByFieldType,
-    SearchAlbumOrderByType
+  IAlbumModel,
+  SearchAlbumOrderByFieldType,
+  SearchAlbumOrderByType
 } from "apps/SdHub/src/app/models/autogen/album.models";
 import {AlbumApi} from "apps/SdHub/src/app/shared/services/api/album.api";
 import {AddAlbumDialogComponent} from "apps/SdHub/src/app/pages/user/add-album-dialog/add-album-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {PerformType} from "apps/SdHub/src/app/pages/generated/search-page/search-page.component";
+import { IPaginationResponse } from "apps/SdHub/src/app/models/autogen/misc.models";
 
 @Component({
     selector: 'user-albums',
@@ -37,7 +38,7 @@ export class UserAlbumsComponent implements OnInit {
 
     public readonly pageSize = 50;
     public loading = false;
-    public searchResult: ISearchAlbumResponse | null = null;
+    public searchResult: IPaginationResponse<IAlbumModel> | null = null;
     public page = 0;
     public totalPages = 1;
 

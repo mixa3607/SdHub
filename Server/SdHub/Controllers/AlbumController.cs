@@ -12,6 +12,7 @@ using SdHub.Database;
 using SdHub.Database.Entities.Albums;
 using SdHub.Database.Extensions;
 using SdHub.Extensions;
+using SdHub.Models;
 using SdHub.Models.Album;
 using SdHub.Services.User;
 using SimpleBase;
@@ -36,7 +37,7 @@ public class AlbumController : ControllerBase
     [HttpPost]
     [Route("[action]")]
     [AllowAnonymous]
-    public async Task<SearchAlbumResponse> Search([FromBody] SearchAlbumRequest req, CancellationToken ct = default)
+    public async Task<PaginationResponse<AlbumModel>> Search([FromBody] SearchAlbumRequest req, CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
 
@@ -110,10 +111,12 @@ public class AlbumController : ControllerBase
 
         var albumModels = _mapper.Map<AlbumModel[]>(albums);
 
-        return new SearchAlbumResponse()
+        return new PaginationResponse<AlbumModel>()
         {
-            Albums = albumModels,
+            Items = albumModels,
             Total = total,
+            Skip = req.Skip,
+            Take = req.Take,
         };
     }
 

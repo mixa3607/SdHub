@@ -15,14 +15,14 @@ export class MyAlbumsService {
     switchMap(() => this.authStateService.user$),
     switchMap((user) => user?.login
       ? this.albumsApi.search({owner: user.login})
-      : of({albums: [], total: 0})
+      : of({items: [], total: 0})
     ),
     tap({error: err => httpErrorResponseHandler(err, this.toastr)}),
     shareReplay(1)
   );
 
   public myAlbums$ = this.myAlbumsRes$.pipe(
-    map(({albums}) => albums),
+    map(({items}) => items),
     shareReplay(1)
   )
 

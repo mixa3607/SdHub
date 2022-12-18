@@ -7,7 +7,7 @@ public class CreateModelRequest
 {
     public string? Name { get; set; }
 
-    public class Validator : AbstractValidator<CreateAlbumRequest>
+    public class Validator : AbstractValidator<CreateModelRequest>
     {
         public Validator()
         {

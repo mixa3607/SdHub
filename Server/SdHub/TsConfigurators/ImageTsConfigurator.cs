@@ -24,7 +24,6 @@ public class ImageTsConfigurator : ITsConfigurator
                 typeof(CheckManageTokenRequest),
                 typeof(CheckManageTokenResponse),
                 typeof(SearchImageRequest),
-                typeof(SearchImageResponse),
             }, c => c
                 .SubsDatetimeOffsetToStr()
                 .SubsTimespanToStr()

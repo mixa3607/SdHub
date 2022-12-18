@@ -6,10 +6,10 @@ import {
   IEditGridRequest,
   IEditGridResponse,
   IGetGridRequest,
-  IGetGridResponse,
-  ISearchGridRequest,
-  ISearchGridResponse
+  IGetGridResponse, IGridModel,
+  ISearchGridRequest
 } from "apps/SdHub/src/app/models/autogen/grid.models";
+import { IPaginationResponse } from "apps/SdHub/src/app/models/autogen/misc.models";
 
 @Injectable({
   providedIn: "root"
@@ -35,6 +35,6 @@ export class GridApi {
   }
 
   public search(req: Partial<ISearchGridRequest>) {
-    return this.http.post<ISearchGridResponse>(this.base + '/search', req);
+    return this.http.post<IPaginationResponse<IGridModel>>(this.base + '/search', req);
   }
 }

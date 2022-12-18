@@ -6,12 +6,13 @@ import { httpErrorResponseHandler } from "apps/SdHub/src/app/shared/http-error-h
 import { ToastrService } from "ngx-toastr";
 import { PerformType } from "apps/SdHub/src/app/pages/generated/search-page/search-page.component";
 import {
-  ISearchGridResponse,
+  IGridModel,
   SearchGridInFieldType,
   SearchGridOrderByFieldType,
   SearchGridOrderByType
 } from "apps/SdHub/src/app/models/autogen/grid.models";
 import { GridApi } from "apps/SdHub/src/app/shared/services/api/grid.api";
+import { IPaginationResponse } from "apps/SdHub/src/app/models/autogen/misc.models";
 
 @UntilDestroy()
 @Component({
@@ -62,7 +63,7 @@ export class SearchInGridsComponent implements OnInit {
   @Output() searchTextChange = new EventEmitter<string>();
   @ViewChild('scrollTo', {read: ElementRef}) scrollTo?: ElementRef;
   public loading = false;
-  public searchResult: ISearchGridResponse | null = null;
+  public searchResult: IPaginationResponse<IGridModel> | null = null;
   public pageSize = 50;
   public page = 0;
   public totalPages = 1;

@@ -6,12 +6,13 @@ import {httpErrorResponseHandler} from "apps/SdHub/src/app/shared/http-error-han
 import {ToastrService} from "ngx-toastr";
 import {AlbumApi} from "apps/SdHub/src/app/shared/services/api/album.api";
 import {
-    ISearchAlbumResponse,
-    SearchAlbumInFieldType,
-    SearchAlbumOrderByFieldType,
-    SearchAlbumOrderByType
+  IAlbumModel,
+  SearchAlbumInFieldType,
+  SearchAlbumOrderByFieldType,
+  SearchAlbumOrderByType
 } from "apps/SdHub/src/app/models/autogen/album.models";
 import {PerformType} from "apps/SdHub/src/app/pages/generated/search-page/search-page.component";
+import { IPaginationResponse } from "apps/SdHub/src/app/models/autogen/misc.models";
 
 @UntilDestroy()
 @Component({
@@ -62,7 +63,7 @@ export class SearchInAlbumsComponent implements OnInit {
     @Output() searchTextChange = new EventEmitter<string>();
     @ViewChild('scrollTo', {read: ElementRef}) scrollTo?: ElementRef;
     public loading = false;
-    public searchResult: ISearchAlbumResponse | null = null;
+    public searchResult: IPaginationResponse<IAlbumModel> | null = null;
     public pageSize = 50;
     public page = 0;
     public totalPages = 1;

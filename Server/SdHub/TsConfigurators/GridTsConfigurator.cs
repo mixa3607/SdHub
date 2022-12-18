@@ -22,7 +22,6 @@ public class GridTsConfigurator : ITsConfigurator
                 typeof(GetGridRequest),
                 typeof(GetGridResponse),
                 typeof(SearchGridRequest),
-                typeof(SearchGridResponse),
                 typeof(EditGridRequest),
                 typeof(EditGridResponse),
                 typeof(DeleteGridRequest),

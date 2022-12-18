@@ -1,12 +1,12 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormControl} from "@angular/forms";
-import {AlbumApi} from "apps/SdHub/src/app/shared/services/api/album.api";
-import {debounceTime, filter, startWith} from "rxjs";
-import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
-import {SearchAlbumInFieldType} from "apps/SdHub/src/app/models/autogen/album.models";
-import {HttpErrorResponse} from "@angular/common/http";
-import {httpErrorResponseHandler} from "apps/SdHub/src/app/shared/http-error-handling/handlers";
-import {ToastrService} from "ngx-toastr";
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormControl } from "@angular/forms";
+import { AlbumApi } from "apps/SdHub/src/app/shared/services/api/album.api";
+import { debounceTime, filter, startWith } from "rxjs";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { HttpErrorResponse } from "@angular/common/http";
+import { httpErrorResponseHandler } from "apps/SdHub/src/app/shared/http-error-handling/handlers";
+import { ToastrService } from "ngx-toastr";
+import { SearchAlbumInFieldType } from "apps/SdHub/src/app/models/autogen/album.models";
 
 
 interface IAllowedAlbum {
@@ -37,7 +37,7 @@ export class AlbumAutocompleteComponent implements OnInit {
   public uploadToAlbum: string | null = null;
   public query = '';
 
-  @Output() uploadToAlbumChange = new EventEmitter<string|null>();
+  @Output() uploadToAlbumChange = new EventEmitter<string | null>();
 
   constructor(private albumApi: AlbumApi,
               private toastr: ToastrService,) {
@@ -73,7 +73,7 @@ export class AlbumAutocompleteComponent implements OnInit {
     }).subscribe({
       next: resp => {
         this.albumsLoading = false;
-        this.allowedAlbums = resp.albums.map(x => ({name: x.name, shortToken: x.shortToken}));
+        this.allowedAlbums = resp.items.map(x => ({name: x.name, shortToken: x.shortToken}));
       },
       error: (err: HttpErrorResponse) => {
         this.albumsLoading = false;

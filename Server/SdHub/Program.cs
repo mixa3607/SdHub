@@ -198,10 +198,10 @@ builder.Services
         smtpClient.DeliveryMethod = mailingOptions.UseMaildir
             ? SmtpDeliveryMethod.SpecifiedPickupDirectory
             : SmtpDeliveryMethod.Network;
-        smtpClient.EnableSsl = mailingOptions.EnableSsl;
+        smtpClient.EnableSsl = !mailingOptions.UseMaildir && mailingOptions.EnableSsl;
         smtpClient.UseDefaultCredentials = false;
         smtpClient.Credentials = new NetworkCredential(mailingOptions.Username, mailingOptions.Password);
-        smtpClient.PickupDirectoryLocation = mailingOptions.PathToMaildir;
+        smtpClient.PickupDirectoryLocation = Path.GetFullPath(mailingOptions.PathToMaildir);
         return smtpClient;
     })
     ;

@@ -27,6 +27,7 @@ public class MailingService : IMailingService
         _emailChecker = emailChecker;
         _fluentEmail = fluentEmail;
         _appInfo = appInfo.Value;
+        InitMaildir();
     }
 
     public async Task SendConfirmEmailCodeAsync(string to, string code, CancellationToken ct = default)

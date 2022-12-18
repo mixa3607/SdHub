@@ -3,7 +3,7 @@
   <div>Nothing found ＞︿＜</div>
 </div>
 <image-bunch-actions-panel
-  [displayedImages]="searchImagesResult?.images ?? []"
+  [displayedImages]="searchImagesResult?.items ?? []"
   (needReloadImages)="onReloadImages()">
 </image-bunch-actions-panel>
 <div *ngIf="loading"
@@ -18,7 +18,7 @@
   <div #scrollTo></div>
   <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: .5rem">
     <small-image-card
-      *ngFor="let img of searchImagesResult?.images ?? []"
+      *ngFor="let img of searchImagesResult?.items ?? []"
       [imageInfo]="img"
       (needReloadImages)="onReloadImages()">
     </small-image-card>

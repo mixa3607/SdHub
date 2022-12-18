@@ -37,7 +37,7 @@ public class ImageController : ControllerBase
 
     [HttpPost("[action]")]
     [AllowAnonymous]
-    public async Task<SearchImageResponse> Search([FromBody] SearchImageRequest req, CancellationToken ct = default)
+    public async Task<PaginationResponse<ImageModel>> Search([FromBody] SearchImageRequest req, CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
 
@@ -148,10 +148,12 @@ public class ImageController : ControllerBase
         var imageModels = _mapper.Map<ImageModel[]>(images);
 
 
-        return new SearchImageResponse()
+        return new PaginationResponse<ImageModel>()
         {
-            Images = imageModels,
+            Items = imageModels,
             Total = total,
+            Skip = req.Skip,
+            Take = req.Take,
         };
     }
 

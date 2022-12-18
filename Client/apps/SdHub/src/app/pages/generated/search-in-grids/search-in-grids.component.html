@@ -34,7 +34,7 @@
        #scrollTo
        class="search-result-container">
     <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: .5rem">
-      <small-grid-card *ngFor="let album of searchResult?.grids ?? []" [info]="album">
+      <small-grid-card *ngFor="let album of searchResult?.items ?? []" [info]="album">
       </small-grid-card>
     </div>
     <div style="flex-grow: 1"></div>

@@ -26,11 +26,10 @@ public class MiscTsConfigurator : ITsConfigurator
                 typeof(ImageParsedMetadataTagModel),
                 typeof(ImageModel),
                 typeof(ImageOwnerModel),
-                typeof(FileModel),
-                typeof(DirectoryModel),
                 typeof(UploadedFileModel),
                 typeof(UserModel),
                 typeof(ServerErrorResponse),
+                typeof(PaginationResponse<>)
             }, c => c
                 .SubsDatetimeOffsetToStr()
                 .SubsTimespanToStr()

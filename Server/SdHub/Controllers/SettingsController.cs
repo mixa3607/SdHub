@@ -18,7 +18,8 @@ public class SettingsController : ControllerBase
     private readonly RecaptchaOptions _recaptcha;
     private readonly IJsonHelper _jsonHelper;
 
-    public SettingsController(IOptions<AppInfoOptions> appInfo, IOptions<RecaptchaOptions> recaptcha, IJsonHelper jsonHelper)
+    public SettingsController(IOptions<AppInfoOptions> appInfo, IOptions<RecaptchaOptions> recaptcha,
+        IJsonHelper jsonHelper)
     {
         _jsonHelper = jsonHelper;
         _recaptcha = recaptcha.Value;
@@ -38,14 +39,6 @@ public class SettingsController : ControllerBase
             DisableImageUploadAnon = _appInfo.DisableImageUploadAnon,
             DisableImageUploadAuth = _appInfo.DisableImageUploadAuth,
         };
-
-        //Response.Headers.ContentType = "text/javascript";
-        //var respStream = Response.BodyWriter.AsStream();
-        //using var textWriter = new StreamWriter(respStream);
-        //textWriter.Write("const GlobalSettings = ");
-        //_jsonHelper.Serialize(settings).WriteTo(textWriter, HtmlEncoder.Default);
-        //textWriter.Write(";");
-
         return settings;
     }
 }

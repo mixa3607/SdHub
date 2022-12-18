@@ -60,11 +60,6 @@ export interface ISearchImageRequest
 	skip: number;
 	take: number;
 }
-export interface ISearchImageResponse
-{
-	images: IImageModel[];
-	total: number;
-}
 export enum SearchImageInFieldType {
 	Prompt = 0,
 	Name = 1,

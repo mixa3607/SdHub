@@ -12,7 +12,7 @@ public class MailingOptions
     /// Sender email
     /// </summary>
     [Required]
-    public string? From { get; set; }
+    public string From { get; set; } = "sample@test.com";
 
     /// <summary>
     /// Mail server host
@@ -55,7 +55,7 @@ public class MailingOptions
     /// Путь до корневой папки <see href="https://ru.wikipedia.org/wiki/Maildir">Maildir</see>
     /// </summary>
     [Required]
-    public string PathToMaildir { get; set; } = "./maildir/";
+    public string PathToMaildir { get; set; } = "./cache/maildir/";
 
     /// <summary>
     /// Есть установить то email'ы не будут проверяться на однодневки/подозрительные

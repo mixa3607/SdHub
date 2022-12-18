@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using Hangfire;
 using LinqKit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +11,8 @@ using SdHub.Constants;
 using SdHub.Database;
 using SdHub.Database.Entities.Bins;
 using SdHub.Extensions;
+using SdHub.Hangfire.Jobs;
+using SdHub.Models;
 using SdHub.Models.Album;
 using SdHub.Models.Bins;
 using SdHub.Services.FileProc;
@@ -34,7 +37,7 @@ public class ModelController : ControllerBase
     [HttpPost]
     [Route("[action]")]
     [AllowAnonymous]
-    public async Task<SearchModelResponse> Search([FromBody] SearchModelRequest req, CancellationToken ct = default)
+    public async Task<PaginationResponse<ModelModel>> Search([FromBody] SearchModelRequest req, CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
 
@@ -84,10 +87,12 @@ public class ModelController : ControllerBase
 
         var models = _mapper.Map<ModelModel[]>(entities);
 
-        return new SearchModelResponse()
+        return new PaginationResponse<ModelModel>()
         {
-            Models = models,
+            Items = models,
             Total = total,
+            Skip = req.Skip,
+            Take = req.Take,
         };
     }
 
@@ -222,8 +227,9 @@ public class ModelController : ControllerBase
         if (req.CkptFile != null)
         {
             var decR = await _fileProcessor.DecomposeUrlAsync(req.CkptFile, ct);
-            var file = await _db.Files.FirstOrDefaultAsync(x => x.StorageName == decR.Storage.Name && x.PathOnStorage == decR.PathOnStorage, ct);
-            if (file == null) 
+            var file = await _db.Files.FirstOrDefaultAsync(
+                x => x.StorageName == decR.Storage.Name && x.PathOnStorage == decR.PathOnStorage, ct);
+            if (file == null)
                 ModelState.AddError(ModelStateErrors.FileNotFound).ThrowIfNotValid();
             entity!.CkptFile = file;
             entity.HashV1 = null;
@@ -233,8 +239,10 @@ public class ModelController : ControllerBase
         await _db.SaveChangesAsync(CancellationToken.None);
         if (requireReCalc)
         {
-            
+            BackgroundJob.Enqueue<IBinUpdaterRunnerV1>(x =>
+                x.UpdateModelVersionFilesAsync(req.ModelId, false, CancellationToken.None));
         }
+
         return _mapper.Map<ModelVersionModel>(entity);
     }
 

@@ -3,8 +3,8 @@
 //     the code is regenerated.
 
 import { IImageOwnerModel } from './misc.models';
-import { IFileModel } from './misc.models';
-import { IDirectoryModel } from './misc.models';
+import { IFileModel } from './file.models';
+import { IDirectoryModel } from './file.models';
 import { IImageModel } from './misc.models';
 
 export interface IGridModel
@@ -50,11 +50,6 @@ export interface ISearchGridRequest
 	orderBy: SearchGridOrderByType;
 	skip: number;
 	take: number;
-}
-export interface ISearchGridResponse
-{
-	grids: IGridModel[];
-	total: number;
 }
 export interface IEditGridRequest
 {

@@ -7,11 +7,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AuthStateService } from 'apps/SdHub/src/app/core/services/auth-state.service';
 import { IAlbumModel } from 'apps/SdHub/src/app/models/autogen/album.models';
 import {
-  ISearchImageResponse,
   SearchImageOrderByFieldType,
   SearchImageOrderByType
 } from 'apps/SdHub/src/app/models/autogen/image.models';
-import { IImageOwnerModel } from 'apps/SdHub/src/app/models/autogen/misc.models';
+import { IImageModel, IImageOwnerModel, IPaginationResponse } from 'apps/SdHub/src/app/models/autogen/misc.models';
 import { PerformType } from 'apps/SdHub/src/app/pages/generated/search-page/search-page.component';
 import { httpErrorResponseHandler } from 'apps/SdHub/src/app/shared/http-error-handling/handlers';
 import { AlbumApi } from 'apps/SdHub/src/app/shared/services/api/album.api';
@@ -49,7 +48,7 @@ export class AlbumPageComponent implements OnInit {
 
   public readonly pageSize = 50;
   public loadingImages = false;
-  public searchResult: ISearchImageResponse | null = null;
+  public searchResult: IPaginationResponse<IImageModel> | null = null;
   public page = 0;
   public totalPages = 1;
 

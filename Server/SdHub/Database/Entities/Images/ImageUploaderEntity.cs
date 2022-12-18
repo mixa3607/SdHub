@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace SdHub.Database.Entities.Images;
+﻿namespace SdHub.Database.Entities.Images;
 
 public class ImageUploaderEntity
 {

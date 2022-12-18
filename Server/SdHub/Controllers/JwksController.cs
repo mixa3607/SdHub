@@ -1,5 +1,4 @@
-﻿using System.Text.Encodings.Web;
-using System.Threading;
+﻿using System.Threading;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

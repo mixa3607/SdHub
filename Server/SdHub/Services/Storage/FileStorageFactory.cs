@@ -10,6 +10,7 @@ using SdHub.Database;
 using SdHub.Database.Entities.Files;
 using SdHub.Storage;
 using SdHub.Storage.Local;
+using SdHub.Storage.ReadOnly;
 using SdHub.Storage.S3;
 
 namespace SdHub.Services.Storage;
@@ -30,7 +31,21 @@ public class FileStorageFactory : IFileStorageFactory
         _serviceProvider = serviceProvider;
     }
 
-    public async Task<IFileStorage> GetStorageAsync(long requiredBytes = 0, CancellationToken ct = default)
+    public async Task<IFileStorage> GetStorageAsync(string composedUrl, CancellationToken ct = default)
+    {
+        await UpdateStorageListIfRequiredAsync(ct);
+        foreach (var fileStorage in _fileStorages)
+        {
+            if (composedUrl.StartsWith(fileStorage.BaseUrl))
+            {
+                return fileStorage;
+            }
+        }
+
+        throw new Exception($"No storage for {composedUrl}");
+    }
+
+    public async Task<IFileStorage> GetStorageAsync(long requiredBytes = 10, CancellationToken ct = default)
     {
         await UpdateStorageListIfRequiredAsync(ct);
         return await GetAvailableStorageAsync(requiredBytes, ct);
@@ -111,6 +126,8 @@ public class FileStorageFactory : IFileStorageFactory
                 _serviceProvider.GetRequiredService<ILogger<LocalFileStorage>>(), entity, entity.Settings!),
             FileStorageBackendType.S3 => new S3FileStorage(
                 _serviceProvider.GetRequiredService<ILogger<S3FileStorage>>(), entity, entity.Settings!),
+            FileStorageBackendType.ReadOnly => new ReadOnlyFileStorage(
+                _serviceProvider.GetRequiredService<ILogger<ReadOnlyFileStorage>>(), entity, entity.Settings!),
             _ => throw new NotSupportedException($"Backend {entity.BackendType} not supported")
         };
     }

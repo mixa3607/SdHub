@@ -22,4 +22,9 @@ public static class ModelStateErrors
 
     public const string GridNotFound = "GRID_NOT_FOUND";
     public const string NotGridOwner = "NOT_GRID_OWNER";
+
+    public const string FileNotFound = "FILE_NOT_FOUND";
+
+    public const string ModelNotFound = "MODEL_NOT_FOUND";
+    public const string ModelVersionNotFound = "MODEL_VERSION_NOT_FOUND";
 }

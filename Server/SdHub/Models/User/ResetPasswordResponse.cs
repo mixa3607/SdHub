@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SdHub.Models.User;
+﻿namespace SdHub.Models.User;
 
 public class ResetPasswordResponse
 {

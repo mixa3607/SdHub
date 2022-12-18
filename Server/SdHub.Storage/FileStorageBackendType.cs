@@ -5,4 +5,5 @@ public enum FileStorageBackendType : byte
     Unknown = 0,
     LocalDir,
     S3,
+    ReadOnly,
 }

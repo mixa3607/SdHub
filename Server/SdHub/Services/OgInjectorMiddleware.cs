@@ -9,7 +9,6 @@ using SdHub.Options;
 using Microsoft.AspNetCore.SpaServices.StaticFiles;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-using Flurl;
 using System.Text;
 using AutoMapper;
 using SdHub.Models.Image;

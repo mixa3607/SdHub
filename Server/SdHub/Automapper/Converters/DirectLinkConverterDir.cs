@@ -1,5 +1,4 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using Flurl;
 using SdHub.Database.Entities.Files;
 

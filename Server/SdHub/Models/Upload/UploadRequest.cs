@@ -1,7 +1,5 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Http;
-using SdHub.Models.Image;
-using System;
 using System.Collections.Generic;
 
 namespace SdHub.Models.Upload;

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace SdHub.Database.Entities.Users;
+﻿namespace SdHub.Database.Entities.Users;
 
 public class UserPlanEntity
 {

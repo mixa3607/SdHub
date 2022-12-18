@@ -12,11 +12,13 @@ public class ModelVersionEntity
 
     public string? HashV1 { get; set; }
 
-    public long CkptFileId { get; set; }
+    public long? CkptFileId { get; set; }
     public FileEntity? CkptFile { get; set; }
+
     public string? Version { get; set; }
     public string? About { get; set; }
-    public string? SourceLink { get; set; }
 
     public List<string> KnownNames { get; set; } = new List<string>();
+
+    public List<GenerationSampleEntity>? Samples { get; set; }
 }

@@ -8,8 +8,7 @@ public class SearchAlbumRequest
 {
     public string? SearchText { get; set; }
     public string? Owner { get; set; }
-
-    //public IReadOnlyList<string> Tags { get; set; } = Array.Empty<string>();
+    
     public IReadOnlyList<SearchAlbumInFieldType> Fields { get; set; } = Array.Empty<SearchAlbumInFieldType>();
 
     public SearchAlbumOrderByFieldType OrderByField { get; set; }

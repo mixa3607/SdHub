@@ -29,6 +29,7 @@ public interface IFileProcessor
     Task<ExtractImageMetadataResult> ExtractImageMetadataAsync(string tempFile, CancellationToken ct = default);
 
     Task<IFileStorage> GetStorageAsync(long requiredBytes = 0, CancellationToken ct = default);
+    Task<DecomposeUrlResult> DecomposeUrlAsync(string composedUrl, CancellationToken ct = default);
 
     Task PruneCacheAsync(DateTime deleteBefore, CancellationToken ct = default);
 }

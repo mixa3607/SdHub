@@ -197,4 +197,20 @@ public class FileProcessor : IFileProcessor
     {
         return _fileStorageFactory.GetStorageAsync(requiredBytes, ct);
     }
+
+    public async Task<DecomposeUrlResult> DecomposeUrlAsync(string composedUrl, CancellationToken ct = default)
+    {
+        if (composedUrl.Contains('\\')) 
+            composedUrl = composedUrl.Replace('\\', '/');
+
+        var storage = await _fileStorageFactory.GetStorageAsync(composedUrl, ct);
+        var pathOnStorage = composedUrl[storage.BaseUrl.Length..];
+
+        if (pathOnStorage.StartsWith('/')) 
+            pathOnStorage = pathOnStorage[1..];
+        if (pathOnStorage.EndsWith('/')) 
+            pathOnStorage = pathOnStorage[..^1];
+
+        return new DecomposeUrlResult(storage, pathOnStorage);
+    }
 }

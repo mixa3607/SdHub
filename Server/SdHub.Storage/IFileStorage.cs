@@ -13,5 +13,5 @@ public interface IFileStorage: IAsyncDisposable
     Task<FileUploadResult> UploadAsync(Stream dataStream, string destination, CancellationToken ct = default);
     Task<FileUploadResult?> FileExistAsync(string destination, CancellationToken ct = default);
 
-    Task<bool> IsAvailableAsync(long minAvailableKBytes = 0, CancellationToken ct = default);
+    Task<bool> IsAvailableAsync(long minAvailableKBytes, CancellationToken ct = default);
 }

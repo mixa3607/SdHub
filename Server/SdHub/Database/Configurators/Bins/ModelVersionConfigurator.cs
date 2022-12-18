@@ -9,5 +9,9 @@ public class ModelVersionConfigurator : IEntityTypeConfiguration<ModelVersionEnt
     public void Configure(EntityTypeBuilder<ModelVersionEntity> builder)
     {
         builder.Property(x => x.KnownNames).IsRequired();
+        builder.HasMany(x => x.Samples)
+            .WithOne(x => x.ModelVersion)
+            .HasForeignKey(x => x.ModelVersionId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

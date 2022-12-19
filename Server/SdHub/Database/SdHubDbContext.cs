@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SdHub.Database.Entities;
 using SdHub.Database.Entities.Albums;
 using SdHub.Database.Entities.Bins;
 using SdHub.Database.Entities.Files;
@@ -50,13 +49,14 @@ public class SdHubDbContext : DbContext
 
     public DbSet<GenerationSampleEntity> GenerationSamples { get; set; } = null!;
     public DbSet<ImageUploaderEntity> ImageUploaders { get; set; } = null!;
-
-    public DbSet<RefreshTokenEntity> RefreshTokens { get; set; } = null!;
-    public DbSet<UserEntity> Users { get; set; } = null!;
-
     public DbSet<UserPlanEntity> UserPlans { get; set; } = null!;
 
+    //auth
+    public DbSet<RefreshTokenEntity> RefreshTokens { get; set; } = null!;
+    public DbSet<UserEntity> Users { get; set; } = null!;
+    public DbSet<UserApiTokenEntity> ApiTokens { get; set; } = null!;
     public DbSet<TempCodeEntity> TempCodes { get; set; } = null!;
+
 
     public SdHubDbContext(DbContextOptions<SdHubDbContext> options) : base(options)
     {

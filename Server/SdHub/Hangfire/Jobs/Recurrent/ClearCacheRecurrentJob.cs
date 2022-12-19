@@ -18,7 +18,7 @@ public class ClearCacheRecurrentJob : IHangfireRecurrentJob
         _options = options.Value;
     }
 
-    public string Name => "ClearCache";
+    public string Name => "ClearCache_" + Queue;
     public string CronExpression => "*/5 * * * *"; //every 5 minutes
     public string Queue => _options.ServerQueue!;
 
@@ -30,6 +30,7 @@ public class ClearCacheRecurrentJob : IHangfireRecurrentJob
             TimeZoneInfo.Utc, Queue);
     }
 
+    [JobDisplayName("Clear file cache")]
     public async Task ExecuteAsync(CancellationToken ct = default)
     {
         await _fileProcessor.PruneCacheAsync(DateTime.UtcNow.AddMinutes(-30), ct);

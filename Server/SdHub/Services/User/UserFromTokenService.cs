@@ -4,17 +4,21 @@ using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
+using SdHub.ApiTokenAuth;
 using SdHub.Models;
 using SdHub.Constants;
+using SdHub.RequestFeatures;
 
 namespace SdHub.Services.User;
 
 public class UserFromTokenService : IUserFromTokenService
 {
     private readonly IHttpContextAccessor _contextAccessor;
-    private UserFromToken? _cached;
+    private UserFromToken? _cachedJwt;
+    private ApiTokenAuthFeature? _cachedApi;
 
     public UserFromTokenService(IHttpContextAccessor contextAccessor)
     {
@@ -22,33 +26,39 @@ public class UserFromTokenService : IUserFromTokenService
     }
 
     public UserModel? Get() =>
-        GetTokenUser()?.User;
+        GetTokenUser()?.User ?? GetApiUser();
 
-    public UserModel? Get(string jwt, TokenValidationParameters validationParams) =>
-        GetTokenUser(jwt, validationParams)?.User;
+    public UserModel? GetApiUser()
+    {
+        if (_cachedApi != null)
+            return _cachedApi.User;
 
-    public UserModel? Get(ClaimsPrincipal? claims) =>
-        GetTokenUser(claims)?.User;
+        var user = _contextAccessor.HttpContext?.User;
+        if (user?.Identity?.IsAuthenticated != true)
+            return null;
+        if (user.FindFirst(ClaimTypes.AuthenticationMethod)?.Value != ApiTokenDefaults.AuthenticationScheme)
+            return null;
+
+        _cachedApi = _contextAccessor.HttpContext!.Features.Get<ApiTokenAuthFeature>();
+        return _cachedApi!.User;
+    }
 
     public UserFromToken? GetTokenUser()
     {
-        if (_contextAccessor.HttpContext?.User.Identity?.IsAuthenticated != true)
-            return null;
+        if (_cachedJwt != null)
+            return _cachedJwt;
         var user = _contextAccessor.HttpContext?.User;
-        if (user == null)
+        if (user?.Identity?.IsAuthenticated != true)
             return null;
-        if (_cached != null)
-            return _cached;
 
         var model = GetTokenUser(user);
         if (model != null)
         {
-            //я честно хз почему именно "access_token" и откуда растут ноги
             model.JwtToken = _contextAccessor.HttpContext?.GetTokenAsync("access_token")
                 .Result;
         }
 
-        _cached = model;
+        _cachedJwt = model;
         return model;
     }
 
@@ -56,8 +66,6 @@ public class UserFromTokenService : IUserFromTokenService
     {
         var handler = new JwtSecurityTokenHandler();
         var user = handler.ValidateToken(jwt, validationParams, out var secToken);
-        //var token = new JwtSecurityToken(jwt);
-        //var user = new ClaimsPrincipal(new ClaimsIdentity(token.Claims));
 
         var model = GetTokenUser(user);
         if (model != null)
@@ -72,6 +80,8 @@ public class UserFromTokenService : IUserFromTokenService
     {
         var user = claims;
         if (user == null)
+            return null;
+        if (user.FindFirst(ClaimTypes.AuthenticationMethod)?.Value != JwtBearerDefaults.AuthenticationScheme)
             return null;
 
         var model = new UserFromToken()

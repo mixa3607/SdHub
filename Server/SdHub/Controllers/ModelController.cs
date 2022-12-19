@@ -37,7 +37,8 @@ public class ModelController : ControllerBase
     [HttpPost]
     [Route("[action]")]
     [AllowAnonymous]
-    public async Task<PaginationResponse<ModelModel>> Search([FromBody] SearchModelRequest req, CancellationToken ct = default)
+    public async Task<PaginationResponse<ModelModel>> Search([FromBody] SearchModelRequest req,
+        CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
 
@@ -113,6 +114,7 @@ public class ModelController : ControllerBase
         if (entity == null)
             ModelState.AddError(ModelStateErrors.ModelNotFound).ThrowIfNotValid();
 
+        entity!.Versions!.ForEach(x => x.Model = null);
         return _mapper.Map<ModelModel>(entity);
     }
 
@@ -183,12 +185,12 @@ public class ModelController : ControllerBase
     [HttpPost]
     [Route("[action]")]
     [Authorize(Roles = UserRoleTypes.Admin)]
-    public async Task AddVersion([FromBody] AddModelVersionRequest req,
+    public async Task<ModelVersionModel> AddVersion([FromBody] AddModelVersionRequest req,
         CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
 
-        if (await _db.Models.AnyAsync(x => x.Id == req.ModelId, ct))
+        if (!await _db.Models.AnyAsync(x => x.Id == req.ModelId, ct))
             ModelState.AddError(ModelStateErrors.ModelNotFound).ThrowIfNotValid();
 
         var entity = new ModelVersionEntity()
@@ -198,6 +200,7 @@ public class ModelController : ControllerBase
 
         _db.ModelVersions.Add(entity);
         await _db.SaveChangesAsync(CancellationToken.None);
+        return _mapper.Map<ModelVersionModel>(entity);
     }
 
     [HttpPost]
@@ -208,7 +211,7 @@ public class ModelController : ControllerBase
     {
         ModelState.ThrowIfNotValid();
 
-        if (await _db.Models.AnyAsync(x => x.Id == req.ModelId, ct))
+        if (!await _db.Models.AnyAsync(x => x.Id == req.ModelId, ct))
             ModelState.AddError(ModelStateErrors.ModelNotFound).ThrowIfNotValid();
 
         var entity = await _db.ModelVersions
@@ -254,7 +257,7 @@ public class ModelController : ControllerBase
     {
         ModelState.ThrowIfNotValid();
 
-        if (await _db.Models.AnyAsync(x => x.Id == req.ModelId, ct))
+        if (!await _db.Models.AnyAsync(x => x.Id == req.ModelId, ct))
             ModelState.AddError(ModelStateErrors.ModelNotFound).ThrowIfNotValid();
 
         var entity = await _db.ModelVersions

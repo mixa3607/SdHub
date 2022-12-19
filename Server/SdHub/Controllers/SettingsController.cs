@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Options;
 using SdHub.Models;
 using SdHub.Options;
@@ -16,12 +15,9 @@ public class SettingsController : ControllerBase
 {
     private readonly AppInfoOptions _appInfo;
     private readonly RecaptchaOptions _recaptcha;
-    private readonly IJsonHelper _jsonHelper;
 
-    public SettingsController(IOptions<AppInfoOptions> appInfo, IOptions<RecaptchaOptions> recaptcha,
-        IJsonHelper jsonHelper)
+    public SettingsController(IOptions<AppInfoOptions> appInfo, IOptions<RecaptchaOptions> recaptcha)
     {
-        _jsonHelper = jsonHelper;
         _recaptcha = recaptcha.Value;
         _appInfo = appInfo.Value;
     }

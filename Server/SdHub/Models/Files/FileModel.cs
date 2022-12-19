@@ -9,7 +9,7 @@ public class FileModel
     public string? Hash { get; set; }
     public string? MimeType { get; set; }
     public string? Extension { get; set; }
-    public int Size { get; set; }
+    public long Size { get; set; }
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.Now;
     public string? DirectUrl { get; set; }
 }

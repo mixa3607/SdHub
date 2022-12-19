@@ -46,8 +46,9 @@ public class LocalFileStorage : IFileStorage
 
     public Task<FileUploadResult?> FileExistAsync(string destination, CancellationToken ct = default)
     {
-        var physDstFile = Path.Combine(_settings.PhysicalRoot!, destination);
-        var fInfo = new FileInfo(physDstFile);
+        var relPath = Path.GetRelativePath(_settings.VirtualRoot!, destination);
+        var physDstFile = Path.Combine(_settings.PhysicalRoot!, relPath);
+        var fInfo = new FileInfo(Path.GetFullPath(physDstFile));
         return fInfo.Exists
             ? Task.FromResult<FileUploadResult?>(new FileUploadResult(destination, fInfo.Length, Name))
             : Task.FromResult<FileUploadResult?>(null);

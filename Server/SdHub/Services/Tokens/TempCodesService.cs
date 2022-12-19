@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SdHub.Database;
-using SdHub.Database.Entities;
+using SdHub.Database.Entities.Users;
 using SimpleBase;
 
 namespace SdHub.Services.Tokens;

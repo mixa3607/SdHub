@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using SdHub.ApiTokenAuth;
@@ -42,6 +43,13 @@ public static class SecurityStartupExtensions
                 o.RequireHttpsMetadata = options.EnableHttpsRedirections;
                 o.TokenValidationParameters = options.MapToTokenValidationParameters();
                 o.Events = new JwtBearerEvents();
+                o.Events.OnTokenValidated = ctx =>
+                {
+                    var identity = (ctx.Principal!.Identity! as ClaimsIdentity)!;
+                    identity.AddClaim(
+                        new Claim(ClaimTypes.AuthenticationMethod, JwtBearerDefaults.AuthenticationScheme));
+                    return Task.CompletedTask;
+                };
                 o.Events.OnAuthenticationFailed = ctx =>
                 {
                     ctx.HttpContext.Features.Set(new JwtAuthFailedFeature(ctx.Exception));

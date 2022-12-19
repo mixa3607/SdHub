@@ -1,7 +1,10 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
+using Fluid;
 using Flurl.Http;
 using LinqKit;
 using Microsoft.AspNetCore.Authorization;
@@ -18,7 +21,6 @@ using SdHub.Services.FileProc;
 
 namespace SdHub.Controllers;
 
-[AllowAnonymous]
 [Route("api/v1/[controller]")]
 [Produces("application/json")]
 public class FilesController : ControllerBase
@@ -35,9 +37,10 @@ public class FilesController : ControllerBase
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [HttpPost]
+    [HttpPost("[action]")]
     [Authorize(Roles = UserRoleTypes.Admin)]
-    public async Task<PaginationResponse<FileModel>> Search([FromBody] SearchFileRequest req, CancellationToken ct = default)
+    public async Task<PaginationResponse<FileModel>> Search([FromBody] SearchFileRequest req,
+        CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
 
@@ -65,8 +68,8 @@ public class FilesController : ControllerBase
             query = query.Where(x => EF.Functions.ILike(x.StorageName!, req.Storage));
         }
 
-        query = query.OrderBy(x => x.CreatedAt);
-        
+        query = query.OrderByDescending(x => x.CreatedAt);
+
         var total = await query.CountAsync(ct);
         var files = await query.Skip(req.Skip).Take(req.Take).ToArrayAsync(ct);
         var fileModels = _mapper.Map<FileModel[]>(files);
@@ -82,8 +85,8 @@ public class FilesController : ControllerBase
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [HttpPost]
-    [Authorize(Roles = UserRoleTypes.Admin)]
+    [HttpPost("[action]")]
+    [Authorize(AuthenticationSchemes = AuthConst.JwtAndApiScheme, Roles = UserRoleTypes.Admin)]
     public async Task<FileModel> Import([FromBody] ImportFileRequest req, CancellationToken ct = default)
     {
         ModelState.ThrowIfNotValid();
@@ -92,11 +95,18 @@ public class FilesController : ControllerBase
         var exist = await decR.Storage.FileExistAsync(decR.PathOnStorage, ct);
         if (exist == null)
             ModelState.AddError(ModelStateErrors.FileNotFound).ThrowIfNotValid();
+        if (await _db.Files.AnyAsync(x =>
+                x.PathOnStorage == exist!.PathOnStorage && x.StorageName == exist.StorageName, ct))
+            ModelState.AddError("File exist").ThrowIfNotValid();
 
         var tmpFilePath = _fileProcessor.GetNewTempFilePath();
-        var netStream = await req.FileUrl!.GetStreamAsync(ct);
-        await using var fileStream = System.IO.File.OpenWrite(tmpFilePath);
-        await netStream.CopyToAsync(fileStream, ct);
+        {
+            var resp = await req.FileUrl!.SendAsync(HttpMethod.Get, null, ct, HttpCompletionOption.ResponseHeadersRead);
+            var netStream = await resp.GetStreamAsync();
+            await using var fileStream = new FileStream(tmpFilePath, FileMode.CreateNew, FileAccess.ReadWrite,
+                FileShare.None, 10 * 1024 * 1024);
+            await netStream.CopyToAsync(fileStream, ct);
+        }
 
         var mime = await _fileProcessor.DetectMimeTypeAsync(tmpFilePath, ct);
         var hash = await _fileProcessor.CalculateHashAsync(tmpFilePath, ct);

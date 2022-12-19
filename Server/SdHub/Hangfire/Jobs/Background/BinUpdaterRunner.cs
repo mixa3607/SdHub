@@ -50,7 +50,7 @@ public class BinUpdaterRunner : IBinUpdaterRunnerV1
 
         var bytes = await mvM.CkptFile.DirectUrl!
             .ConfigureRequest(x => { x.AllowedHttpStatusRange = "206"; })
-            .WithHeader("Range", $"bytes={0x100000}-{0x100000 + 0x10000}")
+            .WithHeader("Range", $"bytes={0x100000}-{0x100000 + 0x10000 - 1}")
             .GetBytesAsync(ct);
         if (bytes.Length != 0x10000)
         {

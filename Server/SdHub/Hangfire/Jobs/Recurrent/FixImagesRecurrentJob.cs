@@ -15,7 +15,7 @@ public class FixImagesRecurrentJob : IHangfireRecurrentJob
         _db = db;
     }
 
-    public string Name => "FixImagesThumbs";
+    public string Name => "FixImagesThumbs_" + Queue;
     public string CronExpression => "*/5 * * * *"; //every 5 minutes
     public string Queue => "default";
 
@@ -29,6 +29,7 @@ public class FixImagesRecurrentJob : IHangfireRecurrentJob
             TimeZoneInfo.Utc, Queue);
     }
 
+    [JobDisplayName("Fix images thumbs")]
     public async Task ExecuteAsync(CancellationToken ct = default)
     {
         var batchSize = 100;

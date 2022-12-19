@@ -46,4 +46,5 @@ public class UserEntity
     public string? PasswordHash { get; set; }
     public List<string> Roles { get; set; } = new List<string>();
     public List<RefreshTokenEntity>? RefreshTokens { get; set; }
+    public List<UserApiTokenEntity>? ApiTokens { get; set; }
 }

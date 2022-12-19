@@ -69,6 +69,11 @@ public class ModelController : ControllerBase
                     predicate = predicate.Or(x =>
                         x.Versions!.Any(y => EF.Functions.ILike(y.HashV1!, searchText)));
                 }
+                else if (fieldType == SearchModelInFieldType.KnownNames)
+                {
+                    predicate = predicate.Or(x =>
+                        x.Versions!.Any(y => y.KnownNames!.Any(z => EF.Functions.ILike(z, searchText))));
+                }
             }
 
             query = query.Where(predicate);

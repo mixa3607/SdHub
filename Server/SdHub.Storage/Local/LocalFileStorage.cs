@@ -39,6 +39,9 @@ public class LocalFileStorage : IFileStorage
         dataStream.Position = 0;
         var virtDstFile = Path.Combine(_settings.VirtualRoot!, destination);
         var physDstFile = Path.Combine(_settings.PhysicalRoot!, destination);
+        var physDirPath = Path.GetDirectoryName(physDstFile)!;
+        if (!Directory.Exists(physDirPath)) 
+            Directory.CreateDirectory(physDirPath);
         await using var destFile = File.Create(physDstFile);
         await dataStream.CopyToAsync(destFile, ct);
         return new FileUploadResult(virtDstFile.Replace('\\', '/'), dataStream.Length, Name);

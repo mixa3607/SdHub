@@ -90,7 +90,6 @@ public static class CustomSerilogLoggingExtensions
 
     public static WebApplication UseCustomSerilogging(this WebApplication app, SerilogOptions serilogOptions)
     {
-
         if (serilogOptions.EnableRequestLogging)
         {
             const int inMemBuffLen = 50 * 1024;
@@ -99,7 +98,11 @@ public static class CustomSerilogLoggingExtensions
             Console.WriteLine($"Request logging enabled with level {serilogOptions.RequestLogMessageLevel}");
             app.Use((context, next) =>
             {
-                context.Request.EnableBuffering(inMemBuffLen);
+                if (context.Request.ContentLength > maxLoggingBodyLen)
+                {
+                    context.Request.EnableBuffering(inMemBuffLen);
+                }
+
                 return next();
             });
 
@@ -112,21 +115,21 @@ public static class CustomSerilogLoggingExtensions
                     var body = (dynamic?)null;
                     if (context.Request.ContentType == MediaTypeNames.Application.Json)
                     {
-                        var blob = MemoryPool<byte>.Shared.Rent(maxLoggingBodyLen).Memory[..(maxLoggingBodyLen)];
-
                         try
                         {
-                            var origPos = context.Request.Body.Position;
-                            context.Request.Body.Position = 0;
-                            var read = context.Request.Body.ReadAsync(blob, CancellationToken.None).Result;
-                            bodyStr = Encoding.UTF8.GetString(blob[..read].Span);
-                            context.Request.Body.Position = origPos;
-                            if (context.Request.Body.Length > maxLoggingBodyLen)
+                            if (context.Request.ContentLength > maxLoggingBodyLen)
                             {
-                                body = $"Body len more than {maxLoggingBodyLen}. Cant deserialize";
+                                bodyStr = $"Body len more than {maxLoggingBodyLen}. Cant deserialize";
                             }
                             else
                             {
+                                var blob = MemoryPool<byte>.Shared.Rent(maxLoggingBodyLen)
+                                    .Memory[..(maxLoggingBodyLen)];
+                                var origPos = context.Request.Body.Position;
+                                context.Request.Body.Position = 0;
+                                var read = context.Request.Body.ReadAsync(blob, CancellationToken.None).Result;
+                                bodyStr = Encoding.UTF8.GetString(blob[..read].Span);
+                                context.Request.Body.Position = origPos;
                                 try
                                 {
                                     body = JsonConvert.DeserializeObject<ExpandoObject?>(bodyStr);

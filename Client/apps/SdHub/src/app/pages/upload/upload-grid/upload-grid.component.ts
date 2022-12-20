@@ -138,8 +138,8 @@ export class UploadGridComponent implements OnInit {
 
     this.toastr.info('Begin upload grid');
     const request$ = this.uploadApi.uploadGridCheckInput(req)
-      .pipe(switchMap(() => this.uploadApi.uploadGridAuth(formData)),
-        untilDestroyed(this),
+      .pipe(
+        switchMap(() => this.uploadApi.uploadGridAuth(formData)),
         shareReplay()
       );
 

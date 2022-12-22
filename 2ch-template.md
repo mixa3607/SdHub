@@ -61,6 +61,7 @@ https://github.com/AUTOMATIC1111/stable-diffusion-webui - пользовател
 https://wiki.diffai.xyz/FAQ - [b]ЧаВо ДАННОГО ТРЕДА, ЕСЛИ ЕСТЬ ВОПРОС, ДЛЯ НАЧАЛА ЗАГЛЯНИ СЮДА[/b]
 https://wiki.diffai.xyz/amd-users - [b]у тебя AMD? Тебе сюда![/b]
 https://rentry.org/sdupdates2 - Вся информация о моделях, эмбедингах, промтах и т.д. (переодически обновляется)
+https://rentry.org/SD_upscale - Про апскейлинг (aka как делать хайрезы без повторяющихся лиц и кроненбергов)
 https://wiki.diffai.xyz/other-info - Остальные ссылки (промпты, лица, одежда, позы, ракурсы и т.д.)
 ----------------------------------
 Шаблон шапки для тредов: https://wiki.diffai.xyz/2ch-template

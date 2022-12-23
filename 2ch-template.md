@@ -2,7 +2,7 @@
 title: Шаблон шапки
 description: 
 published: true
-date: 2022-11-30T08:46:21.163Z
+date: 2022-12-23T17:59:48.976Z
 tags: 
 editor: markdown
 dateCreated: 2022-11-18T23:51:44.600Z
@@ -62,7 +62,7 @@ https://wiki.diffai.xyz/FAQ - [b]ЧаВо ДАННОГО ТРЕДА, ЕСЛИ Е
 https://wiki.diffai.xyz/amd-users - [b]у тебя AMD? Тебе сюда![/b]
 https://rentry.org/sdupdates2 - Вся информация о моделях, эмбедингах, промтах и т.д. (переодически обновляется)
 https://rentry.org/SD_upscale - Про апскейлинг (aka как делать хайрезы без повторяющихся лиц и кроненбергов)
-https://wiki.diffai.xyz/other-info - Остальные ссылки (промпты, лица, одежда, позы, ракурсы и т.д.)
+https://wiki.diffai.xyz/other-info - Остальные ссылки (апскейлеры, промпты, лица, одежда, позы, ракурсы и т.д.)
 ----------------------------------
 Шаблон шапки для тредов: https://wiki.diffai.xyz/2ch-template
 ```

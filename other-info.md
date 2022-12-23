@@ -2,7 +2,7 @@
 title: other-info
 description: 
 published: true
-date: 2022-12-03T01:57:55.529Z
+date: 2022-12-23T17:59:03.606Z
 tags: 
 editor: markdown
 dateCreated: 2022-12-03T01:46:21.404Z
@@ -23,3 +23,7 @@ https://figurosity.com/figure-drawing-poses
 https://app.justsketch.me
 https://webapp.magicposer.com
 https://www.artstation.com/marketplace/p/VOAyv/stable-diffusion-3d-posable-manekin-doll
+
+## Апскейлеры
+https://upscale.wiki/wiki/Model_Database
+https://github.com/Sygil-Dev/sygil-webui#lsdr

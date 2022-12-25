@@ -1,6 +1,10 @@
-﻿using SdHub.Models.Image;
+﻿using SdHub.Models.Bins;
+using SdHub.Models.Bins.Embeddings;
+using SdHub.Models.Bins.Hypernets;
+using SdHub.Models.Bins.Vaes;
+using SdHub.Models.Image;
 
-namespace SdHub.Models.Bins;
+namespace SdHub.Models.Samples;
 
 public class GenerationSampleModel
 {

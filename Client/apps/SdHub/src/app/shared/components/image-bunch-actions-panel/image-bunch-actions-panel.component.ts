@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnDestroy, Output } from '@angular/core
 import { IAlbumModel } from "apps/SdHub/src/app/models/autogen/album.models";
 import { keyBy } from 'lodash';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, combineLatest, forkJoin } from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin, startWith } from 'rxjs';
 import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { IImageModel } from '../../../models/autogen/misc.models';
 
@@ -45,7 +45,8 @@ export class ImageBunchActionsPanelComponent implements OnDestroy {
   public myAlbumsWithoutCurrent$ = combineLatest([this.myAlbums$, this.selectedAlbum$]).pipe(
     map(([myAlbums, selectedAlbum]) =>
       myAlbums.filter((album) => album.shortToken !== selectedAlbum?.shortToken)
-    )
+    ),
+    startWith([])
   );
 
   private displayedImagesByShortToken$ = this.displayedImages$.pipe(

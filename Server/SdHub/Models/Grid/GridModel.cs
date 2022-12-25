@@ -17,7 +17,7 @@ public class GridModel
     public string? Name { get; set; }
     public string? Description { get; set; }
 
-    public ImageOwnerModel? Owner { get; set; }
+    public UserSimpleModel? Owner { get; set; }
 
     public List<GridImageModel>? GridImages { get; set; }
 

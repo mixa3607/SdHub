@@ -10,7 +10,7 @@ import {
   SearchImageOrderByFieldType,
   SearchImageOrderByType
 } from 'apps/SdHub/src/app/models/autogen/image.models';
-import { IImageModel, IImageOwnerModel, IPaginationResponse } from 'apps/SdHub/src/app/models/autogen/misc.models';
+import { IImageModel, IUserSimpleModel, IPaginationResponse } from 'apps/SdHub/src/app/models/autogen/misc.models';
 import { PerformType } from 'apps/SdHub/src/app/pages/generated/search-page/search-page.component';
 import { httpErrorResponseHandler } from 'apps/SdHub/src/app/shared/http-error-handling/handlers';
 import { AlbumApi } from 'apps/SdHub/src/app/shared/services/api/album.api';
@@ -41,7 +41,7 @@ export class AlbumPageComponent implements OnInit {
   public name = '';
   public description = '';
   public shortToken = '';
-  public albumOwner: IImageOwnerModel | null = null;
+  public albumOwner: IUserSimpleModel | null = null;
   public album: IAlbumModel | null = null;
 
   @ViewChild('scrollTo', {read: ElementRef}) scrollTo?: ElementRef;

@@ -2,7 +2,7 @@
 //     Changes to this file may cause incorrect behavior and will be lost if
 //     the code is regenerated.
 
-import { IImageOwnerModel } from './misc.models';
+import { IUserSimpleModel } from './misc.models';
 import { IFileModel } from './file.models';
 import { IDirectoryModel } from './file.models';
 import { IImageModel } from './misc.models';
@@ -16,7 +16,7 @@ export interface IGridModel
 	createdAt: string;
 	name: string;
 	description: string;
-	owner: IImageOwnerModel;
+	owner: IUserSimpleModel;
 	gridImages: IGridImageModel[];
 	xTiles: number;
 	yTiles: number;

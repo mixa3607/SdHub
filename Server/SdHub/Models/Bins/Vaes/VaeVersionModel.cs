@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using SdHub.Models.Files;
 
-namespace SdHub.Models.Bins;
+namespace SdHub.Models.Bins.Vaes;
 
 public class VaeVersionModel
 {

@@ -13,7 +13,7 @@ public class AlbumModel
     public string? Name { get; set; }
     public string? Description { get; set; }
 
-    public ImageOwnerModel? Owner { get; set; }
+    public UserSimpleModel? Owner { get; set; }
 
     public FileModel? ThumbImage { get; set; }
 }

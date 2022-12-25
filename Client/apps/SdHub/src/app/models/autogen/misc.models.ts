@@ -13,11 +13,12 @@ export interface IFrontendSettings
 	disableImageUploadAuth: boolean;
 	disableGridUploadAuth: boolean;
 }
-export interface IImageOwnerModel
+export interface IUserSimpleModel
 {
 	guid: string;
 	login: string;
 	isAnonymous: boolean;
+	loginNormalized: string;
 }
 export interface IUserModel
 {
@@ -56,7 +57,7 @@ export interface IImageParsedMetadataTagModel
 }
 export interface IImageModel
 {
-	owner: IImageOwnerModel;
+	owner: IUserSimpleModel;
 	originalImage: IFileModel;
 	compressedImage: IFileModel;
 	shortUrl: string;
@@ -90,6 +91,11 @@ export enum AudienceType {
 }
 export enum CaptchaType {
 	ReCaptchaV2 = 0
+}
+export enum SdVersion {
+	Unknown = 0,
+	V1 = 1,
+	V2 = 2
 }
 export abstract class ModelStateErrors
 {

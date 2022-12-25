@@ -11,7 +11,7 @@ public class EditModelVersionRequest
     public string? Version { get; set; }
     public string? About { get; set; }
     public List<string>? KnownNames { get; set; }
-    public string? CkptFile { get; set; }
+    public Dictionary<string, ModelVersionFileType>? Files { get; set; }
 
     public class Validator : AbstractValidator<EditModelVersionRequest>
     {

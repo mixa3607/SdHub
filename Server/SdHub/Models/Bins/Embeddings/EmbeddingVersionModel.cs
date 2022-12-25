@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using SdHub.Models.Files;
 
-namespace SdHub.Models.Bins;
+namespace SdHub.Models.Bins.Embeddings;
 
-public class HypernetVersionModel
+public class EmbeddingVersionModel
 {
     public long Id { get; set; }
 
-    public long HypernetId { get; set; }
-    public HypernetModel? Hypernet { get; set; }
+    public long EmbeddingId { get; set; }
+    public EmbeddingModel? Embedding { get; set; }
 
     public FileModel? File { get; set; }
     public string? Version { get; set; }

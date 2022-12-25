@@ -2,8 +2,6 @@
 using SdHub.Automapper.Converters;
 using SdHub.Database.Entities.Files;
 using SdHub.Database.Entities.Images;
-using SdHub.Database.Entities.Users;
-using SdHub.Models;
 using SdHub.Models.Files;
 using SdHub.Models.Image;
 using SdHub.Storage;
@@ -23,8 +21,5 @@ public class FileProfile : Profile
             .ForMember(x => x.ShortUrl, o => o.ConvertUsing<ShortLinkImageConverter, ImageEntity>(x => x));
         CreateMap<ImageParsedMetadataEntity, ImageParsedMetadataModel>(MemberList.Destination).ReverseMap();
         CreateMap<ImageParsedMetadataTagEntity, ImageParsedMetadataTagModel>(MemberList.Destination).ReverseMap();
-        CreateMap<UserEntity, ImageOwnerModel>(MemberList.Destination);
-
-        CreateMap<UserPlanEntity, UserPlanModel>(MemberList.Destination);
     }
 }

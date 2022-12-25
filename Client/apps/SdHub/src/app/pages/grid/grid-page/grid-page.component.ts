@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {
   IImageModel,
-  IImageOwnerModel,
-  IUserModel
+  IUserModel, IUserSimpleModel
 } from "apps/SdHub/src/app/models/autogen/misc.models";
 import { BehaviorSubject } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
@@ -46,7 +45,7 @@ export class GridPageComponent implements OnInit {
   public createdAt: string = '';
   public shortUrl: string = '';
   public shortToken: string = '';
-  public owner: IImageOwnerModel | null = null;
+  public owner: IUserSimpleModel | null = null;
   public xTiles: number = -1;
   public yTiles: number = -1;
   public info: IGridModel | null = null;

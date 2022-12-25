@@ -7,6 +7,7 @@ using Flurl.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SdHub.Database;
+using SdHub.Database.Entities.Bins;
 using SdHub.Models.Bins;
 
 namespace SdHub.Hangfire.Jobs;
@@ -30,25 +31,36 @@ public class BinUpdaterRunner : IBinUpdaterRunnerV1
     public async Task UpdateModelVersionFilesAsync(long modelVersionId, bool force, CancellationToken ct = default)
     {
         var modelVersion = await _db.ModelVersions
-            .Include(x => x.CkptFile)
+            .Include(x => x.Files!)
+            .ThenInclude(x => x.File!)
             .FirstOrDefaultAsync(x => x.Id == modelVersionId, ct);
         if (modelVersion == null)
             return;
 
-        if (!force && modelVersion.HashV1 != null)
+        foreach (var file in modelVersion.Files!)
         {
-            _logger.LogWarning($"{nameof(modelVersion.HashV1)} is set. Skip");
+            if (!force && file.ModelHashV1 != null)
+            {
+                _logger.LogWarning($"{nameof(file.ModelHashV1)} is set. Skip");
+                continue;
+            }
+
+            await UpdateHashV1Async(file, ct);
+        }
+
+        await _db.SaveChangesAsync(CancellationToken.None);
+    }
+
+    public async Task UpdateHashV1Async(ModelVersionFileEntity file, CancellationToken ct = default)
+    {
+        var model = _mapper.Map<ModelVersionFileModel>(file);
+        if (model.File == null)
+        {
+            _logger.LogWarning("File is null. Skip");
             return;
         }
 
-        var mvM = _mapper.Map<ModelVersionModel>(modelVersion);
-        if (mvM.CkptFile == null)
-        {
-            _logger.LogWarning("Ckpt file is null. Skip");
-            return;
-        }
-
-        var bytes = await mvM.CkptFile.DirectUrl!
+        var bytes = await model.File.DirectUrl!
             .ConfigureRequest(x => { x.AllowedHttpStatusRange = "206"; })
             .WithHeader("Range", $"bytes={0x100000}-{0x100000 + 0x10000 - 1}")
             .GetBytesAsync(ct);
@@ -60,7 +72,6 @@ public class BinUpdaterRunner : IBinUpdaterRunnerV1
 
         using var sha = SHA256.Create();
         var hashBytes = sha.ComputeHash(bytes);
-        modelVersion.HashV1 = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
-        await _db.SaveChangesAsync(CancellationToken.None);
+        file.ModelHashV1 = BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
     }
 }

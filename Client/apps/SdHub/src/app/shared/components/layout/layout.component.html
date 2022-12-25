@@ -1,6 +1,6 @@
 <div class="navbar-container">
   <mat-toolbar class="navbar" color="primary">
-    <button mat-icon-button *ngIf="sidenav?.mode === 'over'" (click)="sidenav?.toggle()">
+    <button mat-icon-button *ngIf="sidenav?.mode === 'over'" (click)="toggleNav()">
       <mat-icon *ngIf="!sidenav.opened">
         menu
       </mat-icon>
@@ -61,6 +61,21 @@
           <mat-icon mat-list-icon>auto_stories</mat-icon>
           <p mat-line>Wiki</p>
         </a>
+
+        <div *ngIf="isAdmin" style="border-left: 5px #676767 solid; border-radius: 3px;">
+          <p (click)="isExpandAdmin = !isExpandAdmin">Admin</p>
+          <div *ngIf="isExpandAdmin">
+            <a mat-list-item [routerLink]="['/admin/users']" routerLinkActive="active">
+              <mat-icon mat-list-icon>folder_zip</mat-icon>
+              <p mat-line>Users</p>
+            </a>
+            <a mat-list-item [routerLink]="['/admin/files']" routerLinkActive="active">
+              <mat-icon mat-list-icon>folder_zip</mat-icon>
+              <p mat-line>Files</p>
+            </a>
+          </div>
+        </div>
+
         <a id="push-bottom" mat-list-item [routerLink]="['/about']" routerLinkActive="active">
           <mat-icon mat-list-icon>info</mat-icon>
           <p mat-line>About</p>

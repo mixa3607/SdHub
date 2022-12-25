@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SdHub.Models.Bins;
+namespace SdHub.Models.Bins.Vaes;
 
 public class VaeModel
 {

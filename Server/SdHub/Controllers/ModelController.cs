@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -10,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using SdHub.Constants;
 using SdHub.Database;
 using SdHub.Database.Entities.Bins;
+using SdHub.Database.Entities.Files;
 using SdHub.Extensions;
 using SdHub.Hangfire.Jobs;
 using SdHub.Models;
@@ -62,12 +64,12 @@ public class ModelController : ControllerBase
                 else if (fieldType == SearchModelInFieldType.FullHash)
                 {
                     predicate = predicate.Or(x =>
-                        x.Versions!.Any(y => EF.Functions.ILike(y.CkptFile!.Hash!, searchText)));
+                        x.Versions!.Any(y => y.Files!.Any(z => EF.Functions.ILike(z.File!.Hash!, searchText))));
                 }
                 else if (fieldType == SearchModelInFieldType.V1Hash)
                 {
                     predicate = predicate.Or(x =>
-                        x.Versions!.Any(y => EF.Functions.ILike(y.HashV1!, searchText)));
+                        x.Versions!.Any(y => y.Files!.Any(z => EF.Functions.ILike(z.ModelHashV1!, searchText))));
                 }
                 else if (fieldType == SearchModelInFieldType.KnownNames)
                 {
@@ -85,7 +87,8 @@ public class ModelController : ControllerBase
             query = query.Where(x => vers.Contains(x.SdVersion));
         }
 
-        query = query.Include(x => x.ModelTags!)
+        query = query
+            .Include(x => x.ModelTags!)
             .ThenInclude(x => x.Tag!);
 
         var total = await query.CountAsync(ct);
@@ -112,7 +115,8 @@ public class ModelController : ControllerBase
             .Include(x => x.ModelTags!)
             .ThenInclude(x => x.Tag!)
             .Include(x => x.Versions!)
-            .ThenInclude(x => x.CkptFile!)
+            .ThenInclude(x => x.Files!)
+            .ThenInclude(x => x.File!)
             .Where(x => x.Id == req.Id);
 
         var entity = await query.FirstOrDefaultAsync(ct);
@@ -220,7 +224,8 @@ public class ModelController : ControllerBase
             ModelState.AddError(ModelStateErrors.ModelNotFound).ThrowIfNotValid();
 
         var entity = await _db.ModelVersions
-            .Include(x => x.CkptFile)
+            .Include(x => x.Files!)
+            .ThenInclude(x => x.File!)
             .FirstOrDefaultAsync(x => x.ModelId == req.ModelId && x.Id == req.VersionId, ct);
         if (entity == null)
             ModelState.AddError(ModelStateErrors.ModelVersionNotFound).ThrowIfNotValid();
@@ -231,21 +236,49 @@ public class ModelController : ControllerBase
             entity!.About = req.About;
         if (req!.KnownNames != null)
             entity!.KnownNames = req.KnownNames;
-        var requireReCalc = false;
-        if (req.CkptFile != null)
+        if (req.Files != null)
         {
-            var decR = await _fileProcessor.DecomposeUrlAsync(req.CkptFile, ct);
-            var file = await _db.Files.FirstOrDefaultAsync(
-                x => x.StorageName == decR.Storage.Name && x.PathOnStorage == decR.PathOnStorage, ct);
-            if (file == null)
-                ModelState.AddError(ModelStateErrors.FileNotFound).ThrowIfNotValid();
-            entity!.CkptFile = file;
-            entity.HashV1 = null;
-            requireReCalc = true;
+            var updFiles = new List<(FileEntity file, ModelVersionFileType type)>();
+            foreach (var (key, value) in req.Files)
+            {
+                var decR = await _fileProcessor.DecomposeUrlAsync(key, ct);
+                var file = await _db.Files.FirstOrDefaultAsync(
+                    x => x.StorageName == decR.Storage.Name && x.PathOnStorage == decR.PathOnStorage, ct);
+                if (file == null)
+                    ModelState.AddError(ModelStateErrors.FileNotFound, key).ThrowIfNotValid();
+
+                updFiles.Add((file!, value));
+            }
+
+            // add or update
+            foreach (var valueTuple in updFiles)
+            {
+                var existedFile = entity!.Files!.FirstOrDefault(x => x.FileId == valueTuple.file.Id);
+                if (existedFile != null)
+                {
+                    existedFile.Type = valueTuple.type;
+                }
+                else
+                {
+                    entity.Files!.Add(new ModelVersionFileEntity()
+                    {
+                        File = valueTuple.file,
+                        Type = valueTuple.type,
+                    });
+                }
+            }
+
+            //delete
+            foreach (var file in entity!.Files!)
+            {
+                var deleted = updFiles.All(x => x.file.Id != file.FileId);
+                if (deleted)
+                    entity.Files.Remove(file);
+            }
         }
 
         await _db.SaveChangesAsync(CancellationToken.None);
-        if (requireReCalc)
+        if (entity!.Files!.Any(x => x.ModelHashV1 == null))
         {
             BackgroundJob.Enqueue<IBinUpdaterRunnerV1>(x =>
                 x.UpdateModelVersionFilesAsync(req.ModelId, false, CancellationToken.None));

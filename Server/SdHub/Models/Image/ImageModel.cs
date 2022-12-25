@@ -5,7 +5,7 @@ namespace SdHub.Models.Image;
 
 public class ImageModel
 {
-    public ImageOwnerModel? Owner { get; set; }
+    public UserSimpleModel? Owner { get; set; }
 
     public FileModel? OriginalImage { get; set; }
     public FileModel? CompressedImage { get; set; }

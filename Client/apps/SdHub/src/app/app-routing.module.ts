@@ -1,5 +1,6 @@
-import {NgModule} from '@angular/core';
-import {Routes, RouterModule} from '@angular/router';
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
+import { AdminGuard } from "apps/SdHub/src/app/core/guards/admin.guard";
 
 const appRoutes: Routes = [
   {
@@ -45,6 +46,11 @@ const appRoutes: Routes = [
   {
     path: 'upload',
     loadChildren: () => import('./pages/upload/upload.module').then(m => m.UploadModule),
+  },
+  {
+    path: 'admin',
+    loadChildren: () => import('./pages/admin/admin.module').then(m => m.AdminModule),
+    canActivate: [AdminGuard]
   },
   {
     path: '**',

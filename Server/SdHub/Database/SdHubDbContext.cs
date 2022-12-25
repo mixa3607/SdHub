@@ -40,6 +40,7 @@ public class SdHubDbContext : DbContext
     //bins
     public DbSet<ModelEntity> Models { get; set; } = null!;
     public DbSet<ModelVersionEntity> ModelVersions { get; set; } = null!;
+    public DbSet<ModelVersionFileEntity> ModelVersionFiles { get; set; } = null!;
     public DbSet<HypernetEntity> Hypernets { get; set; } = null!;
     public DbSet<HypernetVersionEntity> HypernetVersions { get; set; } = null!;
     public DbSet<VaeEntity> Vaes { get; set; } = null!;

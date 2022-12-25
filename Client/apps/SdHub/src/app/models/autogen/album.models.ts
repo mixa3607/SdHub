@@ -2,7 +2,7 @@
 //     Changes to this file may cause incorrect behavior and will be lost if
 //     the code is regenerated.
 
-import { IImageOwnerModel } from './misc.models';
+import { IUserSimpleModel } from './misc.models';
 import { IFileModel } from './file.models';
 import { IImageModel } from './misc.models';
 import { IGridModel } from './grid.models';
@@ -14,7 +14,7 @@ export interface IAlbumModel
 	createdAt: string;
 	name: string;
 	description: string;
-	owner: IImageOwnerModel;
+	owner: IUserSimpleModel;
 	thumbImage: IFileModel;
 }
 export interface IAlbumImageModel

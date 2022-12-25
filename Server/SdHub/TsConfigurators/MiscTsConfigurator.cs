@@ -7,7 +7,7 @@ using SdHub.Models;
 using SdHub.Services.ErrorHandling;
 using System.IO;
 using SdHub.Constants;
-using SdHub.Models.Files;
+using SdHub.Models.Bins;
 using SdHub.Models.Image;
 using SdHub.Models.Upload;
 
@@ -25,8 +25,8 @@ public class MiscTsConfigurator : ITsConfigurator
                 typeof(ImageParsedMetadataModel),
                 typeof(ImageParsedMetadataTagModel),
                 typeof(ImageModel),
-                typeof(ImageOwnerModel),
                 typeof(UploadedFileModel),
+                typeof(UserSimpleModel),
                 typeof(UserModel),
                 typeof(ServerErrorResponse),
                 typeof(PaginationResponse<>)
@@ -41,6 +41,7 @@ public class MiscTsConfigurator : ITsConfigurator
         {
             typeof(AudienceType),
             typeof(CaptchaType),
+            typeof(SdVersion),
         }, c => c.ExportTo(outFile));
         builder.ExportAsClasses(new Type[]
             {

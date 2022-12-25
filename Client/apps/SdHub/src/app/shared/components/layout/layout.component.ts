@@ -7,6 +7,7 @@ import { AuthService } from "apps/SdHub/src/app/core/services/auth.service";
 import { environment } from "apps/SdHub/src/environments/environment";
 import { BreakpointObserver, MediaMatcher } from "@angular/cdk/layout";
 import { MatSidenav } from "@angular/material/sidenav";
+import { UserRoleTypes } from "apps/SdHub/src/app/models/autogen/user.models";
 
 @UntilDestroy()
 @Component({
@@ -15,8 +16,10 @@ import { MatSidenav } from "@angular/material/sidenav";
   styleUrls: ['./layout.component.scss']
 })
 export class LayoutComponent implements OnInit, AfterViewInit {
-  @ViewChild(MatSidenav) sidenav!: MatSidenav;
+  @ViewChild(MatSidenav, {static: true}) sidenav!: MatSidenav;
   public isMobile = false;
+  public isAdmin = false;
+  public isExpandAdmin = false;
 
   public userName: string = 'Anon';
   public isAnonymous = true;
@@ -33,8 +36,10 @@ export class LayoutComponent implements OnInit, AfterViewInit {
     combineLatest([authStateService.isAuthenticated$, this.authStateService.user$])
       .pipe(untilDestroyed(this))
       .subscribe(([isAu, user]) => {
-        if (isAu && user != null)
+        if (isAu && user != null){
           this.userName = user.login;
+          this.isAdmin = user.roles.indexOf(UserRoleTypes.Admin) != -1;
+        }
         else if (!isAu)
           this.userName = "Anon";
         else
@@ -45,9 +50,6 @@ export class LayoutComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-  }
-
-  ngAfterViewInit() {
     this.observer.observe(['(max-width: 1000px)']).subscribe((res) => {
       this.isMobile = res.matches;
       if (this.isMobile) {
@@ -58,6 +60,13 @@ export class LayoutComponent implements OnInit, AfterViewInit {
         void this.sidenav.open();
       }
     });
+  }
+
+  public toggleNav(): void{
+    this.sidenav?.toggle();
+  }
+
+  ngAfterViewInit() {
   }
 
   public onLogoutClick(): void {

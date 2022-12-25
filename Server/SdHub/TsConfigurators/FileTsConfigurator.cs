@@ -17,6 +17,7 @@ public class FileTsConfigurator : ITsConfigurator
                 typeof(FileModel),
                 typeof(DirectoryModel),
                 typeof(ImportFileRequest),
+                typeof(SearchFileRequest),
             }, c => c
                 .SubsDatetimeOffsetToStr()
                 .SubsTimespanToStr()

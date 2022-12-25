@@ -25,3 +25,10 @@ export interface IImportFileRequest
 {
 	fileUrl: string;
 }
+export interface ISearchFileRequest
+{
+	searchText: string;
+	storage: string;
+	skip: number;
+	take: number;
+}

@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using Fluid;
 using Flurl.Http;
 using LinqKit;
 using Microsoft.AspNetCore.Authorization;
@@ -19,9 +18,9 @@ using SdHub.Models;
 using SdHub.Models.Files;
 using SdHub.Services.FileProc;
 
-namespace SdHub.Controllers;
+namespace SdHub.Controllers.Admin;
 
-[Route("api/v1/[controller]")]
+[Route("api/v1/admin/[controller]")]
 [Produces("application/json")]
 public class FilesController : ControllerBase
 {
@@ -65,6 +64,11 @@ public class FilesController : ControllerBase
 
         if (!string.IsNullOrWhiteSpace(req.Storage))
         {
+            if (!await _db.FileStorages.AnyAsync(x => EF.Functions.ILike(x.Name!, req.Storage), ct))
+            {
+                ModelState.AddError("Storage not found").ThrowIfNotValid();
+            }
+
             query = query.Where(x => EF.Functions.ILike(x.StorageName!, req.Storage));
         }
 

@@ -6,7 +6,8 @@ import {
   IEditGridRequest,
   IEditGridResponse,
   IGetGridRequest,
-  IGetGridResponse, IGridModel,
+  IGetGridResponse,
+  IGridModel,
   ISearchGridRequest
 } from "apps/SdHub/src/app/models/autogen/grid.models";
 import { IPaginationResponse } from "apps/SdHub/src/app/models/autogen/misc.models";
@@ -38,3 +39,4 @@ export class GridApi {
     return this.http.post<IPaginationResponse<IGridModel>>(this.base + '/search', req);
   }
 }
+

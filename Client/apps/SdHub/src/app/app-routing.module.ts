@@ -6,30 +6,31 @@ const appRoutes: Routes = [
   {
     path: 'i',
     loadChildren: () => import('./pages/image/image.module').then(m => m.ImageModule),
-  },
-  {
+  }, {
     path: 'image',
     loadChildren: () => import('./pages/image/image.module').then(m => m.ImageModule),
   },
   {
     path: 'a',
     loadChildren: () => import('./pages/album/album.module').then(m => m.AlbumModule),
-  },
-  {
+  }, {
     path: 'album',
-    loadChildren: () => import('./pages/album/album.module').then(m => m.AlbumModule),
+    redirectTo: 'a'
   },
   {
     path: 'g',
     loadChildren: () => import('./pages/grid/grid.module').then(m => m.GridModule),
-  },
-  {
+  }, {
     path: 'grid',
-    loadChildren: () => import('./pages/grid/grid.module').then(m => m.GridModule),
+    redirectTo: 'g'
   },
   {
     path: 'gen',
-    loadChildren: () => import('./pages/generated/generated.module').then(m => m.GeneratedModule),
+    loadChildren: () => import('apps/SdHub/src/app/pages/generated/generated.module').then(m => m.GeneratedModule),
+  },
+  {
+    path: 'bin',
+    loadChildren: () => import('apps/SdHub/src/app/pages/bins/bins.module').then(m => m.BinsModule),
   },
   {
     path: 'about',

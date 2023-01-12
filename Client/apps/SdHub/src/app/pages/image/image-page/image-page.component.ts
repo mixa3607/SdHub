@@ -1,23 +1,23 @@
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
-import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
-import {BehaviorSubject} from "rxjs";
-import {HttpErrorResponse} from "@angular/common/http";
-import {IGetImageRequest} from "../../../models/autogen/image.models";
-import {IImageModel, IImageParsedMetadataTagModel, IUserModel} from "../../../models/autogen/misc.models";
-import {Clipboard} from "@angular/cdk/clipboard";
-import {ToastrService} from "ngx-toastr";
-import {ImageApi} from "apps/SdHub/src/app/shared/services/api/image.api";
-import {httpErrorResponseHandler} from "apps/SdHub/src/app/shared/http-error-handling/handlers";
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from "@angular/router";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { BehaviorSubject } from "rxjs";
+import { HttpErrorResponse } from "@angular/common/http";
+import { IGetImageRequest } from "../../../models/autogen/image.models";
+import { IImageModel, IImageParsedMetadataTagModel, IUserModel } from "../../../models/autogen/misc.models";
+import { Clipboard } from "@angular/cdk/clipboard";
+import { ToastrService } from "ngx-toastr";
+import { ImageApi } from "apps/SdHub/src/app/shared/services/api/image.api";
+import { httpErrorResponseHandler } from "apps/SdHub/src/app/shared/http-error-handling/handlers";
 import {
   ManageTokenInputModalComponent
 } from "apps/SdHub/src/app/pages/image/manage-token-input-modal/manage-token-input-modal.component";
-import {MatDialog} from "@angular/material/dialog";
-import {bytesToHuman} from "apps/SdHub/src/app/shared/utils/bytes";
+import { MatDialog } from "@angular/material/dialog";
+import { bytesToHuman } from "apps/SdHub/src/app/shared/utils/bytes";
 import {
   ImageViewerDialogComponent
 } from "apps/SdHub/src/app/shared/components/image-viewer-dialog/image-viewer-dialog.component";
-import {AuthStateService} from "apps/SdHub/src/app/core/services/auth-state.service";
+import { AuthStateService } from "apps/SdHub/src/app/core/services/auth-state.service";
 
 interface IGroupedTags {
   software: string,
@@ -48,9 +48,9 @@ export class ImagePageComponent implements OnInit {
   public editData: IEditImage = {};
   public showEditButton = false;
 
-  constructor(private route: ActivatedRoute,
+  constructor(private imageApi: ImageApi,
+              private route: ActivatedRoute,
               private router: Router,
-              private imageApi: ImageApi,
               private clipboard: Clipboard,
               private toastr: ToastrService,
               private authState: AuthStateService,

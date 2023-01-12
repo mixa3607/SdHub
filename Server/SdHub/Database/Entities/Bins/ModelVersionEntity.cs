@@ -9,6 +9,7 @@ public class ModelVersionEntity
     public long ModelId { get; set; }
     public ModelEntity? Model { get; set; }
 
+    public int Order { get; set; }
     public string? Version { get; set; }
     public string? About { get; set; }
 

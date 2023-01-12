@@ -9,6 +9,7 @@ public class ModelVersionModel
 
     public long ModelId { get; set; }
     
+    public int Order { get; set; }
     public string? Version { get; set; }
     public string? About { get; set; }
 

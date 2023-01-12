@@ -7,17 +7,30 @@ namespace SdHub.Options;
 /// </summary>
 public class HangfireOptions
 {
+    public HangfireStorageType StorageType { get; set; }
     /// <summary>
-    /// Database connection string
+    /// Postgres connection string
     /// </summary>
     [Required]
-    public string? DatabaseConnectionString { get; set; }
+    public string? PgConnectionString { get; set; }
 
     /// <summary>
-    /// Database schema
+    /// Postgres schema
     /// </summary>
     [Required]
-    public string? DatabaseSchema { get; set; } = "public";
+    public string? PgSchema { get; set; } = "public";
+
+    /// <summary>
+    /// Redis connection string
+    /// </summary>
+    [Required]
+    public string? RedisConnectionString { get; set; }
+
+    /// <summary>
+    /// Redis tables prefix
+    /// </summary>
+    [Required]
+    public string? RedisPrefix { get; set; }
 
     /// <summary>
     /// Run hangfire worker on backend
@@ -33,6 +46,13 @@ public class HangfireOptions
     /// <summary>
     /// Special queue for this worker
     /// </summary>
-    [Required] 
+    [Required]
     public string? ServerQueue { get; set; } = "backend";
+}
+
+public enum HangfireStorageType : byte
+{
+    Redis,
+    Postgres,
+    InMemory,
 }

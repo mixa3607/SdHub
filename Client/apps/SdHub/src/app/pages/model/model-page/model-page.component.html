@@ -1,0 +1,7 @@
+<mat-card>
+  <mat-card-content *ngIf="model!=null" style="display: flex; flex-direction: column;">
+    <div>Name: {{model.name}}</div>
+    <markdown [data]="model.about"></markdown>
+    <div>SD version: {{sdVerToStr(model.sdVersion)}}</div>
+  </mat-card-content>
+</mat-card>

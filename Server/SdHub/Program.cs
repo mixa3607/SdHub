@@ -10,8 +10,11 @@ using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Hangfire;
+using Hangfire.Console;
 using Hangfire.Dashboard;
+using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
+using Hangfire.Redis;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -49,6 +52,7 @@ using SdHub.Services.Storage;
 using SdHub.Services.Tokens;
 using SdHub.Services.User;
 using SdHub.Services.ValidatorsCheck;
+using StackExchange.Redis;
 
 //не круто но как есть
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -86,11 +90,31 @@ builder.Services
     .AddScoped<IHangfireUsersService, HangfireUsersService>()
     .AddHangfire(x =>
     {
-        x.UsePostgreSqlStorage(hangfireOptions.DatabaseConnectionString, new PostgreSqlStorageOptions()
+        switch (hangfireOptions.StorageType)
         {
-            SchemaName = hangfireOptions.DatabaseSchema,
-            PrepareSchemaIfNecessary = true,
-        });
+            case HangfireStorageType.InMemory:
+                Console.WriteLine("HGF: Use memory storage");
+                x.UseMemoryStorage();
+                break;
+            case HangfireStorageType.Postgres:
+                Console.WriteLine("HGF: Use postgres storage");
+                x.UsePostgreSqlStorage(hangfireOptions.PgConnectionString, new PostgreSqlStorageOptions()
+                {
+                    SchemaName = hangfireOptions.PgSchema,
+                    PrepareSchemaIfNecessary = true,
+                });
+                break;
+            case HangfireStorageType.Redis:
+                Console.WriteLine("HGF: Use redis storage");
+                x.UseRedisStorage(ConnectionMultiplexer.Connect(hangfireOptions.RedisConnectionString!),
+                    new RedisStorageOptions()
+                    {
+                        Prefix = hangfireOptions.RedisPrefix,
+                        SucceededListSize = 10_000,
+                    });
+                break;
+        }
+        x.UseConsole();
     })
     .Scan(x => x
         .FromAssemblyOf<IHangfireBackgroundJobRunner>()

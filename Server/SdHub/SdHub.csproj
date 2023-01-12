@@ -17,7 +17,10 @@
 		<PackageReference Include="Flurl" Version="3.0.6" />
 		<PackageReference Include="Flurl.Http" Version="3.2.4" />
 		<PackageReference Include="Hangfire.AspNetCore" Version="1.7.32" />
+		<PackageReference Include="Hangfire.Console" Version="1.4.2" />
+		<PackageReference Include="Hangfire.MemoryStorage" Version="1.7.0" />
 		<PackageReference Include="Hangfire.PostgreSql" Version="1.9.9" />
+		<PackageReference Include="Hangfire.Redis.StackExchange" Version="1.8.6" />
 		<PackageReference Include="LinqKit.Core" Version="1.2.3" />
 		<PackageReference Include="MetadataExtractor" Version="2.7.2" />
 		<PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="6.0.10" />

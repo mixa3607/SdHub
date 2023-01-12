@@ -22,7 +22,7 @@
   right: 0;
 }
 
-.user-info-overlay{
+.user-info-overlay {
   background: rgb(229, 229, 229);
   border: black solid .1rem;
   display: flex;
@@ -31,4 +31,14 @@
   padding: .3rem;
   min-width: 15rem;
   border-radius: .3rem;
+}
+
+.active {
+  background-color: #dcdcdc;
+}
+
+.nav-list {
+  display: flex;
+  flex-direction: column;
+  min-height: stretch;
 }

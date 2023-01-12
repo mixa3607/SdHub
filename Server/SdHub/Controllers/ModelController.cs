@@ -74,7 +74,7 @@ public class ModelController : ControllerBase
                 else if (fieldType == SearchModelInFieldType.KnownNames)
                 {
                     predicate = predicate.Or(x =>
-                        x.Versions!.Any(y => y.KnownNames!.Any(z => EF.Functions.ILike(z, searchText))));
+                        x.Versions!.Any(y => y.KnownNames.Any(z=>z.Contains(searchText))));
                 }
             }
 
@@ -230,6 +230,8 @@ public class ModelController : ControllerBase
         if (entity == null)
             ModelState.AddError(ModelStateErrors.ModelVersionNotFound).ThrowIfNotValid();
 
+        if (req!.Order != null)
+            entity!.Order = req.Order.Value;
         if (req!.Version != null)
             entity!.Version = req.Version;
         if (req.About != null)

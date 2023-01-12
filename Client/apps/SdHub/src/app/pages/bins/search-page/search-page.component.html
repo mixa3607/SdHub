@@ -22,36 +22,14 @@
             </mat-select>
           </mat-form-field>
         </div>
-        <!--<mat-form-field class="example-chip-list" appearance="fill">
-          <mat-label>With tags</mat-label>
-          <mat-chip-list #chipList aria-label="Search in tags">
-            <mat-chip *ngFor="let fruit of fruits">
-              {{fruit}}
-              <button matChipRemove>
-                <mat-icon>cancel</mat-icon>
-              </button>
-            </mat-chip>
-            <input placeholder="Add tag..."
-                   [matChipInputFor]="chipList"
-                   [matChipInputSeparatorKeyCodes]="separatorKeysCodes">
-          </mat-chip-list>
-        </mat-form-field>-->
       </mat-card-content>
     </mat-card>
 
     <ng-container [ngSwitch]="selectedSearchType">
-      <search-in-images *ngSwitchCase="searchInType.Images"
-                        style="flex-grow: 1"
-                        [(searchText)]="searchText"
-                        [searchButtonClick]="performSearch$"></search-in-images>
-      <search-in-albums *ngSwitchCase="searchInType.Albums"
-                        style="flex-grow: 1"
-                        [(searchText)]="searchText"
-                        [searchButtonClick]="performSearch$"></search-in-albums>
-      <search-in-grids *ngSwitchCase="searchInType.Grids"
+      <search-in-models *ngSwitchCase="searchInType.Models"
                        style="flex-grow: 1"
-                       [(searchText)]="searchText"
-                       [searchButtonClick]="performSearch$"></search-in-grids>
+                       [searchText]="searchText"
+                       [searchButtonClick]="performSearch$"></search-in-models>
       <div *ngSwitchDefault
            style="display: flex; flex-direction: column; align-items: center; flex-grow: 1; justify-content: center; font-size: 4rem">
         <div>This search type not supported yet</div>

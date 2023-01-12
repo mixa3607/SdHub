@@ -30,36 +30,27 @@
     <!-- Side nav -->
     <mat-sidenav #snav [opened]="true" [mode]="'side'" fixedTopGap="56" class="sidenav">
 
-      <mat-nav-list>
+      <mat-nav-list class="nav-list">
         <a mat-list-item [routerLink]="['/upload']" routerLinkActive="active">
           <mat-icon mat-list-icon>upload_file</mat-icon>
           <p mat-line>Upload</p>
         </a>
 
-        <h3 mat-subheader>Images/Albums/...</h3>
         <a mat-list-item [routerLink]="['/gen/search']" routerLinkActive="active">
           <mat-icon mat-list-icon>collections</mat-icon>
-          <p mat-line>All</p>
+          <p mat-line>Images/Albums/...</p>
         </a>
 
-        <h3 mat-subheader>Models/Vae/...</h3>
-        <div matTooltip="not implemented"
-             matTooltipPosition="right">
-          <a mat-list-item [routerLink]="['/bin/search']" routerLinkActive="active" disabled>
-            <mat-icon mat-list-icon>folder_zip</mat-icon>
-            <p mat-line>All</p>
-          </a>
-        </div>
+        <a mat-list-item [routerLink]="['/bin/search']" routerLinkActive="active">
+          <mat-icon mat-list-icon>folder_zip</mat-icon>
+          <p mat-line>Models/Vae/...</p>
+        </a>
 
         <mat-divider></mat-divider>
 
         <a mat-list-item [disabled]="isAnonymous" [routerLink]="['/user']" routerLinkActive="active">
           <mat-icon mat-list-icon>person</mat-icon>
           <p mat-line>User</p>
-        </a>
-        <a mat-list-item href="https://wiki.diffai.xyz" target="_blank">
-          <mat-icon mat-list-icon>auto_stories</mat-icon>
-          <p mat-line>Wiki</p>
         </a>
 
         <div *ngIf="isAdmin" style="border-left: 5px #676767 solid; border-radius: 3px;">
@@ -73,8 +64,20 @@
               <mat-icon mat-list-icon>folder_zip</mat-icon>
               <p mat-line>Files</p>
             </a>
+            <a mat-list-item [routerLink]="['/admin/models']" routerLinkActive="active">
+              <mat-icon mat-list-icon>folder_zip</mat-icon>
+              <p mat-line>Models</p>
+            </a>
           </div>
         </div>
+
+        <div style="flex-grow: 1"></div>
+        <mat-divider></mat-divider>
+
+        <a mat-list-item href="https://wiki.diffai.xyz" target="_blank">
+          <mat-icon mat-list-icon>auto_stories</mat-icon>
+          <p mat-line>Wiki</p>
+        </a>
 
         <a id="push-bottom" mat-list-item [routerLink]="['/about']" routerLinkActive="active">
           <mat-icon mat-list-icon>info</mat-icon>

@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { IImageModel } from "apps/SdHub/src/app/models/autogen/misc.models";
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, startWith } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { AuthStateService } from '../../../core/services/auth-state.service';
 import { ImageSelectionService } from '../../../core/services/image-selection.service';
@@ -55,7 +55,8 @@ export class SmallImageCardComponent implements OnInit {
   public myAlbumsWithoutCurrent$ = combineLatest([this.myAlbums$, this.selectedAlbum$]).pipe(
     map(([myAlbums, selectedAlbum]) =>
       myAlbums.filter((album) => album.shortToken !== selectedAlbum?.shortToken)
-    )
+    ),
+    startWith([])
   );
 
   public canDeleteImage$ = this.authStateService.user$.pipe(

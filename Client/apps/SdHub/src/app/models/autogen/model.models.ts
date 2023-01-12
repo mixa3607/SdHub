@@ -18,6 +18,7 @@ export interface IModelVersionModel
 {
 	id: number;
 	modelId: number;
+	order: number;
 	version: string;
 	about: string;
 	knownNames: string[];
@@ -65,6 +66,7 @@ export interface IEditModelVersionRequest
 {
 	modelId: number;
 	versionId: number;
+	order: number;
 	version: string;
 	about: string;
 	knownNames: string[];

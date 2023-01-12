@@ -8,6 +8,7 @@ public class EditModelVersionRequest
     public long ModelId { get; set; }
     public long VersionId { get; set; }
 
+    public int? Order { get; set; }
     public string? Version { get; set; }
     public string? About { get; set; }
     public List<string>? KnownNames { get; set; }

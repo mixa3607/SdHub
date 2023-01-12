@@ -52,6 +52,7 @@ https://rentry.org/nai-speedrun#hello-asuka
 Если модель уже умеет рисовать что-то похожее: https://github.com/AUTOMATIC1111/stable-diffusion-webui/wiki/Textual-Inversion
 Если она не умеет, или нужно делать это на нескольких моделях: https://rentry.org/hypernetwork4dumdums
 Гайд по созданию своих моделей: https://github.com/nitrosocke/dreambooth-training-guide
+Гайд по файн-тьюнингу (дообучению) SD-чекпоинтов с использованием LoRA: https://rentry.org/2chAI_LoRA_Dreambooth_guide
 Сборник гайдов и технических статей по теме: https://ai-art-wiki.com/wiki/Textual_inversion
 ----------------------------------
 Репозитории: 

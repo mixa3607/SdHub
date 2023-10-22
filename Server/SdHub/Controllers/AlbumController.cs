@@ -15,6 +15,7 @@ using SdHub.Extensions;
 using SdHub.Models;
 using SdHub.Models.Album;
 using SdHub.Services.User;
+using SdHub.Shared.AspErrorHandling.ModelState;
 using SimpleBase;
 
 namespace SdHub.Controllers;
@@ -201,7 +202,7 @@ public class AlbumController : ControllerBase
         if (album == null)
             ModelState.AddError(ModelStateErrors.AlbumNotFound).ThrowIfNotValid();
 
-        album!.DeletedAt = DateTimeOffset.Now;
+        album!.DeletedAt = DateTimeOffset.UtcNow;
         await _db.SaveChangesAsync(CancellationToken.None);
         return new DeleteAlbumResponse()
         {

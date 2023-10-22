@@ -1,10 +1,9 @@
 ﻿using System;
 using System.IO;
+using Rb.Itsd.TsGenerator;
 using Reinforced.Typings.Fluent;
 using SdHub.Models.Album;
 using SdHub.Models.Bins;
-using SdHub.TsConfigurators.Extensions;
-using SdHub.TsConfigurators.Shared;
 
 namespace SdHub.TsConfigurators;
 
@@ -12,7 +11,7 @@ public class ModelTsConfigurator : ITsConfigurator
 {
     public void Configure(ConfigurationBuilder builder)
     {
-        var outFile = Path.Combine(ITsConfigurator.ModelsRoot, "model.models.ts");
+        var outFile = Path.Combine(ReinforcedTypingsConfiguration.ModelsRoot, "model.models.ts");
         builder.ExportAsInterfaces(new Type[]
             {
                 typeof(ModelModel),

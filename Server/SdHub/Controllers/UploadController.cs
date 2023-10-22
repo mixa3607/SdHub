@@ -16,13 +16,13 @@ using SdHub.Database.Entities.Albums;
 using SdHub.Database.Entities.Images;
 using SdHub.Database.Entities.Users;
 using SdHub.Database.Extensions;
-using SdHub.Extensions;
 using SdHub.Hangfire.Jobs;
 using SdHub.Models.Image;
 using SdHub.Models.Upload;
 using SdHub.Options;
 using SdHub.Services.FileProc;
 using SdHub.Services.User;
+using SdHub.Shared.AspErrorHandling.ModelState;
 using SimpleBase;
 
 namespace SdHub.Controllers;
@@ -84,7 +84,7 @@ public class UploadController : ControllerBase
 
         var uploadedLastHour = await _db.Images
             .ApplyFilter(inGrid: false, ownerId: user.Id)
-            .Where(x => x.CreatedAt > DateTimeOffset.Now.AddHours(-1))
+            .Where(x => x.CreatedAt > DateTimeOffset.UtcNow.AddHours(-1))
             .CountAsync(ct);
 
         return await UploadAsync(req, uploadedLastHour, user, uploader, albumId, ct);
@@ -112,7 +112,7 @@ public class UploadController : ControllerBase
 
         var uploadedLastHour = await _db.Images
             .ApplyFilter(inGrid: false)
-            .Where(x => x.UploaderId == uploader.Id && x.CreatedAt > DateTimeOffset.Now.AddHours(-1))
+            .Where(x => x.UploaderId == uploader.Id && x.CreatedAt > DateTimeOffset.UtcNow.AddHours(-1))
             .CountAsync(ct);
 
         return await UploadAsync(req, uploadedLastHour, user, uploader, 0, ct);

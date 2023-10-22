@@ -12,6 +12,7 @@ using SdHub.Extensions;
 using SdHub.Models;
 using SdHub.Models.Samples;
 using SdHub.Services.User;
+using SdHub.Shared.AspErrorHandling.ModelState;
 
 namespace SdHub.Controllers;
 

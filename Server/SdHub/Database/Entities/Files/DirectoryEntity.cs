@@ -12,5 +12,5 @@ public class DirectoryEntity
     public FileStorageEntity? Storage { get; set; }
     public string? PathOnStorage { get; set; }
 
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.Now;
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 }

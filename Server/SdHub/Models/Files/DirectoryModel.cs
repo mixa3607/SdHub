@@ -7,6 +7,6 @@ public class DirectoryModel
     public long Id { get; set; }
     public string Name { get; set; } = "";
     public long Size { get; set; }
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.Now;
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     public string? DirectUrl { get; set; }
 }

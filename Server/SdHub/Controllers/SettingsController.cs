@@ -23,7 +23,7 @@ public class SettingsController : ControllerBase
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [HttpGet]
+    [HttpGet("[action]")]
     public FrontendSettings Get(CancellationToken ct = default)
     {
         var settings = new FrontendSettings()

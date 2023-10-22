@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Minio;
+using Minio.DataModel.Args;
 using Minio.Exceptions;
 
 namespace SdHub.Storage.S3;
@@ -8,7 +9,7 @@ public class S3FileStorage : IFileStorage
 {
     private readonly ILogger<S3FileStorage> _logger;
     private readonly S3StorageSettings _settings;
-    private MinioClient _client;
+    private IMinioClient _client;
 
     public FileStorageBackendType BackendType => FileStorageBackendType.S3;
     public string Name { get; }

@@ -5,8 +5,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
+using System.Reflection;
 using System.Threading.Tasks;
-using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Hangfire;
@@ -14,16 +14,16 @@ using Hangfire.Console;
 using Hangfire.Dashboard;
 using Hangfire.MemoryStorage;
 using Hangfire.PostgreSql;
-using Hangfire.Redis;
+using Hangfire.Redis.StackExchange;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
@@ -32,17 +32,13 @@ using Npgsql;
 using SdHub.Attributes;
 using SdHub.Constants;
 using SdHub.Database;
-using SdHub.Database.Shared;
 using SdHub.Extensions;
 using SdHub.Hangfire.BasicAuth;
 using SdHub.Hangfire.Jobs;
-using SdHub.Logging;
 using SdHub.Options;
 using SdHub.RequestFeatures;
 using SdHub.Services;
 using SdHub.Services.Captcha;
-using SdHub.Services.ErrorHandling.Extensions;
-using SdHub.Services.ErrorHandling.Handlers;
 using SdHub.Services.FileProc;
 using SdHub.Services.FileProc.Detectors;
 using SdHub.Services.FileProc.Extractor;
@@ -51,43 +47,116 @@ using SdHub.Services.Mailing;
 using SdHub.Services.Storage;
 using SdHub.Services.Tokens;
 using SdHub.Services.User;
-using SdHub.Services.ValidatorsCheck;
+using SdHub.Shared.AspAutomapper;
+using SdHub.Shared.AspErrorHandling;
+using SdHub.Shared.AspErrorHandling.Exceptions;
+using SdHub.Shared.AspValidation;
+using SdHub.Shared.EntityFramework;
+using SdHub.Shared.Logging;
 using StackExchange.Redis;
-
-//не круто но как есть
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-NpgsqlConnection.GlobalTypeMapper.UseJsonNet(settings: new JsonSerializerSettings()
-{
-    TypeNameHandling = TypeNameHandling.None,
-    Converters = new List<JsonConverter>()
-    {
-        new ImageMetadataTagValueConverter()
-    }
-});
-
-
-//#########################################################################
+using static MetadataExtractor.Formats.Exif.Makernotes.CanonMakernoteDirectory;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+Console.WriteLine($"Environment: {builder.Environment.EnvironmentName}");
+Console.WriteLine($"Application: {builder.Environment.ApplicationName}");
+Console.WriteLine($"ContentRoot: {builder.Environment.ContentRootPath}");
+
 
 //logging
-var serilogOptions = builder.Configuration.GetOptionsReflex<SerilogOptions>();
-builder.Host
-    .AddCustomSerilog(serilogOptions)
-    ;
-//misc
+builder.Services.ConfigureRbSerilog(builder.Configuration.GetSection("Serilog"));
+builder.Host.AddRbSerilog();
+
+//database
+{
+    var dbOptions = builder.Configuration
+        .GetSection("Database")
+        .Get<PgDatabaseOptions>()!;
+    var dataSourceBuilder = new NpgsqlDataSourceBuilder(dbOptions.ConnectionString);
+    dataSourceBuilder.UseJsonNet(settings: new JsonSerializerSettings()
+    {
+        TypeNameHandling = TypeNameHandling.None,
+        Converters = new List<JsonConverter>()
+        {
+            new ImageMetadataTagValueConverter()
+        }
+    });
+    var dataSource = dataSourceBuilder.Build();
+    builder.Services
+        .Configure<SdHubSeederOptions>(builder.Configuration.GetSection("SdHubSeeder"))
+        .AddScoped<IDbMigrator<SdHubDbContext>, DbMigrator<SdHubDbContext>>()
+        .AddSingleton<IDbSeeder<SdHubDbContext>, SdHubDbSeeder>()
+        .AddDbContext<SdHubDbContext>(x =>
+            x.UseNpgsql(dataSource, y => y
+                .MigrationsHistoryTable(SdHubDbContext.HistoryTable, SdHubDbContext.SchemaName)
+                .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery))
+        );
+}
+
+//security
+var securityOptions = builder.Configuration.GetSection("WebSecurity").Get<WebSecurityOptions>()!;
 builder.Services
-    .AddAndGetOptionsReflex<AppInfoOptions>(builder.Configuration, out var appInfo)
-    .Configure<ApiBehaviorOptions>(opts => { opts.SuppressModelStateInvalidFilter = true; })
+    .Configure<RecaptchaOptions>(builder.Configuration.GetSection("Recaptcha"))
+    .Configure<WebSecurityOptions>(builder.Configuration.GetSection("WebSecurity"))
+    .AddSingleton<ICaptchaValidator, CaptchaValidator>()
+    .AddCustomCors(securityOptions)
+    .AddCustomSecurity(securityOptions)
     ;
+
+//controllers
+builder.Services
+    .Configure<ApiBehaviorOptions>(opts =>
+    {
+        opts.InvalidModelStateResponseFactory = context => throw new BadHttpRequestModelStateException(context.ModelState);
+    })
+    .AddRbErrorHandlersBuiltin()
+    .AddControllers()
+    .AddNewtonsoftJson()
+    ;
+
+//validation
+builder.Services
+    .AddFluentValidationAutoValidation()
+    .AddFluentValidationClientsideAdapters()
+    .AddValidatorsFromAssembly(typeof(Program).Assembly)
+    .AddScoped<AllRequiredValidatorsRegisteredService>()
+    ;
+
+//automapper
+builder.Services
+    .AddAutoMapper(typeof(Program).Assembly)
+    ;
+
+//mem cache
+builder.Services
+    .AddMemoryCache()
+    ;
+
+//swagger
+var swaggerOptions = builder.Configuration.GetSection("Swagger").Get<SwaggerOptions>();
+builder.Services
+    .Configure<SwaggerOptions>(builder.Configuration.GetSection("Swagger"))
+    .AddSwaggerGenNewtonsoftSupport()
+    .AddEndpointsApiExplorer()
+    .AddSwaggerGen(o =>
+    {
+        var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        o.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+    })
+    ;
+
+//app info
+var appInfo = builder.Configuration.GetSection("AppInfo").Get<AppInfoOptions>();
+builder.Services
+    .Configure<AppInfoOptions>(builder.Configuration.GetSection("AppInfo"))
+    ;
+
 //hangfire
+var hangfireOptions = builder.Configuration.GetSection("Hangfire").Get<HangfireOptions>() ?? new HangfireOptions();
 builder.Services
-    .AddScoped<IImageConvertRunnerV1, ImageConvertRunner>()
-    .AddAndGetOptionsReflex<HangfireOptions>(builder.Configuration, out var hangfireOptions)
-    .AddScoped<IHangfireUsersService, HangfireUsersService>()
+    //.AddScoped<IImageConvertRunnerV1, ImageConvertRunner>()
+    //.AddScoped<IHangfireUsersService, HangfireUsersService>()
     .AddHangfire(x =>
     {
         switch (hangfireOptions.StorageType)
@@ -98,11 +167,12 @@ builder.Services
                 break;
             case HangfireStorageType.Postgres:
                 Console.WriteLine("HGF: Use postgres storage");
-                x.UsePostgreSqlStorage(hangfireOptions.PgConnectionString, new PostgreSqlStorageOptions()
-                {
-                    SchemaName = hangfireOptions.PgSchema,
-                    PrepareSchemaIfNecessary = true,
-                });
+                x.UsePostgreSqlStorage(c => c.UseNpgsqlConnection(hangfireOptions.PgConnectionString),
+                    new PostgreSqlStorageOptions()
+                    {
+                        SchemaName = hangfireOptions.PgSchema,
+                        PrepareSchemaIfNecessary = true,
+                    });
                 break;
             case HangfireStorageType.Redis:
                 Console.WriteLine("HGF: Use redis storage");
@@ -114,6 +184,7 @@ builder.Services
                     });
                 break;
         }
+
         x.UseConsole();
     })
     .Scan(x => x
@@ -127,7 +198,7 @@ builder.Services
         .AsImplementedInterfaces()
         .WithScopedLifetime())
     ;
-;
+
 if (hangfireOptions.RunServer)
 {
     builder.Services.AddHangfireServer(x =>
@@ -141,76 +212,10 @@ if (hangfireOptions.RunServer)
     });
 }
 
-;
-//users
-builder.Services
-    .AddScoped<ITempCodesService, TempCodesService>()
-    .AddScoped<IUserFromTokenService, UserFromTokenService>()
-    ;
-//swagger
-builder.Services
-    .AddAndGetOptionsReflex<SwaggerOptions>(builder.Configuration, out var swaggerOptions)
-    .AddCustomSwagger(swaggerOptions)
-    ;
-//security
-builder.Services
-    .AddAndGetOptionsReflex<RecaptchaOptions>(builder.Configuration, out _)
-    .AddSingleton<ICaptchaValidator, CaptchaValidator>()
-    .AddAndGetOptionsReflex<WebSecurityOptions>(builder.Configuration, out var securityOptions)
-    .AddCustomCors(securityOptions)
-    .AddCustomSecurity(securityOptions)
-    ;
-//database
-builder.Services
-    .AddAndGetOptionsReflex<DatabaseOptions>(builder.Configuration, out var dbOptions)
-    .AddScoped(typeof(IDbMigrator<>), typeof(DbMigrator<>))
-    .AddAndGetOptionsReflex<SdHubSeederOptions>(builder.Configuration, out _)
-    .AddSingleton<IDbSeeder<SdHubDbContext>, SdHubDbSeeder>()
-    .AddDbContext<SdHubDbContext>(x =>
-        x.UseNpgsql(dbOptions.ConnectionString, y => y.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)))
-    ;
-//error handling
-builder.Services
-    .Scan(x => x
-        .FromAssemblyOf<IServerExceptionHandler>()
-        .AddClasses(c => c.AssignableTo<IServerExceptionHandler>())
-        .As<IServerExceptionHandler>()
-        .WithSingletonLifetime())
-    ;
-//controllers
-builder.Services
-    .AddControllers()
-    .AddNewtonsoftJson(o =>
-    {
-        /*o.SerializerSettings.Converters.Add(new StringEnumConverter());*/
-    })
-    ;
-//validation
-builder.Services
-    .AddFluentValidationAutoValidation(o =>
-    {
-        o.ImplicitlyValidateChildProperties = true;
-        o.ImplicitlyValidateRootCollectionElements = true;
-    })
-    .AddFluentValidationClientsideAdapters()
-    .AddValidatorsFromAssembly(typeof(Program).Assembly)
-    .AddScoped<AllRequiredValidatorsRegisteredService>()
-    ;
-//automapper
-builder.Services
-    .AddAutoMapper(typeof(Program).Assembly)
-    ;
-//mem cache
-builder.Services
-    .AddMemoryCache()
-    ;
-//spa
-builder.Services
-    .AddSpaStaticFiles(configuration => { configuration.RootPath = "./spa_dist"; })
-    ;
 //mailing
+var mailingOptions = builder.Configuration.GetSection("Mailing").Get<MailingOptions>() ?? new MailingOptions();
 builder.Services
-    .AddAndGetOptionsReflex<MailingOptions>(builder.Configuration, out var mailingOptions)
+    .Configure<MailingOptions>(builder.Configuration.GetSection("Mailing"))
     .AddScoped<IMailingService, MailingService>()
     .AddSingleton<IEmailCheckerService, EmailCheckerService>()
     .AddFluentEmail(mailingOptions.From).AddLiquidRenderer(c =>
@@ -223,16 +228,17 @@ builder.Services
         smtpClient.DeliveryMethod = mailingOptions.UseMaildir
             ? SmtpDeliveryMethod.SpecifiedPickupDirectory
             : SmtpDeliveryMethod.Network;
-        smtpClient.EnableSsl = !mailingOptions.UseMaildir && mailingOptions.EnableSsl;
+        smtpClient.EnableSsl = mailingOptions is { UseMaildir: false, EnableSsl: true };
         smtpClient.UseDefaultCredentials = false;
         smtpClient.Credentials = new NetworkCredential(mailingOptions.Username, mailingOptions.Password);
         smtpClient.PickupDirectoryLocation = Path.GetFullPath(mailingOptions.PathToMaildir);
         return smtpClient;
     })
     ;
+
 //storage
 builder.Services
-    .AddAndGetOptionsReflex<FileProcessorOptions>(builder.Configuration, out _)
+    .Configure<FileProcessorOptions>(builder.Configuration.GetSection("FileProcessor"))
     .Scan(x => x
         .FromAssemblyOf<IMetadataSoftwareDetector>()
         .AddClasses(c => c.AssignableTo<IMetadataSoftwareDetector>())
@@ -240,35 +246,58 @@ builder.Services
         .WithSingletonLifetime())
     .AddSingleton<IImageMetadataExtractor, ImageMetadataExtractor>()
     .AddScoped<IFileProcessor, FileProcessor>()
-    .AddSingleton<IFileStorageFactory, FileStorageFactory>();
+    .AddSingleton<IFileStorageFactory, FileStorageFactory>()
+    ;
+
+//spa
+builder.Services
+    .AddSpaStaticFiles(configuration => { configuration.RootPath = "./spa_dist"; })
+    ;
+
+//users
+builder.Services
+    .AddScoped<ITempCodesService, TempCodesService>()
+    .AddScoped<IUserFromTokenService, UserFromTokenService>()
+    ;
+
+
+//#########################################################################
 
 
 var app = builder.Build();
 
-app.UseCustomSerilogging(serilogOptions);
-
+//forwarded headers
 if (securityOptions.EnableForwardedHeaders)
 {
-    //forwarded headers
     var forwardOptions = new ForwardedHeadersOptions
     {
-        ForwardedHeaders = ForwardedHeaders.XForwardedFor |
-                           ForwardedHeaders.XForwardedProto,
-        ForwardLimit = 5,
-        RequireHeaderSymmetry = false,
+        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+        ForwardLimit = 10,
+        RequireHeaderSymmetry = false
     };
     forwardOptions.KnownNetworks.Clear();
     forwardOptions.KnownProxies.Clear();
     app.UseForwardedHeaders(forwardOptions);
 }
 
+//error handling
+app.UseRbErrorsHandling();
+
+//logging
+app.UseRbSerilogRequestLogging();
+
+// https redirection
 if (securityOptions.EnableHttpsRedirections)
 {
     app.UseHttpsRedirection();
 }
 
-app.UseCustomErrorHandling();
-app.UseCustomSwagger(swaggerOptions);
+//swagger
+if (swaggerOptions?.Enable == true)
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.UseStaticFiles(new StaticFileOptions
 {
@@ -280,6 +309,7 @@ app.UseSpaStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.Use((HttpContext ctx, RequestDelegate next) =>
 {
     var jwtFailedFeature = ctx.Features.Get<JwtAuthFailedFeature>();
@@ -308,47 +338,56 @@ app.UseHangfireDashboard("/hgf", new DashboardOptions
     }
 });
 
-app.UseEndpoints(endpoints => { endpoints.MapControllers().RequireAuthorization(); });
+app.MapControllers().RequireAuthorization();
+
 app.UseMiddleware<OgInjectorMiddleware>();
-app.UseSpa(c =>
+app.MapWhen(x => !x.Request.Path.Value!.StartsWith("/api"), builder =>
 {
-    c.Options.SourcePath = "./spa_dist";
-    c.Options.DefaultPageStaticFileOptions = new StaticFileOptions()
+    builder.UseSpa(c =>
     {
-        OnPrepareResponse = ctx =>
+        c.Options.SourcePath = "./spa_dist";
+        c.Options.DefaultPageStaticFileOptions = new StaticFileOptions()
         {
-            if (ctx.File.Name != "index.html")
-                return;
-            var headers = ctx.Context.Response.GetTypedHeaders();
-            headers.CacheControl = new CacheControlHeaderValue
+            OnPrepareResponse = ctx =>
             {
-                NoCache = true,
-                NoStore = true,
-                MustRevalidate = true,
-                MaxAge = TimeSpan.Zero
-            };
+                if (ctx.File.Name != "index.html")
+                    return;
+                var headers = ctx.Context.Response.GetTypedHeaders();
+                headers.CacheControl = new CacheControlHeaderValue
+                {
+                    NoCache = true,
+                    NoStore = true,
+                    MustRevalidate = true,
+                    MaxAge = TimeSpan.Zero
+                };
+            }
+        };
+        if (!string.IsNullOrWhiteSpace(appInfo.FrontDevServer))
+        {
+            Console.WriteLine("Use proxy to frontend!!!");
+            c.UseProxyToSpaDevelopmentServer("http://localhost:4200/");
         }
-    };
-    if (!string.IsNullOrWhiteSpace(appInfo.FrontDevServer))
-    {
-        Console.WriteLine("Use proxy to frontend!!!");
-        c.UseProxyToSpaDevelopmentServer("http://localhost:4200/");
-    }
+    });
 });
 
-app.Use((HttpContext ctx, RequestDelegate next) =>
-{
-    ctx.Response.StatusCode = StatusCodes.Status418ImATeapot;
-    return Task.CompletedTask;
-});
+//app.Use((HttpContext ctx, RequestDelegate next) =>
+//{
+//    ctx.Response.StatusCode = StatusCodes.Status418ImATeapot;
+//    return Task.CompletedTask;
+//});
 
 
 //#########################################################################
 
-CheckValidators(app.Services);
-ValidateAutomapper(app.Services);
+app.Services
+    .RbCheckActionsValidators()
+    .RbCheckTz()
+    .RbCheckLocale()
+    .RbValidateAutomapper()
+    ;
+
+await app.Services.RbEfMigrateAsync<SdHubDbContext>();
 PrepareHangfire(app.Services);
-await MigrateDbAsync(app.Services);
 
 await app.RunAsync();
 
@@ -374,45 +413,5 @@ static void PrepareHangfire(IServiceProvider serviceProvider)
         {
             logger.LogError(e, "Cant update job {name}", recurrentJob.Name);
         }
-    }
-}
-
-static void CheckValidators(IServiceProvider serviceProvider)
-{
-    using var scope = serviceProvider.CreateScope();
-    var service = scope.ServiceProvider.GetRequiredService<AllRequiredValidatorsRegisteredService>();
-    service.Check();
-}
-
-static async Task MigrateDbAsync(IServiceProvider serviceProvider)
-{
-    using var scope = serviceProvider.CreateScope();
-    var migrator = scope.ServiceProvider.GetRequiredService<IDbMigrator<SdHubDbContext>>();
-    await migrator.Migrate();
-    await migrator.Seed();
-}
-
-static void ValidateAutomapper(IServiceProvider serviceProvider)
-{
-    var scope = serviceProvider.CreateScope();
-    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-    var environment = scope.ServiceProvider.GetRequiredService<IHostEnvironment>();
-
-    if (!environment.IsDevelopment())
-    {
-        logger.LogWarning("Skip Automapper check in non Development env");
-        return;
-    }
-
-    try
-    {
-        var mapper = scope.ServiceProvider.GetRequiredService<IMapper>();
-        mapper.ConfigurationProvider.AssertConfigurationIsValid();
-        logger.LogInformation("Automapper profiles is valid");
-    }
-    catch (Exception ex)
-    {
-        logger.LogError(ex, "Error during automapper validation");
-        throw;
     }
 }

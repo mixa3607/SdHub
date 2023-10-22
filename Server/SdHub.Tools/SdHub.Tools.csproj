@@ -2,18 +2,18 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.S3" Version="3.7.101.9" />
-    <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="12.2.0" />
-    <PackageReference Include="Magick.NET.Core" Version="12.2.0" />
-    <PackageReference Include="Minio" Version="4.0.6" />
-    <PackageReference Include="Namotion.Reflection" Version="2.1.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="AWSSDK.S3" Version="3.7.205.15" />
+    <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="13.4.0" />
+    <PackageReference Include="Magick.NET.Core" Version="13.4.0" />
+    <PackageReference Include="Minio" Version="6.0.0" />
+    <PackageReference Include="Namotion.Reflection" Version="3.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>

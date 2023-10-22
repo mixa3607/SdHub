@@ -4,8 +4,8 @@ using System.Text;
 using Namotion.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using SdHub.Logging;
 using SdHub.Options;
+using SdHub.Shared.Logging;
 using static OptionsSectionDocs;
 
 public class OptionsDocsBuilder
@@ -49,20 +49,20 @@ public class OptionsDocsBuilder
             typeof(SerilogOptions),
             //typeof(),
         };
-        foreach (var type in types)
-        {
-            var name = ServiceCollectionExtensions.GetSectionName(type, "")!;
-            var summary = type.GetXmlDocsSummary();
-            var props = new List<PropDoc>();
-            CollectClass(type, 0, props);
-            var e = new OptionsSectionDocs()
-            {
-                Name = name,
-                Summary = summary,
-                Props = props
-            };
-            d.Add(e);
-        }
+        //foreach (var type in types)
+        //{
+        //    var name = ServiceCollectionExtensions.GetSectionName(type, "")!;
+        //    var summary = type.GetXmlDocsSummary();
+        //    var props = new List<PropDoc>();
+        //    CollectClass(type, 0, props);
+        //    var e = new OptionsSectionDocs()
+        //    {
+        //        Name = name,
+        //        Summary = summary,
+        //        Props = props
+        //    };
+        //    d.Add(e);
+        //}
 
         return d;
     }

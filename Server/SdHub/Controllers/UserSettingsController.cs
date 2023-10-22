@@ -13,6 +13,7 @@ using SdHub.Extensions;
 using SdHub.Models;
 using SdHub.Models.User;
 using SdHub.Services.User;
+using SdHub.Shared.AspErrorHandling.ModelState;
 
 namespace SdHub.Controllers;
 
@@ -71,8 +72,8 @@ public class UserSettingsController : ControllerBase
         {
             Token = b64,
             UserId = user!.Id,
-            CreatedAt = DateTimeOffset.Now,
-            ExpiredAt = DateTimeOffset.Now.AddYears(1)
+            CreatedAt = DateTimeOffset.UtcNow,
+            ExpiredAt = DateTimeOffset.UtcNow.AddYears(1)
         };
         _db.ApiTokens.Add(entity);
         await _db.SaveChangesAsync(CancellationToken.None);

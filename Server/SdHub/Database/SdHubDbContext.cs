@@ -11,6 +11,9 @@ namespace SdHub.Database;
 
 public class SdHubDbContext : DbContext
 {
+    public const string SchemaName = "public";
+    public const string HistoryTable = "__EFMigrationsHistory";
+
     //tags
     public DbSet<TagEntity> Tags { get; set; } = null!;
     public DbSet<ModelTagEntity> ModelTags { get; set; } = null!;
@@ -65,6 +68,7 @@ public class SdHubDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.HasDefaultSchema(SchemaName);
         modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
     }
 }

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net7.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<IsPackable>false</IsPackable>
 		<NoWarn>$(NoWarn);1591</NoWarn>
@@ -12,54 +12,39 @@
 		<PackageReference Include="CsvHelper" Version="30.0.1" />
 		<PackageReference Include="FluentEmail.Liquid" Version="3.0.2" />
 		<PackageReference Include="FluentEmail.Smtp" Version="3.0.2" />
-		<PackageReference Include="FluentValidation" Version="11.2.2" />
-		<PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
-		<PackageReference Include="Flurl" Version="3.0.6" />
+		<PackageReference Include="Flurl" Version="3.0.7" />
 		<PackageReference Include="Flurl.Http" Version="3.2.4" />
-		<PackageReference Include="Hangfire.AspNetCore" Version="1.7.32" />
+		<PackageReference Include="Hangfire.AspNetCore" Version="1.8.6" />
 		<PackageReference Include="Hangfire.Console" Version="1.4.2" />
-		<PackageReference Include="Hangfire.MemoryStorage" Version="1.7.0" />
-		<PackageReference Include="Hangfire.PostgreSql" Version="1.9.9" />
-		<PackageReference Include="Hangfire.Redis.StackExchange" Version="1.8.6" />
-		<PackageReference Include="LinqKit.Core" Version="1.2.3" />
-		<PackageReference Include="MetadataExtractor" Version="2.7.2" />
-		<PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="6.0.10" />
-		<PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.10" />
-		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="4.8.4">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Npgsql" Version="6.0.7" />
-		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.7" />
-		<PackageReference Include="Npgsql.Json.NET" Version="6.0.7" />
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.10" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.10" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.10">
+		<PackageReference Include="Hangfire.MemoryStorage" Version="1.8.0" />
+		<PackageReference Include="Hangfire.PostgreSql" Version="1.20.4" />
+		<PackageReference Include="Hangfire.Redis.StackExchange" Version="1.9.0" />
+		<PackageReference Include="LinqKit.Core" Version="1.2.4" />
+		<PackageReference Include="MetadataExtractor" Version="2.8.1" />
+		<PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="7.0.12" />
+		<PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="7.0.12" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.12" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.12">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="AutoMapper" Version="12.0.0" />
-		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
-		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.10" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-		<PackageReference Include="Scrutor" Version="4.2.0" />
-		<PackageReference Include="SharpCompress" Version="0.32.2" />
-		<PackageReference Include="SimpleBase" Version="3.1.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.4.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.4.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.4.0" />
-		<PackageReference Include="Reinforced.Typings" Version="1.6.1" />
-		<PackageReference Include="Magick.NET-Q8-AnyCPU" Version="12.2.0" />
-		<PackageReference Include="Magick.NET.Core" Version="12.2.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.12" />
+		<PackageReference Include="SharpCompress" Version="0.34.1" />
+		<PackageReference Include="SimpleBase" Version="4.0.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.5.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
+		<PackageReference Include="Reinforced.Typings" Version="1.6.2" />
+		<PackageReference Include="Magick.NET-Q8-AnyCPU" Version="13.4.0" />
+		<PackageReference Include="Magick.NET.Core" Version="13.4.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\SdHub.Logging\SdHub.Logging.csproj" />
+		<ProjectReference Include="..\SdHub.Shared\SdHub.Shared.csproj" />
 		<ProjectReference Include="..\SdHub.Storage\SdHub.Storage.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Utils\" />
 		<Folder Include="wwwroot\" />
 		<Folder Include="RequestFeatures\" />
 		<Folder Include="Attributes\" />

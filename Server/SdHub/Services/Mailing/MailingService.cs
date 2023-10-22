@@ -6,7 +6,7 @@ using FluentEmail.Core;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SdHub.Options;
-using SdHub.Services.ErrorHandling.Exceptions;
+using SdHub.Shared.AspErrorHandling.Exceptions;
 
 namespace SdHub.Services.Mailing;
 

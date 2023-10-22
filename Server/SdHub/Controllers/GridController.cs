@@ -15,6 +15,7 @@ using SdHub.Extensions;
 using SdHub.Models;
 using SdHub.Models.Grid;
 using SdHub.Services.User;
+using SdHub.Shared.AspErrorHandling.ModelState;
 
 namespace SdHub.Controllers;
 
@@ -155,7 +156,7 @@ public class GridController : ControllerBase
         if (grid!.Owner!.Guid != userJwt.Guid)
             ModelState.AddError(ModelStateErrors.NotGridOwner).ThrowIfNotValid();
 
-        var now = DateTimeOffset.Now;
+        var now = DateTimeOffset.UtcNow;
         grid.DeletedAt = now;
         grid.GridImages!.ForEach(x => x.Image!.DeletedAt = now);
         await _db.SaveChangesAsync(CancellationToken.None);

@@ -29,6 +29,7 @@ using SdHub.Models.Upload;
 using SdHub.Options;
 using SdHub.Services.FileProc;
 using SdHub.Services.User;
+using SdHub.Shared.AspErrorHandling.ModelState;
 using SharpCompress.Readers;
 using SimpleBase;
 
@@ -186,7 +187,7 @@ public class UploadGridController : ControllerBase
         }
 
         var uploadedLastHour = await _db.Grids.ApplyFilter(ownerId: user.Id)
-            .Where(x => x.CreatedAt > DateTimeOffset.Now.AddHours(-1))
+            .Where(x => x.CreatedAt > DateTimeOffset.UtcNow.AddHours(-1))
             .CountAsync(ct);
 
         return await UploadAsync(req, uploadedLastHour, user, uploader, albumId, ct);

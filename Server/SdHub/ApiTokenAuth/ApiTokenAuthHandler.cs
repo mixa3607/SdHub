@@ -51,7 +51,7 @@ public class ApiTokenAuthHandler : AuthenticationHandler<ApiTokenAuthSchemeOptio
                 return AuthenticateResult.Fail(new ApiTokenAuthException("token_not_found"));
             if (userToken.ExpiredAt == default)
                 return AuthenticateResult.Fail(new ApiTokenAuthException("token_revoked"));
-            if (userToken.ExpiredAt < DateTimeOffset.Now)
+            if (userToken.ExpiredAt < DateTimeOffset.UtcNow)
                 return AuthenticateResult.Fail(new ApiTokenAuthException("token_expired", $"Token expired at {userToken.ExpiredAt}"));
 
             var userModel = _mapper.Map<UserModel>(userToken.User!);

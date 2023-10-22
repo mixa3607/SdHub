@@ -22,11 +22,11 @@ public class TempCodesService : ITempCodesService
     {
         var entity = new TempCodeEntity()
         {
-            ExpiredAt = DateTimeOffset.Now.Add(-lifetime),
+            ExpiredAt = DateTimeOffset.UtcNow.Add(-lifetime),
             Code = GenerateShortToken(),
             CodeType = type,
             CurrAttempts = 0,
-            CreatedAt = DateTimeOffset.Now,
+            CreatedAt = DateTimeOffset.UtcNow,
             Identifier = identifier,
             MaxAttempts = attempts
         };
@@ -42,7 +42,7 @@ public class TempCodesService : ITempCodesService
         var entity = await _db.TempCodes.FirstOrDefaultAsync(x => x.Identifier == identifier && x.Code == code && !x.Used, ct);
         if (entity == null)
             return TempCodeActivateResult.NotFound;
-        if (entity.ExpiredAt > DateTimeOffset.Now)
+        if (entity.ExpiredAt > DateTimeOffset.UtcNow)
             return TempCodeActivateResult.Lifetime;
         if (entity.MaxAttempts <= entity.CurrAttempts)
             return TempCodeActivateResult.MaxAttemptsReached;

@@ -12,7 +12,7 @@ public class UserEntity
     public string? DeleteReason { get; set; }
     public DateTimeOffset? DeletedAt { get; set; }
     public DateTimeOffset? EmailConfirmedAt { get; set; }
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.Now;
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     public DateTimeOffset EmailConfirmationLastSend { get; set; }
     public long PlanId { get; set; }
     public UserPlanEntity? Plan { get; set; }

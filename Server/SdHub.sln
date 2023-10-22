@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SdHub", "SdHub\SdHub.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SdHub.Tools", "SdHub.Tools\SdHub.Tools.csproj", "{A913C278-CCD4-4751-B2D1-F90405CDA8E4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SdHub.Logging", "SdHub.Logging\SdHub.Logging.csproj", "{BC248216-2658-4EB5-B7E1-2C79BACED8BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SdHub.Storage", "SdHub.Storage\SdHub.Storage.csproj", "{250DC919-4BC6-4D3D-A7F4-A8AC4AAB2A2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SdHub.Storage", "SdHub.Storage\SdHub.Storage.csproj", "{250DC919-4BC6-4D3D-A7F4-A8AC4AAB2A2B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SdHub.Shared", "SdHub.Shared\SdHub.Shared.csproj", "{9DDB23D4-AC13-49CA-B6CC-F4CF82A9A700}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,14 +25,14 @@ Global
 		{A913C278-CCD4-4751-B2D1-F90405CDA8E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A913C278-CCD4-4751-B2D1-F90405CDA8E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A913C278-CCD4-4751-B2D1-F90405CDA8E4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BC248216-2658-4EB5-B7E1-2C79BACED8BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BC248216-2658-4EB5-B7E1-2C79BACED8BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BC248216-2658-4EB5-B7E1-2C79BACED8BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BC248216-2658-4EB5-B7E1-2C79BACED8BE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{250DC919-4BC6-4D3D-A7F4-A8AC4AAB2A2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{250DC919-4BC6-4D3D-A7F4-A8AC4AAB2A2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{250DC919-4BC6-4D3D-A7F4-A8AC4AAB2A2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{250DC919-4BC6-4D3D-A7F4-A8AC4AAB2A2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DDB23D4-AC13-49CA-B6CC-F4CF82A9A700}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DDB23D4-AC13-49CA-B6CC-F4CF82A9A700}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DDB23D4-AC13-49CA-B6CC-F4CF82A9A700}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DDB23D4-AC13-49CA-B6CC-F4CF82A9A700}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

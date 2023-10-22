@@ -9,7 +9,7 @@ public class RefreshTokenEntity
 
     public Guid UserGuid { get; set; }
 
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.Now;
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     public DateTimeOffset ExpiredAt { get; set; }
     public string? UserAgent { get; set; }
     public string? IpAddress { get; set; }

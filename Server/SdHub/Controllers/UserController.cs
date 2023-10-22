@@ -24,6 +24,7 @@ using SdHub.Services.Captcha;
 using SdHub.Services.Mailing;
 using SdHub.Services.Tokens;
 using SdHub.Services.User;
+using SdHub.Shared.AspErrorHandling.ModelState;
 
 namespace SdHub.Controllers;
 
@@ -104,7 +105,7 @@ public class UserController : ControllerBase
             PasswordHash = _passwordService.CreatePasswordHash(req.Password!),
             Plan = await _db.UserPlans.FirstOrDefaultAsync(x => x.Name == RatesPlanTypes.RegUserPlan, ct),
             Roles = new List<string>() { UserRoleTypes.User },
-            EmailConfirmationLastSend = DateTimeOffset.Now,
+            EmailConfirmationLastSend = DateTimeOffset.UtcNow,
         };
         _db.Users.Add(user);
         await _db.SaveChangesAsync(CancellationToken.None);
@@ -223,7 +224,7 @@ public class UserController : ControllerBase
         if (checkCodeResult != TempCodeActivateResult.Ok)
             ModelState.AddError(ModelStateErrors.BadConfirmationCode).ThrowIfNotValid();
 
-        user.EmailConfirmedAt = DateTimeOffset.Now;
+        user.EmailConfirmedAt = DateTimeOffset.UtcNow;
         await _db.SaveChangesAsync(CancellationToken.None);
 
         return new ConfirmEmailResponse()
@@ -299,7 +300,7 @@ public class UserController : ControllerBase
 
         var newPasswdHash = _passwordService.CreatePasswordHash(req.NewPassword!);
         user.PasswordHash = newPasswdHash;
-        user.EmailConfirmedAt ??= DateTimeOffset.Now;
+        user.EmailConfirmedAt ??= DateTimeOffset.UtcNow;
         await _db.SaveChangesAsync(CancellationToken.None);
 
         return new ResetPasswordResponse()

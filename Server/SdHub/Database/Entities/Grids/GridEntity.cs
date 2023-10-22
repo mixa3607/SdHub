@@ -13,7 +13,7 @@ public class GridEntity
     public string? ShortToken { get; set; }
 
     public DateTimeOffset? DeletedAt { get; set; }
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.Now;
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
     public string? Name { get; set; }
     public string? Description { get; set; }

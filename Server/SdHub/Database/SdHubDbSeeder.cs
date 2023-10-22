@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -7,9 +8,9 @@ using Microsoft.Extensions.Options;
 using SdHub.Constants;
 using SdHub.Database.Entities.Files;
 using SdHub.Database.Entities.Users;
-using SdHub.Database.Shared;
 using SdHub.Options;
 using SdHub.Services.Tokens;
+using SdHub.Shared.EntityFramework;
 using SdHub.Storage;
 using SdHub.Storage.Local;
 
@@ -30,10 +31,10 @@ public class SdHubDbSeeder : IDbSeeder<SdHubDbContext>
         _appInfo = appInfo.Value;
     }
 
-    public async Task Seed(SdHubDbContext db)
+    public async Task SeedAsync(SdHubDbContext db, CancellationToken ct = default)
     {
         //file store
-        if (!await db.FileStorages.AnyAsync())
+        if (!await db.FileStorages.AnyAsync(ct))
         {
             var settings = new LocalStorageSettings()
             {
@@ -49,14 +50,14 @@ public class SdHubDbSeeder : IDbSeeder<SdHubDbContext>
                 Settings = settings.Save(),
             };
             db.FileStorages.Add(store);
-            await db.SaveChangesAsync();
+            await db.SaveChangesAsync(CancellationToken.None);
         }
 
         //plans
-        var adminPlan = await db.UserPlans.FirstOrDefaultAsync(x => x.Name == RatesPlanTypes.AdminPlan);
+        var adminPlan = await db.UserPlans.FirstOrDefaultAsync(x => x.Name == RatesPlanTypes.AdminPlan, ct);
         
-        var anonPlan = await db.UserPlans.FirstOrDefaultAsync(x => x.Name == RatesPlanTypes.AnonUserPlan);
-        var regUserPlan = await db.UserPlans.FirstOrDefaultAsync(x => x.Name == RatesPlanTypes.RegUserPlan);
+        var anonPlan = await db.UserPlans.FirstOrDefaultAsync(x => x.Name == RatesPlanTypes.AnonUserPlan, ct);
+        var regUserPlan = await db.UserPlans.FirstOrDefaultAsync(x => x.Name == RatesPlanTypes.RegUserPlan, ct);
 
         if (adminPlan == null || _options.OverwriteUserPlans)
         {
@@ -110,10 +111,10 @@ public class SdHubDbSeeder : IDbSeeder<SdHubDbContext>
             regUserPlan.ImagesPerGrid = 2500;
             regUserPlan.MaxGridArchiveSizeUpload = 1L * 1024 * 1024; //1gb
         }
-        await db.SaveChangesAsync();
+        await db.SaveChangesAsync(CancellationToken.None);
 
         //users
-        if (!await db.Users.AnyAsync(x => x.Roles.Contains(UserRoleTypes.Admin)))
+        if (!await db.Users.AnyAsync(x => x.Roles.Contains(UserRoleTypes.Admin), ct))
         {
             _logger.LogInformation("Create admin user");
             var user = new UserEntity()
@@ -121,14 +122,14 @@ public class SdHubDbSeeder : IDbSeeder<SdHubDbContext>
                 Roles = new List<string>() { UserRoleTypes.Admin, UserRoleTypes.User, UserRoleTypes.HangfireRW },
                 Login = "Admin",
                 PasswordHash = _passwordService.CreatePasswordHash(_options.AdminPassword!),
-                Plan = await db.UserPlans.FirstAsync(x => x.Name == RatesPlanTypes.AdminPlan),
+                Plan = await db.UserPlans.FirstAsync(x => x.Name == RatesPlanTypes.AdminPlan, ct),
                 Email = "admin@test.com",
-                EmailConfirmedAt = DateTimeOffset.Now,
+                EmailConfirmedAt = DateTimeOffset.UtcNow,
             };
             db.Users.Add(user);
-            await db.SaveChangesAsync();
+            await db.SaveChangesAsync(CancellationToken.None);
         }
-        if (await db.Users.AllAsync(x => !x.IsAnonymous))
+        if (await db.Users.AllAsync(x => !x.IsAnonymous, ct))
         {
             _logger.LogInformation("Create anon user");
             var user = new UserEntity()
@@ -136,11 +137,11 @@ public class SdHubDbSeeder : IDbSeeder<SdHubDbContext>
                 Roles = new List<string>() { UserRoleTypes.User },
                 Login = "Anon",
                 PasswordHash = "",
-                Plan = await db.UserPlans.FirstAsync(x => x.Name == RatesPlanTypes.AnonUserPlan),
+                Plan = await db.UserPlans.FirstAsync(x => x.Name == RatesPlanTypes.AnonUserPlan, ct),
                 IsAnonymous = true
             };
             db.Users.Add(user);
-            await db.SaveChangesAsync();
+            await db.SaveChangesAsync(CancellationToken.None);
         }
     }
 }

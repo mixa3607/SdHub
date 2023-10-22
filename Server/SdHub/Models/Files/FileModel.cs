@@ -10,6 +10,6 @@ public class FileModel
     public string? MimeType { get; set; }
     public string? Extension { get; set; }
     public long Size { get; set; }
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.Now;
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     public string? DirectUrl { get; set; }
 }

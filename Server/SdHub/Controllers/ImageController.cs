@@ -17,6 +17,7 @@ using SdHub.Extensions;
 using SdHub.Models;
 using SdHub.Models.Image;
 using SdHub.Services.User;
+using SdHub.Shared.AspErrorHandling.ModelState;
 
 namespace SdHub.Controllers;
 
@@ -223,7 +224,7 @@ public class ImageController : ControllerBase
         if (!CanManage(imageEnt!, userJwt, req.ManageToken, ModelState))
             ModelState.Throw();
 
-        imageEnt!.DeletedAt = DateTimeOffset.Now;
+        imageEnt!.DeletedAt = DateTimeOffset.UtcNow;
         await _db.SaveChangesAsync(CancellationToken.None);
         return new DeleteImageResponse()
         {

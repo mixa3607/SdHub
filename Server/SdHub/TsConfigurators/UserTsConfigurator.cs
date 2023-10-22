@@ -1,10 +1,9 @@
 ﻿using System;
 using System.IO;
+using Rb.Itsd.TsGenerator;
 using Reinforced.Typings.Fluent;
 using SdHub.Constants;
 using SdHub.Models.User;
-using SdHub.TsConfigurators.Extensions;
-using SdHub.TsConfigurators.Shared;
 
 namespace SdHub.TsConfigurators;
 
@@ -12,7 +11,7 @@ public class UserTsConfigurator : ITsConfigurator
 {
     public void Configure(ConfigurationBuilder builder)
     {
-        var outFile = Path.Combine(ITsConfigurator.ModelsRoot, "user.models.ts");
+        var outFile = Path.Combine(ReinforcedTypingsConfiguration.ModelsRoot, "user.models.ts");
         builder.ExportAsInterfaces(new Type[]
             {
                 typeof(SendResetPasswordEmailRequest),
@@ -41,16 +40,11 @@ public class UserTsConfigurator : ITsConfigurator
                 .WithPublicProperties()
                 .ExportTo(outFile))
             ;
-        builder.ExportAsEnums(new Type[]
-        {
-        }, c => c.ExportTo(outFile));
+
         builder.ExportAsClasses(new Type[]
             {
                 typeof(UserRoleTypes),
             }, c => c
-                .SubsDatetimeOffsetToStr()
-                .SubsTimespanToStr()
-                .SubsGuidToStr()
                 .WithPublicFields()
                 .WithPublicProperties()
                 .ExportTo(outFile))

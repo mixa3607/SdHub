@@ -1,15 +1,14 @@
 ﻿using System;
 using SdHub.Models.Enums;
-using SdHub.TsConfigurators.Shared;
 using Reinforced.Typings.Fluent;
-using SdHub.TsConfigurators.Extensions;
 using SdHub.Models;
-using SdHub.Services.ErrorHandling;
 using System.IO;
+using Rb.Itsd.TsGenerator;
 using SdHub.Constants;
 using SdHub.Models.Bins;
 using SdHub.Models.Image;
 using SdHub.Models.Upload;
+using SdHub.Shared.AspErrorHandling;
 
 namespace SdHub.TsConfigurators;
 
@@ -17,7 +16,7 @@ public class MiscTsConfigurator : ITsConfigurator
 {
     public void Configure(ConfigurationBuilder builder)
     {
-        var outFile = Path.Combine(ITsConfigurator.ModelsRoot, "misc.models.ts");
+        var outFile = Path.Combine(ReinforcedTypingsConfiguration.ModelsRoot, "misc.models.ts");
         builder.ExportAsInterfaces(new Type[]
             {
                 typeof(FrontendSettings),
@@ -47,9 +46,6 @@ public class MiscTsConfigurator : ITsConfigurator
             {
                 typeof(ModelStateErrors)
             }, c => c
-                .SubsDatetimeOffsetToStr()
-                .SubsTimespanToStr()
-                .SubsGuidToStr()
                 .WithPublicFields()
                 .WithPublicProperties()
                 .ExportTo(outFile))

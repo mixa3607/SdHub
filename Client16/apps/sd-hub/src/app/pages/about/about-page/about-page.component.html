@@ -1,0 +1,34 @@
+<div class="container" style="display: flex; flex-direction: row; align-content: center;">
+  <div style=" flex: 1;">
+    <mat-card>
+      <mat-card-content style="display: flex; flex-direction: column;">
+        <h2>About SdHub</h2>
+        <p>It's simple site that can help you share AI generated images.</p>
+
+        <h3>Development progress</h3>
+        <ng-container *ngFor="let task of tasks">
+          <mat-checkbox (click)="$event.preventDefault()"
+                        [checked]="task.completed"
+                        [indeterminate]="task.completed == null">{{task.name}}</mat-checkbox>
+          <div *ngIf="task.subtasks != null && task.subtasks.length > 0"
+               style="margin-left: 1.5rem; display: flex; flex-direction: column">
+            <ng-container *ngFor="let task of task.subtasks">
+              <mat-checkbox (click)="$event.preventDefault()"
+                            [checked]="task.completed"
+                            [indeterminate]="task.completed == null">{{task.name}}</mat-checkbox>
+            </ng-container>
+          </div>
+        </ng-container>
+
+        <p>
+          All ideas and bug reports you can send to:
+          <a href="https://t.me/mixa3607" target="_blank">
+            <img style="vertical-align: bottom" src="https://telegram.org/img/website_icon.svg">
+            @mixa3607
+          </a>
+        </p>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>

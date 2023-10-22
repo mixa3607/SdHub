@@ -1,0 +1,29 @@
+<h1 mat-dialog-title>
+  New album
+</h1>
+
+<div [formGroup]="form" class="form-container">
+  <mat-form-field appearance="fill">
+    <mat-label>Name</mat-label>
+    <input formControlName="name"
+           matInput
+           placeholder="Name"
+           type="text">
+    <mat-error
+            *ngIf="form.get('name')!.invalid">{{getErrorMessage(form.get('name')!)}}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Description</mat-label>
+    <input type="text"
+           formControlName="description"
+           matInput
+           placeholder="Description">
+    <mat-error
+            *ngIf="form.get('description')!.invalid">{{getErrorMessage(form.get('description')!)}}</mat-error>
+  </mat-form-field>
+</div>
+
+<div mat-dialog-actions [align]="'end'">
+  <button (click)="onConfirm()" [disabled]="form.invalid" color="primary" mat-raised-button>Ok</button>
+</div>

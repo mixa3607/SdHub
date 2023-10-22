@@ -1,0 +1,93 @@
+<mat-card style="display: flex; flex-direction: column; gap: 1rem;min-width: min-content;">
+  <mat-card-content>
+    <h1>Upload images</h1>
+    <div class="file-drop-area-wrap">
+      <div *ngIf="uploadingStatus$ | async as uploadingStatus" class="loading-overlay">
+        <mat-spinner
+          [mode]="uploadingStatus.type === 'uploading' ? 'determinate' : 'indeterminate'"
+          [value]="uploadingStatus.type === 'uploading' ? uploadingStatus.progress : 0"
+          diameter="60">
+        </mat-spinner>
+      </div>
+      <ngx-file-drop class="file-drop-area"
+                     [class.file-drop-area_disabled]="uploading"
+                     (onFileDrop)="dropped($event)"
+                     accept=".png,.jpeg,.jpg,.webp"
+                     dropZoneLabel="Drop images here">
+        <ng-template let-openFileSelector="openFileSelector" ngx-file-drop-content-tmp>
+          Drop images here (or pick
+          <button (click)="openFileSelector()" mat-icon-button type="button">
+            <mat-icon>folder_open</mat-icon>
+          </button>
+          )
+        </ng-template>
+      </ngx-file-drop>
+    </div>
+  </mat-card-content>
+  <div class="actions">
+    <album-autocomplete *ngIf="isAuthenticated" [userLogin]="userLogin"
+                        (uploadToAlbumChange)="uploadToAlbum = $event"></album-autocomplete>
+    <button (click)="onUploadClick()" [disabled]="waitUpload() === 0 || uploading"
+            color="primary"
+            mat-raised-button
+            style="flex-grow: 60; height: auto">Upload
+    </button>
+    <button (click)="onClearClick()" [disabled]="files.length === 0 || uploading"
+            color="warn"
+            mat-raised-button
+            style="height: auto; font-size: 32px"><mat-icon inline>clear</mat-icon>
+    </button>
+  </div>
+  <div class="preview-cards-container">
+    <mat-card *ngFor="let file of files"
+              [ngClass]="'upload-image-preview-card_' + file.uploaded"
+              class="upload-image-preview-card">
+      <div *ngIf="file.uploaded == 'error'" class="error-message">
+        {{file.uploadingError}}
+      </div>
+      <div class="image-container">
+        <img [src]="file.objectUrl">
+      </div>
+
+
+      <div class="props-container">
+        <div class="prop-container">
+          <div class="prop-name">File name</div>
+          <div class="prop-value-container">
+            <mat-icon>file_present</mat-icon>
+            <div class="prop-value">{{file.name}}</div>
+          </div>
+        </div>
+        <div class="prop-container">
+          <div class="prop-name">Size</div>
+          <div class="prop-value-container">
+            <mat-icon>save</mat-icon>
+            <div class="prop-value">{{file.sizeHuman}}</div>
+          </div>
+        </div>
+        <div *ngIf="!isAuthenticated" class="prop-container">
+          <div class="prop-name">Master code</div>
+          <div class="prop-value-container">
+            <mat-icon>save</mat-icon>
+            <div class="prop-value">{{file.uploadedFile?.manageToken ?? 'Fill after upload'}}</div>
+          </div>
+        </div>
+        <div class="link-container">
+          <a *ngIf="file.uploaded == 'yes'"
+             [href]="file.uploadedFile?.image?.shortUrl ?? ''">
+            {{file.uploadedFile?.image?.shortUrl ?? ''}}
+          </a>
+          <a *ngIf="file.uploaded !== 'yes'">
+            Require upload
+          </a>
+          <button (click)="onCopyShortLinkClick(file)"
+                  [disabled]="file.uploaded !== 'yes'"
+                  mat-icon-button>
+            <mat-icon>content_copy</mat-icon>
+          </button>
+        </div>
+      </div>
+
+    </mat-card>
+  </div>
+</mat-card>

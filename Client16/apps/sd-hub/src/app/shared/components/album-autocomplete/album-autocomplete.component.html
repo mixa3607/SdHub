@@ -1,0 +1,24 @@
+<mat-form-field appearance="fill"
+                class="form-no-bottom-padding"
+                style="flex-grow: 10">
+  <mat-label>Album</mat-label>
+  <input type="text"
+         placeholder="Pick one"
+         aria-label="Number"
+         matInput
+         [matAutocomplete]="auto"
+         [formControl]="albumForm">
+  <mat-autocomplete #auto="matAutocomplete"
+                    [displayWith]="displayAlbumFn">
+    <mat-option *ngIf="albumsLoading"
+                [disabled]="true">
+      <mat-progress-bar mode="query"></mat-progress-bar>
+    </mat-option>
+    <mat-option *ngIf="allowedAlbums.length === 0 && !albumsLoading"
+                [disabled]="true">(▀̿Ĺ̯▀̿ ̿) nothing...
+    </mat-option>
+    <mat-option *ngFor="let opt of allowedAlbums" [value]="opt">
+      {{opt.name}}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

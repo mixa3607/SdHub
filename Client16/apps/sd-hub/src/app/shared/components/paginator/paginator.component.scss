@@ -1,0 +1,16 @@
+.paginator {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.paginator-card {
+  width: 100%;
+
+  .content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+}

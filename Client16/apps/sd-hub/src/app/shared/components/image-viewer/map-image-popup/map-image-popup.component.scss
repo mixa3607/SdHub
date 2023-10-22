@@ -1,0 +1,11 @@
+.prop-container{
+  border-left: #7e7e7e solid 5px;
+  padding-left: 7px;
+
+  .prop-value{
+    cursor: pointer;
+    border: gainsboro solid 0.05rem;
+    padding: 0.3rem;
+    white-space: pre-wrap;
+  }
+}

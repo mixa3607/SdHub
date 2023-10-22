@@ -1,0 +1,62 @@
+<div class="container" style="display: flex; flex-direction: row; align-content: center;">
+  <div style="display: flex; flex-direction: column; gap: .5rem; flex: 1">
+    <mat-card style="display: flex; flex-direction: column; box-sizing: border-box; min-width: min-content;">
+      <mat-card-content style="display: flex; flex-direction: column;">
+        <div style="display: flex; gap: .2rem">
+          <mat-form-field class="form-no-bottom-padding"
+                          appearance="fill"
+                          style="flex-grow: 1">
+            <mat-label>Search text</mat-label>
+            <input matInput [(ngModel)]="searchText" (keyup.enter)="onSearchClick()">
+            <button (click)="onSearchClick()" mat-icon-button matSuffix>
+              <mat-icon>search</mat-icon>
+            </button>
+          </mat-form-field>
+          <mat-form-field class="form-no-bottom-padding"
+                          appearance="fill">
+            <mat-label>Search in</mat-label>
+            <mat-select [(value)]="selectedSearchType">
+              <mat-option *ngFor="let variant of searchInVariants" [value]="variant.id">
+                {{variant.value}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <!--<mat-form-field class="example-chip-list" appearance="fill">
+          <mat-label>With tags</mat-label>
+          <mat-chip-list #chipList aria-label="Search in tags">
+            <mat-chip *ngFor="let fruit of fruits">
+              {{fruit}}
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip>
+            <input placeholder="Add tag..."
+                   [matChipInputFor]="chipList"
+                   [matChipInputSeparatorKeyCodes]="separatorKeysCodes">
+          </mat-chip-list>
+        </mat-form-field>-->
+      </mat-card-content>
+    </mat-card>
+
+    <ng-container [ngSwitch]="selectedSearchType">
+      <search-in-images *ngSwitchCase="searchInType.Images"
+                        style="flex-grow: 1"
+                        [(searchText)]="searchText"
+                        [searchButtonClick]="performSearch$"></search-in-images>
+      <search-in-albums *ngSwitchCase="searchInType.Albums"
+                        style="flex-grow: 1"
+                        [(searchText)]="searchText"
+                        [searchButtonClick]="performSearch$"></search-in-albums>
+      <search-in-grids *ngSwitchCase="searchInType.Grids"
+                       style="flex-grow: 1"
+                       [(searchText)]="searchText"
+                       [searchButtonClick]="performSearch$"></search-in-grids>
+      <div *ngSwitchDefault
+           style="display: flex; flex-direction: column; align-items: center; flex-grow: 1; justify-content: center; font-size: 4rem">
+        <div>This search type not supported yet</div>
+        <div>≧ ﹏ ≦</div>
+      </div>
+    </ng-container>
+  </div>
+</div>

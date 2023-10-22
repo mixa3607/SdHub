@@ -1,0 +1,179 @@
+<div class="container" style="display: flex; flex-direction: row; justify-content: center;">
+  <div>
+    <mat-card>
+      <ng-container *ngIf="loading$ | async; else loaded">
+        <h1>Image loading...</h1>
+      </ng-container>
+      <ng-template #loaded>
+        <mat-card-content *ngIf="loadType == 'error'" class="content-card">
+          <h1>Can't load image</h1>
+          <p>Maybe it has been deleted 🤔</p>
+          <p>Or never existed 🚧</p>
+          <p style="font-weight: bold">But you always can upload your for share the world 🌍
+            <button [routerLink]="['/upload']" mat-stroked-button>Upload</button>
+          </p>
+        </mat-card-content>
+        <mat-card-content *ngIf="loadType == 'ok'" class="content-card" style="display: flex; flex-direction: column">
+          <div class="header">
+            <div *ngIf="!editMode; else editName" style="font-size: 2rem">
+              Image name:
+              <ng-container>
+                <span *ngIf="imageInfo?.name != null && imageInfo?.name != ''; else nameNotSet">{{imageInfo?.name}}</span>
+                <ng-template #nameNotSet><span style="font-style: italic">not set</span></ng-template>
+              </ng-container>
+            </div>
+            <ng-template #editName>
+              <mat-form-field appearance="outline"
+                              class="form-no-bottom-padding"
+                              style="font-size: medium; width: 100%">
+                <mat-label>Image name</mat-label>
+                <input matInput [(ngModel)]="editData.name">
+              </mat-form-field>
+            </ng-template>
+
+            <div style="flex-grow: 1"></div>
+            <ng-container *ngIf="!editMode && showEditButton">
+              <button (click)="onEditClick()" mat-icon-button>
+                <mat-icon>edit</mat-icon>
+              </button>
+            </ng-container>
+            <ng-container *ngIf="editMode">
+              <button (click)="onSaveClick()" mat-raised-button>
+                <mat-icon>save</mat-icon>
+              </button>
+              <button (click)="onCancelClick()" mat-raised-button>
+                <mat-icon>cancel</mat-icon>
+              </button>
+              <button (click)="onDeleteClick()" mat-raised-button color="warn">
+                <mat-icon>delete_forever</mat-icon>
+              </button>
+            </ng-container>
+          </div>
+          <div class="album-card-container">
+            <img [src]="imageInfo?.compressedImage?.directUrl ?? imageInfo?.originalImage?.directUrl"
+                 class="thumbnail">
+            <button mat-icon-button
+                    class="open-image-viewer-btn"
+                    (click)="onOpenImageViewerClick()">
+              <mat-icon inline>fullscreen</mat-icon>
+            </button>
+          </div>
+
+          <div class="props-container">
+            <div class="prop-container">
+              <div class="prop-name">
+                <mat-icon inline>file_present</mat-icon>
+                File name
+              </div>
+              <div class="prop-value-container">
+                <div class="prop-value">{{imageInfo?.originalImage?.name ?? ''}}</div>
+              </div>
+            </div>
+            <div class="prop-container">
+              <div class="prop-name">
+                <mat-icon inline>schedule</mat-icon>
+                Uploaded
+              </div>
+              <div class="prop-value-container">
+                <div class="prop-value">{{imageInfo?.createdAt ?? '' | date:'dd.MM.yyyy hh:mm'}}</div>
+              </div>
+            </div>
+            <div class="prop-container">
+              <div class="prop-name">
+                <mat-icon inline>perm_media</mat-icon>
+                Type
+              </div>
+              <div class="prop-value-container">
+                <div class="prop-value">{{imageInfo?.originalImage?.extension ?? 'Unknown'}}</div>
+              </div>
+            </div>
+            <div *ngIf="imageInfo?.parsedMetadata?.width != -1 || imageInfo?.parsedMetadata?.height != -1"
+                 class="prop-container">
+              <div class="prop-name">
+                <mat-icon inline>perm_media</mat-icon>
+                Dim
+              </div>
+              <div class="prop-value-container">
+                <div class="prop-value">
+                  {{imageInfo?.parsedMetadata?.height ?? 0 }}
+                  x
+                  {{imageInfo?.parsedMetadata?.width ?? 0}}
+                </div>
+              </div>
+            </div>
+
+            <div class="prop-container">
+              <div class="prop-name">
+                <mat-icon inline>content_copy</mat-icon>
+                Share
+              </div>
+              <div class="prop-value-container">
+                <span (click)="onCopyShortLinkClick()" class="prop-value"
+                      style="cursor: pointer">{{imageInfo?.shortUrl ?? ''}}</span>
+              </div>
+            </div>
+
+            <div class="prop-container">
+              <div class="prop-name">
+                <mat-icon inline>content_copy</mat-icon>
+                By
+              </div>
+              <div class="prop-value-container">
+                <a [routerLink]="'/user/' + imageInfo?.owner?.login"
+                   class="prop-value"
+                   style="cursor: pointer">{{imageInfo?.owner?.login ?? ''}}</a>
+              </div>
+            </div>
+
+            <div class="prop-container">
+              <div class="prop-name">
+                <mat-icon inline>save</mat-icon>
+                Size
+              </div>
+              <div class="prop-value-container">
+                <div class="prop-value">{{originalImageHumanSize}}</div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="!editMode; else editDescription" class="props-container">
+            <div *ngIf="(imageInfo?.description != null && imageInfo?.description != '') || editMode"
+                 class="prop-container"
+                 style="display: flex; flex-direction: column; max-width: fit-content; min-width: -webkit-fill-available;">
+              <div class="prop-name">Description</div>
+              <div class="prop-value-container">
+                <span class="prop-value">{{imageInfo?.description ?? ''}}</span>
+              </div>
+            </div>
+          </div>
+          <ng-template #editDescription>
+            <mat-form-field appearance="outline"
+                            class="form-no-bottom-padding"
+                            style="font-size: medium">
+              <mat-label>Description</mat-label>
+              <textarea cdkTextareaAutosize [(ngModel)]="editData.description" matInput placeholder="Name"></textarea>
+            </mat-form-field>
+          </ng-template>
+
+          <div *ngIf="groupedTags.length > 0" class="grouped-tags-container">
+            <div *ngFor="let groupedTag of groupedTags"
+                 class="grouped-tags">
+              <div class="soft-name">{{groupedTag.software}}</div>
+
+              <div class="tags">
+                <div *ngFor="let tag of groupedTag.tags"
+                     class="tag">
+                  <div class="tag-name">{{tag.name}}</div>
+                  <div (click)="onCopyTagClick(tag)" class="tag-value" title="Click for copy">
+                    <code>{{tag.value}}</code>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </mat-card-content>
+      </ng-template>
+    </mat-card>
+  </div>
+</div>

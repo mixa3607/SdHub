@@ -1,0 +1,45 @@
+<div class="container" style="display: flex; flex-direction: row; align-content: center;">
+  <div *ngIf="gridOptions != null"
+       (leafletMapMove)="onMapMove($event)"
+       (leafletMapReady)="onMapReady($event)"
+       [leafletLayers]="mapLayers"
+       [leafletOptions]="mapOptions"
+       leaflet
+       style="flex-grow: 1">
+    <div *ngIf="showCloseButton"
+         class="close-btn">
+      <button mat-icon-button
+              (click)="closeClick.emit(true)">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+
+
+    <div *ngIf="gridOptions.showLegend" class="grid-x">
+      <div *ngFor="let title of gridOptions.xLegend; let i = index"
+           [style.background]="title.background"
+           [style.margin-left]="(i == 0 ? xElemMarginLeft : 0) + 'px'"
+           [style.width]="xElemWidth + 'px'"
+           [style.min-width]="xElemWidth + 'px'"
+           [matTooltip]="title.name"
+           matTooltipPosition="below"
+           class="grid-x-item">
+        <span class="legend-title">{{title.name}}</span>
+      </div>
+    </div>
+
+    <div class="grid-y">
+      <div *ngFor="let title of gridOptions.yLegend; let i = index"
+           [style.background]="title.background"
+           [style.height]="yElemHeight + 'px'"
+           [style.min-height]="yElemHeight + 'px'"
+           [style.margin-top]="(i == 0 ? yElemMarginTop : 0) + 'px'"
+           [matTooltip]="title.name"
+           matTooltipPosition="right"
+           class="grid-y-item">
+        <span class="legend-title">{{title.name}}</span>
+      </div>
+    </div>
+  </div>
+</div>

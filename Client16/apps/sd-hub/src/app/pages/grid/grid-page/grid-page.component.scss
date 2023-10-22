@@ -1,0 +1,102 @@
+.container {
+  padding: .5rem;
+  min-height: 100%;
+}
+
+.album-card-container {
+  max-height: 700px;
+  max-width: 600px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-self: center;
+  position: relative;
+
+  .thumbnail {
+    object-fit: contain;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .open-image-viewer-btn {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: #808080d1;
+    border-radius: 0;
+    color: white;
+
+    mat-icon {
+      transform: scale(3);
+    }
+  }
+}
+
+.album-card-container:hover {
+  .open-image-viewer-btn {
+    display: unset;
+  }
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  gap: .5rem;
+  align-items: center;
+}
+
+.link-container {
+  display: flex;
+  flex-direction: row;
+  gap: .3rem;
+  width: max-content;
+  align-items: center;
+  border: gainsboro solid .05rem;
+  padding-left: .3rem;
+
+  .link {
+    padding: .3rem;
+  }
+}
+
+.props-container {
+  display: flex;
+  flex-direction: row;
+  flex-flow: wrap;
+  gap: .6rem;
+
+  .prop-container {
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+    border: gainsboro solid .05rem;
+    padding: .3rem;
+
+    .prop-name {
+      white-space: nowrap;
+      font-weight: bold;
+      color: gray;
+    }
+
+    .prop-value-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: .5rem;
+
+      .prop-value {
+        padding: .2rem;
+        background: #f1f1f1;
+      }
+    }
+  }
+}
+
+
+.content-card {
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}

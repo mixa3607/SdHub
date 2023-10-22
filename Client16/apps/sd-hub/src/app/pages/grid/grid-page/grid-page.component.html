@@ -1,0 +1,134 @@
+<div class="container" style="display: flex; flex-direction: row; align-content: center;">
+  <div>
+    <mat-card>
+      <ng-container *ngIf="loading$ | async; else loaded">
+        <h1>Grid loading...</h1>
+      </ng-container>
+      <ng-template #loaded>
+        <mat-card-content *ngIf="loadType == 'error'" class="content-card">
+          <h1>Can't load grid</h1>
+          <p>Maybe it has been deleted 🤔</p>
+          <p>Or never existed 🚧</p>
+          <p style="font-weight: bold">But you always can upload your for share the world 🌍
+            <button [routerLink]="['/upload']" mat-stroked-button>Upload</button>
+          </p>
+        </mat-card-content>
+        <mat-card-content *ngIf="loadType == 'ok'" class="content-card" style="display: flex; flex-direction: column">
+          <div class="header">
+            <div *ngIf="!editMode; else editName" style="font-size: 2rem">
+              Grid name:
+              <ng-container>
+                <span *ngIf="name; else nameNotSet">{{name}}</span>
+                <ng-template #nameNotSet><span style="font-style: italic">not set</span></ng-template>
+              </ng-container>
+            </div>
+            <ng-template #editName>
+              <mat-form-field appearance="outline"
+                              class="form-no-bottom-padding"
+                              style="font-size: medium; width: 100%">
+                <mat-label>Grid name</mat-label>
+                <input matInput [(ngModel)]="editData.name">
+              </mat-form-field>
+            </ng-template>
+
+            <div style="flex-grow: 1"></div>
+            <ng-container *ngIf="!editMode && showEditButton">
+              <button (click)="onEditClick()" mat-icon-button>
+                <mat-icon>edit</mat-icon>
+              </button>
+            </ng-container>
+            <ng-container *ngIf="editMode">
+              <button (click)="onSaveClick()" mat-raised-button>
+                <mat-icon>save</mat-icon>
+              </button>
+              <button (click)="onCancelClick()" mat-raised-button>
+                <mat-icon>cancel</mat-icon>
+              </button>
+              <button (click)="onDeleteClick()" mat-raised-button color="warn">
+                <mat-icon>delete_forever</mat-icon>
+              </button>
+            </ng-container>
+          </div>
+          <div class="album-card-container">
+            <img [src]="thumbnailUrl"
+                 class="thumbnail">
+            <button mat-icon-button
+                    class="open-image-viewer-btn"
+                    (click)="onOpenImageViewerClick()">
+              <mat-icon inline>fullscreen</mat-icon>
+            </button>
+          </div>
+
+          <div class="props-container">
+            <div class="prop-container">
+              <div class="prop-name">
+                <mat-icon inline>schedule</mat-icon>
+                Uploaded
+              </div>
+              <div class="prop-value-container">
+                <div class="prop-value">{{createdAt | date:'dd.MM.yyyy hh:mm'}}</div>
+              </div>
+            </div>
+            <div *ngIf="xTiles != -1 || yTiles != -1"
+                 class="prop-container">
+              <div class="prop-name">
+                <mat-icon inline>perm_media</mat-icon>
+                Dim
+              </div>
+              <div class="prop-value-container">
+                <div class="prop-value">
+                  {{xTiles}}
+                  x
+                  {{yTiles}}
+                </div>
+              </div>
+            </div>
+
+            <div class="prop-container">
+              <div class="prop-name">
+                <mat-icon inline>content_copy</mat-icon>
+                Share
+              </div>
+              <div class="prop-value-container">
+                <span (click)="onCopyShortLinkClick()" class="prop-value"
+                      style="cursor: pointer">{{shortUrl}}</span>
+              </div>
+            </div>
+
+            <div class="prop-container">
+              <div class="prop-name">
+                <mat-icon inline>content_copy</mat-icon>
+                By
+              </div>
+              <div class="prop-value-container">
+                <a [routerLink]="'/user/' + owner?.login"
+                   class="prop-value"
+                   style="cursor: pointer">{{owner?.login ?? ''}}</a>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="!editMode; else editDescription" class="props-container">
+            <div *ngIf="(description != '') || editMode"
+                 class="prop-container"
+                 style="display: flex; flex-direction: column; max-width: fit-content; min-width: -webkit-fill-available;">
+              <div class="prop-name">Description</div>
+              <div class="prop-value-container">
+                <span class="prop-value">{{description}}</span>
+              </div>
+            </div>
+          </div>
+          <ng-template #editDescription>
+            <mat-form-field appearance="outline"
+                            class="form-no-bottom-padding"
+                            style="font-size: medium">
+              <mat-label>Description</mat-label>
+              <textarea cdkTextareaAutosize [(ngModel)]="editData.description" matInput placeholder="Name"></textarea>
+            </mat-form-field>
+          </ng-template>
+
+        </mat-card-content>
+      </ng-template>
+    </mat-card>
+  </div>
+</div>

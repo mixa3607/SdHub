@@ -1,0 +1,28 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: .6rem;
+}
+
+.filters {
+  display: flex;
+  flex-direction: row;
+  gap: .6rem;
+}
+
+.search-result-placeholder-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+}
+
+.search-result-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: .8rem;
+}

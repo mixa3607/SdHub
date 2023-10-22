@@ -1,0 +1,77 @@
+<div fxFlex class="container">
+  <div class="filters">
+    <mat-card style="display: flex; flex-direction: column">
+      <mat-card-subtitle>Fields</mat-card-subtitle>
+      <mat-checkbox *ngFor="let cb of searchFieldsCheckboxes"
+                    [(ngModel)]="cb.checked">
+        {{cb.value}}
+      </mat-checkbox>
+    </mat-card>
+    <mat-card style="display: flex; flex-direction: column">
+      <mat-card-subtitle>SD ver</mat-card-subtitle>
+      <mat-checkbox *ngFor="let cb of sdVersionCheckboxes"
+                    [(ngModel)]="cb.checked">
+        {{cb.value}}
+      </mat-checkbox>
+    </mat-card>
+    <mat-card *ngIf="isAdmin" style="display: flex; flex-direction: column">
+      <mat-card-subtitle>Actions</mat-card-subtitle>
+      <button color="primary" mat-raised-button
+              #trigger="cdkOverlayOrigin"
+              (click)="addModelIsOpen = true"
+              cdkOverlayOrigin><mat-icon>add</mat-icon> Add</button>
+      <ng-template (backdropClick)="addModelIsOpen = false"
+                   (detach)="addModelIsOpen = false"
+                   [cdkConnectedOverlayHasBackdrop]="true"
+                   [cdkConnectedOverlayOpen]="addModelIsOpen"
+                   [cdkConnectedOverlayOrigin]="trigger"
+                   cdkConnectedOverlay
+                   cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop">
+        <mat-card>
+          <mat-card-content>
+            <mat-form-field class="form-no-bottom-padding"
+                            appearance="fill"
+                            style="flex-grow: 1">
+              <mat-label>Model name</mat-label>
+              <input matInput [(ngModel)]="addModelName">
+              <button (click)="onAddModelClick()" mat-icon-button matSuffix>
+                <mat-icon>add</mat-icon>
+              </button>
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
+      </ng-template>
+    </mat-card>
+  </div>
+
+  <div *ngIf="(searchResult?.total ?? 0) === 0 && !loading"
+       class="search-result-placeholder-container">
+    <div>Nothing found ＞︿＜</div>
+  </div>
+  <div *ngIf="loading"
+       class="search-result-placeholder-container">
+    <div style="display: flex; flex-direction: column">
+      <div>Search (_　_)。゜zｚＺ</div>
+      <mat-progress-bar mode="query"></mat-progress-bar>
+    </div>
+  </div>
+  <div *ngIf="(searchResult?.total ?? 0) > 0 && !loading"
+       #scrollTo
+       class="search-result-container">
+    <div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: .5rem">
+      <mat-card *ngFor="let item of searchResult?.items ?? []">
+        <mat-card-content>
+          <div style="font-size: 2rem; font-weight: bold;">{{item.name}}</div>
+          <div>SD: {{sdVerToStr(item.sdVersion)}}</div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div style="flex-grow: 1"></div>
+    <paginator [(page)]="page"
+               [totalPages]="totalPages"
+               (pageChange)="onPageChange()"></paginator>
+  </div>
+
+</div>
+
+

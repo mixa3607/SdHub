@@ -1,0 +1,23 @@
+<mat-card>
+  <mat-card-content style="display: flex; flex-direction: column; gap: .4rem">
+    <a
+       class="album-card-container"
+       [routerLink]="'/album/' + shortToken">
+      <img *ngIf="thumbUrl != ''; else noThumb" class="thumbnail" [attr.src]="thumbUrl">
+      <ng-template #noThumb>
+        <span style="font-style: italic; height: 10rem;">Preview not available</span>
+      </ng-template>
+    </a>
+    <mat-divider></mat-divider>
+    <div>
+      Name:
+      <ng-container>
+        <span *ngIf="name != ''; else nameNotSet">{{name}}</span>
+        <ng-template #nameNotSet><span style="font-style: italic">not set</span></ng-template>
+      </ng-container>
+    </div>
+    <div>User: <a [routerLink]="'/user/' + userName">{{userName}}</a></div>
+    <div>Uploaded: <span class="gray-value">{{uploadAt | date:'dd.MM.yyyy hh:mm'}}</span></div>
+    <div *ngIf="imagesCount != -1">Images: <span class="gray-value">{{imagesCount}}</span></div>
+  </mat-card-content>
+</mat-card>

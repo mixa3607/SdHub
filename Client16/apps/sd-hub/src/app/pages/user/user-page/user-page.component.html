@@ -1,0 +1,59 @@
+<div class="container" style="display: flex; flex-direction: row; align-content: center;">
+  <div style="display: flex; flex-direction: column; gap: .6rem; flex: 1;">
+    <mat-card>
+      <mat-card-content style="display: flex; flex-direction: column;">
+        <div style="display: flex; flex-direction: row">
+          <h1>User: {{user?.login}}</h1>
+          <div style="flex-grow: 1"></div>
+          <ng-container *ngIf="allowEdit">
+            <ng-container *ngIf="!editMode; else editBtns">
+              <button (click)="onEditClick()" mat-icon-button>
+                <mat-icon>edit</mat-icon>
+              </button>
+            </ng-container>
+            <ng-template #editBtns>
+              <button (click)="onSaveClick()" mat-icon-button>
+                <mat-icon>save</mat-icon>
+              </button>
+            </ng-template>
+          </ng-container>
+        </div>
+        <div *ngIf="!editMode; else editDescription" style="max-height: 15rem; overflow: auto;">
+          <markdown [data]="user?.about"></markdown>
+        </div>
+        <ng-template #editDescription>
+          <mat-form-field appearance="outline"
+                          class="form-no-bottom-padding"
+                          style="font-size: medium">
+            <mat-label>About</mat-label>
+            <textarea cdkTextareaAutosize [(ngModel)]="user!.about!" matInput placeholder="About"></textarea>
+          </mat-form-field>
+        </ng-template>
+
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+      <nav mat-tab-nav-bar mat-stretch-tabs [tabPanel]="tabPanel">
+        <ng-container *ngFor="let link of tabs">
+          <a mat-tab-link
+             [disabled]="!link.enable"
+             (click)="onTabChange(link.type)"
+             [active]="activeTab == link.type">{{link.name}}
+          </a>
+        </ng-container>
+
+      </nav>
+      <mat-tab-nav-panel #tabPanel></mat-tab-nav-panel>
+    </mat-card>
+
+
+    <user-images *ngIf="activeTab === 'image'"
+                 [userLogin]="user?.login ?? null"></user-images>
+    <user-albums *ngIf="activeTab === 'album'"
+                 [userLogin]="user?.login ?? null"
+                 [enableAddButton]="allowEdit"
+                 style="flex-grow: 1;"></user-albums>
+
+  </div>
+</div>

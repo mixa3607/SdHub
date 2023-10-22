@@ -1,0 +1,54 @@
+<div [formGroup]="form" class="form-container">
+  <mat-form-field appearance="fill">
+    <mat-label>Login</mat-label>
+    <input formControlName="login"
+           matInput
+           type="text">
+    <mat-error *ngIf="form.get('login')!.invalid">{{getErrorMessage(form.get('login')!)}}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Email</mat-label>
+    <input formControlName="email"
+           matInput
+           type="email">
+    <mat-error *ngIf="form.get('email')!.invalid">{{getErrorMessage(form.get('email')!)}}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Password</mat-label>
+    <input [type]="hidePassword ? 'password' : 'text'"
+           formControlName="password"
+           matInput
+           placeholder="Password">
+    <button (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hidePassword" mat-icon-button
+            matSuffix>
+      <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+    </button>
+    <mat-error *ngIf="form.get('password')!.invalid">{{getErrorMessage(form.get('password')!)}}</mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Password again</mat-label>
+    <input [type]="hidePassword ? 'password' : 'text'"
+           formControlName="confirmPassword"
+           matInput
+           placeholder="Confirm your password...">
+    <button (click)="hidePassword = !hidePassword"
+            [attr.aria-label]="'Hide password'"
+            [attr.aria-pressed]="hidePassword"
+            mat-icon-button
+            matSuffix>
+      <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+    </button>
+    <mat-error
+            *ngIf="form.get('confirmPassword')!.invalid">{{getErrorMessage(form.get('confirmPassword')!)}}</mat-error>
+  </mat-form-field>
+
+  <re-captcha *ngIf="!captchaDisabled"
+              formControlName="recaptcha"
+              style="align-self: center"></re-captcha>
+
+  <button [disabled]="form.invalid" color="primary" mat-raised-button (click)="onRegisterClick()">Register</button>
+</div>

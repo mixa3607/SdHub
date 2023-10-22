@@ -1,0 +1,128 @@
+<div class="navbar-container">
+  <mat-toolbar class="navbar" color="primary">
+    <button mat-icon-button *ngIf="sidenav?.mode === 'over'" (click)="toggleNav()">
+      <mat-icon *ngIf="!sidenav.opened">
+        menu
+      </mat-icon>
+      <mat-icon *ngIf="sidenav.opened">
+        close
+      </mat-icon>
+    </button>
+    <a [routerLink]="['/']" class="navbar-brand" matTooltip="Home">
+      <h1>
+        {{isMobile ? 'SdHub' : 'Stable Diffusion hub'}}
+      </h1>
+    </a>
+    <span class="navbar-spacer"></span>
+    <button #trigger="cdkOverlayOrigin"
+            (click)="userInfoIsOpen = true"
+            cdkOverlayOrigin
+            mat-button>
+      <mat-icon>{{isAnonymous ? 'no_accounts' : 'person'}}</mat-icon>
+      <span>
+        {{userName}}
+      </span>
+    </button>
+  </mat-toolbar>
+
+
+  <mat-sidenav-container class="navbar-sidenav-container" style="background: #e5e5e5; flex: 1">
+    <!-- Side nav -->
+    <mat-sidenav [opened]="true" [mode]="'side'" fixedTopGap="56" class="sidenav">
+
+      <mat-nav-list class="nav-list">
+        <mat-list-item [routerLink]="['/upload']" routerLinkActive="active">
+          <mat-icon matListItemIcon>upload_file</mat-icon>
+          <div matListItemTitle>Upload</div>
+        </mat-list-item>
+
+        <mat-list-item [routerLink]="['/gen/search']" routerLinkActive="active">
+          <mat-icon matListItemIcon>collections</mat-icon>
+          <div matListItemTitle>Images/Albums/...</div>
+        </mat-list-item>
+
+        <mat-list-item [routerLink]="['/bin/search']" routerLinkActive="active">
+          <mat-icon matListItemIcon>folder_zip</mat-icon>
+          <div matListItemTitle>Models/Vae/...</div>
+        </mat-list-item>
+
+        <mat-divider></mat-divider>
+
+        <mat-list-item [disabled]="isAnonymous" [routerLink]="['/user']" routerLinkActive="active">
+          <mat-icon matListItemIcon>person</mat-icon>
+          <div matListItemTitle>User</div>
+        </mat-list-item>
+
+        <div *ngIf="isAdmin" style="border-left: 5px #676767 solid; border-radius: 3px;">
+          <p (click)="isExpandAdmin = !isExpandAdmin">Admin</p>
+          <div *ngIf="isExpandAdmin">
+            <mat-list-item [routerLink]="['/admin/users']" routerLinkActive="active">
+              <mat-icon matListItemIcon>folder_zip</mat-icon>
+              <div matListItemTitle>Users</div>
+            </mat-list-item>
+            <mat-list-item [routerLink]="['/admin/files']" routerLinkActive="active">
+              <mat-icon matListItemIcon>folder_zip</mat-icon>
+              <div matListItemTitle>Files</div>
+            </mat-list-item>
+            <mat-list-item [routerLink]="['/admin/models']" routerLinkActive="active">
+              <mat-icon matListItemIcon>folder_zip</mat-icon>
+              <div matListItemTitle>Models</div>
+            </mat-list-item>
+          </div>
+        </div>
+
+        <div style="flex-grow: 1"></div>
+        <mat-divider></mat-divider>
+
+        <!--<a mat-list-item href="https://wiki.diffai.xyz" target="_blank">
+          <mat-icon matListItemIcon>auto_stories</mat-icon>
+          <p matListItemTitle>Wiki</p>
+        </a>-->
+
+        <mat-list-item id="push-bottom" [routerLink]="['/about']" routerLinkActive="active">
+          <mat-icon matListItemIcon>info</mat-icon>
+          <div matListItemTitle>About</div>
+        </mat-list-item>
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <!-- Main content -->
+    <mat-sidenav-content class="sidenav-content">
+
+
+      <router-outlet></router-outlet>
+
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
+
+<ng-template (backdropClick)="userInfoIsOpen = false"
+             (detach)="userInfoIsOpen = false"
+             [cdkConnectedOverlayHasBackdrop]="true"
+             [cdkConnectedOverlayOpen]="userInfoIsOpen"
+             [cdkConnectedOverlayOrigin]="trigger"
+             cdkConnectedOverlay
+             cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop">
+  <div class="user-info-overlay">
+    <ng-container *ngIf="isAnonymous; else authorized">
+      <button [routerLink]="'/auth/login'" mat-raised-button>
+        <mat-icon>login</mat-icon>
+        Log in
+      </button>
+      <button *ngIf="registrationEnabled" [routerLink]="'/auth/register'" mat-raised-button>
+        <mat-icon>person_add</mat-icon>
+        Register
+      </button>
+    </ng-container>
+    <ng-template #authorized>
+      <div style="border-radius: .3rem; width: 100%; background-color: white;">
+        <div style="margin: .3rem;">Login: {{userName}}</div>
+      </div>
+      <mat-divider></mat-divider>
+      <button (click)="onLogoutClick()" mat-raised-button>
+        <mat-icon>logout</mat-icon>
+        Log out
+      </button>
+    </ng-template>
+  </div>
+</ng-template>

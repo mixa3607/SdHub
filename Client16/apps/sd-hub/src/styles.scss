@@ -1,0 +1,37 @@
+@import 'ngx-toastr/toastr';
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-size: 14px;
+}
+
+a {
+  text-decoration: none;
+  color: dodgerblue;
+}
+
+mat-form-field.form-no-bottom-padding {
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+}
+
+.md-fill-space {
+  .mat-dialog-container {
+    padding: 0;
+
+    .mat-dialog-content {
+
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+    }
+  }
+}

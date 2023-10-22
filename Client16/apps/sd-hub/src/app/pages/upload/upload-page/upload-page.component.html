@@ -1,0 +1,19 @@
+<div class="container" style="display: flex; flex-direction: row; align-content: center;">
+  <div style="display: flex; flex-direction: column; gap: 1rem; flex: 1;">
+    <mat-card>
+      <nav mat-tab-nav-bar mat-stretch-tabs [tabPanel]="tabPanel">
+        <ng-container *ngFor="let link of tabs">
+          <a mat-tab-link
+             [disabled]="!link.enable"
+             (click)="onTabChange(link.type)"
+             [active]="activeTab == link.type">{{link.name}}
+          </a>
+        </ng-container>
+      </nav>
+      <mat-tab-nav-panel #tabPanel></mat-tab-nav-panel>
+    </mat-card>
+
+    <upload-image *ngIf="activeTab === 'image'"></upload-image>
+    <upload-grid *ngIf="activeTab === 'grid'"></upload-grid>
+  </div>
+</div>

@@ -1,0 +1,22 @@
+<div style="display: flex; flex-direction: column; gap: .3rem">
+  <div style="font-weight: bold">Name:
+    <span *ngIf="tileInfo?.name != ''">{{tileInfo?.name ?? ''}}</span>
+    <span *ngIf="tileInfo?.name == ''"
+          style="font-style: italic">not set</span>
+  </div>
+  <div *ngFor="let prop of tileInfo?.props ?? []" class="prop-container">
+    <div>{{prop.name}}</div>
+    <div class="prop-value"><code>{{prop.value}}</code></div>
+  </div>
+  <div style="display: flex; flex-direction: row; gap:.3rem">
+    <button mat-stroked-button
+            style="flex-grow: 1"
+            [routerLink]="['/i', tileInfo?.shortCode!]">
+      open
+    </button>
+    <button mat-stroked-button
+            (click)="goToLink(tileInfo?.shortUrl!)">
+      <mat-icon>open_in_new</mat-icon>
+    </button>
+  </div>
+</div>

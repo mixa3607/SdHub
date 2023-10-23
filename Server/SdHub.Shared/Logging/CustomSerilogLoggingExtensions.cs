@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using Serilog;
 using Serilog.Exceptions;
 using Serilog.Settings.Configuration;
+using Serilog.Sinks.Elasticsearch;
 
 namespace SdHub.Shared.Logging;
 
@@ -48,6 +49,7 @@ public static class CustomSerilogLoggingExtensions
 
             var configurationAssemblies = new Assembly[]
             {
+                typeof(LoggerConfigurationElasticsearchExtensions).Assembly,
                 typeof(ConsoleLoggerConfigurationExtensions).Assembly,
                 typeof(FileLoggerConfigurationExtensions).Assembly,
             };

@@ -7,7 +7,7 @@
   </div>
   <mat-card-content style="display: flex; flex-direction: column; gap: .4rem">
     <a class="card-container">
-      <a *ngIf="compressedUrl !== ''; else noThumb" [href]="compressedUrl">
+      <a *ngIf="compressedUrl !== ''; else noThumb">
         <a [routerLink]="'/i/' + shortToken">
           <img class="thumbnail" [src]="compressedUrl">
         </a>

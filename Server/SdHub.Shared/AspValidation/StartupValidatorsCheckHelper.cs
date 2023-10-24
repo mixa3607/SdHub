@@ -27,11 +27,11 @@ public class StartupValidatorsCheckHelper
     /// Check that process run in required tz. Ignored in Development
     /// </summary>
     /// <param name="services"></param>
-    /// <param name="requiredOffset">If null used +3</param>
+    /// <param name="requiredOffset">If null used +0</param>
     public static IServiceProvider CheckTz(IServiceProvider services, TimeSpan? requiredOffset = null)
     {
         var logger = services.GetRequiredService<ILogger<StartupValidatorsCheckHelper>>();
-        requiredOffset ??= TimeSpan.FromHours(3);
+        requiredOffset ??= TimeSpan.FromHours(0);
         var tz = TimeZoneInfo.Local;
 
         if (tz.BaseUtcOffset == requiredOffset)

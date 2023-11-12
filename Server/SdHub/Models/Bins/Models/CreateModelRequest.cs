@@ -5,7 +5,7 @@ namespace SdHub.Models.Bins;
 
 public class CreateModelRequest
 {
-    public string? Name { get; set; }
+    public required string Name { get; set; }
 
     public class Validator : AbstractValidator<CreateModelRequest>
     {

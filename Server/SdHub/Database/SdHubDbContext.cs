@@ -4,8 +4,9 @@ using SdHub.Database.Entities.Bins;
 using SdHub.Database.Entities.Files;
 using SdHub.Database.Entities.Grids;
 using SdHub.Database.Entities.Images;
-using SdHub.Database.Entities.Tags;
 using SdHub.Database.Entities.Users;
+using System;
+using System.Linq;
 
 namespace SdHub.Database;
 
@@ -13,13 +14,6 @@ public class SdHubDbContext : DbContext
 {
     public const string SchemaName = "public";
     public const string HistoryTable = "__EFMigrationsHistory";
-
-    //tags
-    public DbSet<TagEntity> Tags { get; set; } = null!;
-    public DbSet<ModelTagEntity> ModelTags { get; set; } = null!;
-    public DbSet<VaeTagEntity> VaeTags { get; set; } = null!;
-    public DbSet<HypernetTagEntity> HypernetTags { get; set; } = null!;
-    public DbSet<EmbeddingTagEntity> EmbeddingTags { get; set; } = null!;
 
     //files
     public DbSet<FileStorageEntity> FileStorages { get; set; } = null!;
@@ -42,17 +36,13 @@ public class SdHubDbContext : DbContext
 
     //bins
     public DbSet<ModelEntity> Models { get; set; } = null!;
-    public DbSet<ModelVersionEntity> ModelVersions { get; set; } = null!;
-    public DbSet<ModelVersionFileEntity> ModelVersionFiles { get; set; } = null!;
+    public DbSet<ModelFileEntity> ModelFiles { get; set; } = null!;
+
     public DbSet<HypernetEntity> Hypernets { get; set; } = null!;
-    public DbSet<HypernetVersionEntity> HypernetVersions { get; set; } = null!;
     public DbSet<VaeEntity> Vaes { get; set; } = null!;
-    public DbSet<VaeVersionEntity> VaeVersions { get; set; } = null!;
     public DbSet<EmbeddingEntity> Embeddings { get; set; } = null!;
-    public DbSet<EmbeddingVersionEntity> EmbeddingVersions { get; set; } = null!;
 
     public DbSet<GenerationSampleEntity> GenerationSamples { get; set; } = null!;
-    public DbSet<ImageUploaderEntity> ImageUploaders { get; set; } = null!;
     public DbSet<UserPlanEntity> UserPlans { get; set; } = null!;
 
     //auth
@@ -71,4 +61,20 @@ public class SdHubDbContext : DbContext
         modelBuilder.HasDefaultSchema(SchemaName);
         modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
     }
+}
+public static class EfQueryExtensions
+{
+    public static IQueryable<T> IsDeleted<T>(this IQueryable<T> query, bool? isDeleted) where T : IEntityWithDeletingFlag
+    {
+        return isDeleted switch
+        {
+            null => query,
+            true => query.Where(x => x.DeletedAt != null),
+            false => query.Where(x => x.DeletedAt == null),
+        };
+    }
+}
+public interface IEntityWithDeletingFlag
+{
+    DateTimeOffset? DeletedAt { get; }
 }

@@ -6,7 +6,7 @@ using SdHub.Database.Entities.Users;
 
 namespace SdHub.Database.Entities.Grids;
 
-public class GridEntity
+public class GridEntity : IEntityWithDeletingFlag
 {
     public long Id { get; set; }
 

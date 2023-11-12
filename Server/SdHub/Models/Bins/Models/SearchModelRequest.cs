@@ -9,7 +9,6 @@ public class SearchModelRequest
     public string? SearchText { get; set; }
 
     public IReadOnlyList<SearchModelInFieldType> Fields { get; set; } = Array.Empty<SearchModelInFieldType>();
-    public IReadOnlyList<SdVersion> SdVersions { get; set; } = Array.Empty<SdVersion>();
 
     public int Skip { get; set; }
     public int Take { get; set; } = 20;

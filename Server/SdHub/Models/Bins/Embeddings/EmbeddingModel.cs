@@ -8,7 +8,6 @@ public class EmbeddingModel
     public string? Name { get; set; }
     public string? About { get; set; }
     public string? Trigger { get; set; }
-    public SdVersion SdVersion { get; set; }
 
     public IReadOnlyList<EmbeddingVersionModel>? Versions { get; set; }
 }

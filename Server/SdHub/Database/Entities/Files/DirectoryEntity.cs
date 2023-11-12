@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SdHub.Database.Entities.Files;
+﻿namespace SdHub.Database.Entities.Files;
 
 public class DirectoryEntity
 {
@@ -11,6 +9,4 @@ public class DirectoryEntity
     public string? StorageName { get; set; }
     public FileStorageEntity? Storage { get; set; }
     public string? PathOnStorage { get; set; }
-
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 }

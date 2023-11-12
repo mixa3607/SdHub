@@ -8,16 +8,12 @@ using SdHub.Database.Entities.Users;
 
 namespace SdHub.Database.Entities.Images;
 
-
-public class ImageEntity
+public class ImageEntity : IEntityWithDeletingFlag
 {
     public long Id { get; set; }
-    
+
     public long OwnerId { get; set; }
     public UserEntity? Owner { get; set; }
-
-    public long UploaderId { get; set; }
-    public ImageUploaderEntity? Uploader { get; set; }
 
     public long OriginalImageId { get; set; }
     public FileEntity? OriginalImage { get; set; }
@@ -31,19 +27,17 @@ public class ImageEntity
     /// <summary>
     /// base58 code
     /// </summary>
-    public string? ShortToken { get; set; }
-
-    public string? ManageToken { get; set; }
+    public string ShortToken { get; set; } = null!;
 
     public DateTimeOffset? DeletedAt { get; set; }
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset CreatedAt { get; set; }
 
     public string? Name { get; set; }
     public string? Description { get; set; }
 
     public ImageParsedMetadataEntity? ParsedMetadata { get; set; }
     public ImageRawMetadataEntity? RawMetadata { get; set; }
-    
+
     public List<AlbumImageEntity>? AlbumImages { get; set; }
     public GridImageEntity? GridImage { get; set; }
     public List<GenerationSampleEntity>? GenSamples { get; set; }

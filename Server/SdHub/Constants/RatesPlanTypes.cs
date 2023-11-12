@@ -8,7 +8,6 @@ public static class RatesPlanTypes
 {
     public const string AdminPlan = nameof(AdminPlan);
     public const string RegUserPlan = nameof(RegUserPlan);
-    public const string AnonUserPlan = nameof(AnonUserPlan);
 
     private static string[]? _all;
 

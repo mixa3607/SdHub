@@ -30,7 +30,7 @@ public class BinUpdaterRunner : IBinUpdaterRunnerV1
 
     public async Task UpdateModelVersionFilesAsync(long modelVersionId, bool force, CancellationToken ct = default)
     {
-        var modelVersion = await _db.ModelVersions
+        var modelVersion = await _db.Models
             .Include(x => x.Files!)
             .ThenInclude(x => x.File!)
             .FirstOrDefaultAsync(x => x.Id == modelVersionId, ct);
@@ -51,7 +51,7 @@ public class BinUpdaterRunner : IBinUpdaterRunnerV1
         await _db.SaveChangesAsync(CancellationToken.None);
     }
 
-    public async Task UpdateHashV1Async(ModelVersionFileEntity file, CancellationToken ct = default)
+    public async Task UpdateHashV1Async(ModelFileEntity file, CancellationToken ct = default)
     {
         var model = _mapper.Map<ModelVersionFileModel>(file);
         if (model.File == null)

@@ -6,8 +6,9 @@ namespace SdHub.Database.Extensions;
 public static class DbImageExtensions
 {
     public static IQueryable<ImageEntity> ApplyFilter(this IQueryable<ImageEntity> q, string? shortCode = null,
-        bool? anonymousUser = false, long? ownerId = null, bool? deleted = false, bool? userDeleted = false, bool? gridDeleted = null,
-        bool? inGrid = null) {
+        long? ownerId = null, bool? deleted = null, bool? userDeleted = false, bool? gridDeleted = null,
+        bool? inGrid = null)
+    {
         if (shortCode != null)
             q = q.Where(x => x.ShortToken == shortCode);
 
@@ -28,9 +29,6 @@ public static class DbImageExtensions
 
         if (ownerId != null)
             q = q.Where(x => x.OwnerId == ownerId);
-
-        if (anonymousUser != null)
-            q = q.Where(x => x.Owner!.IsAnonymous == anonymousUser);
 
         if (userDeleted == false)
             q = q.Where(x => x.Owner!.DeletedAt == null);

@@ -1,6 +1,6 @@
 ﻿namespace SdHub.Models.Bins;
 
-public enum ModelVersionFileType : byte
+public enum ModelFileType : byte
 {
     Unknown = 0,
 

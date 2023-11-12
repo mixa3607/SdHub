@@ -166,8 +166,6 @@ public class UploadGridController : ControllerBase
         if (_appInfo.DisableGridUploadAuth)
             ModelState.AddError("Uploading disabled by administrator").ThrowIfNotValid();
 
-        var uploader = await GetUploaderAsync(ct);
-
         var jwtUser = _userFromToken.Get();
         var user = await _db.Users
             .Include(x => x.Plan)
@@ -190,7 +188,7 @@ public class UploadGridController : ControllerBase
             .Where(x => x.CreatedAt > DateTimeOffset.UtcNow.AddHours(-1))
             .CountAsync(ct);
 
-        return await UploadAsync(req, uploadedLastHour, user, uploader, albumId, ct);
+        return await UploadAsync(req, uploadedLastHour, user, albumId, ct);
     }
 
     private class ProcessingFile
@@ -212,8 +210,7 @@ public class UploadGridController : ControllerBase
     }
 
     // TODO когда нибудь я разберу эту махину, но не сегодня
-    private async Task<UploadGridResponse> UploadAsync(UploadGridRequest req, int uploadedLastHour, UserEntity user,
-        ImageUploaderEntity uploader, long albumId, CancellationToken ct = default)
+    private async Task<UploadGridResponse> UploadAsync(UploadGridRequest req, int uploadedLastHour, UserEntity user, long albumId, CancellationToken ct = default)
     {
         var resp = new UploadGridResponse();
 
@@ -248,10 +245,10 @@ public class UploadGridController : ControllerBase
                     count++;
                 }
 
-                if (count > user.Plan!.ImagesPerGrid)
+                if (count > user.Plan!.MaxImagesPerGrid)
                 {
                     resp.Uploaded = false;
-                    resp.Reason = $"Max images per grid is {user.Plan!.ImagesPerGrid}";
+                    resp.Reason = $"Max images per grid is {user.Plan!.MaxImagesPerGrid}";
                     return resp;
                 }
 
@@ -369,8 +366,6 @@ public class UploadGridController : ControllerBase
                     Owner = user,
                     DeletedAt = null,
                     ShortToken = GenerateShortToken(),
-                    ManageToken = "",
-                    UploaderId = uploader.Id,
                     RawMetadata = new ImageRawMetadataEntity()
                     {
                         Directories = file.Metadata.RawDirectories
@@ -421,24 +416,6 @@ public class UploadGridController : ControllerBase
             Uploaded = true,
             Grid = _mapper.Map<GridModel>(grid)
         };
-    }
-
-
-    private async Task<ImageUploaderEntity> GetUploaderAsync(CancellationToken ct = default)
-    {
-        var ip = HttpContext.Connection.RemoteIpAddress!.ToString();
-        var uploader = await _db.ImageUploaders.FirstOrDefaultAsync(x => x.IpAddress == ip, ct);
-        if (uploader == null)
-        {
-            uploader = new ImageUploaderEntity()
-            {
-                IpAddress = ip
-            };
-            _db.ImageUploaders.Add(uploader);
-            await _db.SaveChangesAsync(CancellationToken.None);
-        }
-
-        return uploader;
     }
 
     private string GenerateShortToken()

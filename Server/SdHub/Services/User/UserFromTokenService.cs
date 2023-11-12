@@ -6,7 +6,6 @@ using System.Linq;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
-using Microsoft.IdentityModel.Tokens;
 using SdHub.ApiTokenAuth;
 using SdHub.Models;
 using SdHub.Constants;
@@ -52,27 +51,7 @@ public class UserFromTokenService : IUserFromTokenService
             return null;
 
         var model = GetTokenUser(user);
-        if (model != null)
-        {
-            model.JwtToken = _contextAccessor.HttpContext?.GetTokenAsync("access_token")
-                .Result;
-        }
-
         _cachedJwt = model;
-        return model;
-    }
-
-    public UserFromToken? GetTokenUser(string jwt, TokenValidationParameters validationParams)
-    {
-        var handler = new JwtSecurityTokenHandler();
-        var user = handler.ValidateToken(jwt, validationParams, out var secToken);
-
-        var model = GetTokenUser(user);
-        if (model != null)
-        {
-            model.JwtToken = jwt;
-        }
-
         return model;
     }
 
@@ -88,7 +67,6 @@ public class UserFromTokenService : IUserFromTokenService
         {
             Roles = user.FindAll(ClaimTypes.Role).Select(x => x.Value).ToArray(),
             Email = user.FindFirst(ClaimTypes.Email)?.Value,
-            Phone = user.FindFirst(ClaimTypes.MobilePhone)?.Value,
             Login = user.FindFirst(CustomClaimTypes.Login)?.Value,
             Guid = Guid.Parse(user.FindFirst(CustomClaimTypes.UserGuid)!.Value),
         };

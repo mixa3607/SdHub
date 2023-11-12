@@ -2,7 +2,7 @@
 
 public class ResetPasswordRequest
 {
-    public string? Login { get; set; }
-    public string? Code { get; set; }
-    public string? NewPassword { get; set; }
+    public required string Login { get; set; }
+    public required string Code { get; set; }
+    public required string NewPassword { get; set; }
 }

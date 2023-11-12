@@ -5,10 +5,11 @@ namespace SdHub.Models.User;
 
 public class SendResetPasswordEmailRequest
 {
-    public string? Login { get; set; }
+    public required string Login { get; set; }
 
     public CaptchaType CaptchaType { get; set; }
     public string? CaptchaCode { get; set; }
+
     public class Validator : AbstractValidator<SendResetPasswordEmailRequest>
     {
         public Validator()

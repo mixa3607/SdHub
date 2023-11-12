@@ -1,7 +1,4 @@
-﻿using SdHub.Database.Entities.Tags;
-using SdHub.Models.Bins;
-using System.Collections.Generic;
-
+﻿using SdHub.Database.Entities.Files;
 namespace SdHub.Database.Entities.Bins;
 
 public class HypernetEntity
@@ -9,8 +6,7 @@ public class HypernetEntity
     public long Id { get; set; }
     public string? Name { get; set; }
     public string? About { get; set; }
-    public SdVersion SdVersion { get; set; }
 
-    public List<HypernetVersionEntity>? Versions { get; set; }
-    public List<HypernetTagEntity>? HypernetTags { get; set; }
+    public long FileId { get; set; }
+    public FileEntity? File { get; set; }
 }

@@ -2,5 +2,6 @@
 
 public class ConfirmEmailResponse
 {
-    public bool Success { get; set; }
+    public required UserModel User { get; set; }
+    public required bool Success { get; set; }
 }

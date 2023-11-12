@@ -2,5 +2,6 @@
 
 public class RegisterResponse
 {
-    public string? SendToEmail { get; set; }
+    public required UserModel User { get; set; }
+    public required string SendToEmail { get; set; }
 }

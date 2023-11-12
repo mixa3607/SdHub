@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace SdHub.Services.FileProc.Metadata;
 
 public class ImageMetadataDirectory
 {
-    public string? Type { get; set; }
-    public IReadOnlyList<ImageMetadataTag> Tags { get; set; } = Array.Empty<ImageMetadataTag>();
+    public required string Type { get; set; }
+    public required IReadOnlyList<ImageMetadataTag> Tags { get; set; }
 
     public override string ToString()
     {

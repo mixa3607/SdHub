@@ -56,7 +56,6 @@ public class SdHubDbSeeder : IDbSeeder<SdHubDbContext>
         //plans
         var adminPlan = await db.UserPlans.FirstOrDefaultAsync(x => x.Name == RatesPlanTypes.AdminPlan, ct);
         
-        var anonPlan = await db.UserPlans.FirstOrDefaultAsync(x => x.Name == RatesPlanTypes.AnonUserPlan, ct);
         var regUserPlan = await db.UserPlans.FirstOrDefaultAsync(x => x.Name == RatesPlanTypes.RegUserPlan, ct);
 
         if (adminPlan == null || _options.OverwriteUserPlans)
@@ -71,27 +70,10 @@ public class SdHubDbSeeder : IDbSeeder<SdHubDbContext>
             adminPlan.OnlyWithMetadata = false;
             adminPlan.ImagesPerHour = 5000;
             adminPlan.MaxImageSizeUpload = 15 * 1024;
-            adminPlan.ImagesPerUpload = 100;
+            adminPlan.MaxImagesPerUpload = 100;
             adminPlan.GridsPerHour = 200;
-            adminPlan.ImagesPerGrid = 25000;
+            adminPlan.MaxImagesPerGrid = 25000;
             adminPlan.MaxGridArchiveSizeUpload = 5L * 1024 * 1024; //5gb
-        }
-
-        if (anonPlan == null || _options.OverwriteUserPlans)
-        {
-            if (anonPlan == null)
-            {
-                anonPlan = new UserPlanEntity();
-                db.UserPlans.Add(anonPlan);
-            }
-            anonPlan.Name = RatesPlanTypes.AnonUserPlan;
-            anonPlan.OnlyWithMetadata = true;
-            anonPlan.ImagesPerHour = 50;
-            anonPlan.MaxImageSizeUpload = 3 * 1024;
-            anonPlan.ImagesPerUpload = 10;
-            anonPlan.GridsPerHour = 0;
-            anonPlan.ImagesPerGrid = 0;
-            anonPlan.MaxGridArchiveSizeUpload = 0;
         }
 
         if (regUserPlan == null || _options.OverwriteUserPlans)
@@ -106,9 +88,9 @@ public class SdHubDbSeeder : IDbSeeder<SdHubDbContext>
             regUserPlan.OnlyWithMetadata = false;
             regUserPlan.ImagesPerHour = 500;
             regUserPlan.MaxImageSizeUpload = 10 * 1024;
-            regUserPlan.ImagesPerUpload = 20;
+            regUserPlan.MaxImagesPerUpload = 20;
             regUserPlan.GridsPerHour = 20;
-            regUserPlan.ImagesPerGrid = 2500;
+            regUserPlan.MaxImagesPerGrid = 2500;
             regUserPlan.MaxGridArchiveSizeUpload = 1L * 1024 * 1024; //1gb
         }
         await db.SaveChangesAsync(CancellationToken.None);
@@ -125,20 +107,6 @@ public class SdHubDbSeeder : IDbSeeder<SdHubDbContext>
                 Plan = await db.UserPlans.FirstAsync(x => x.Name == RatesPlanTypes.AdminPlan, ct),
                 Email = "admin@test.com",
                 EmailConfirmedAt = DateTimeOffset.UtcNow,
-            };
-            db.Users.Add(user);
-            await db.SaveChangesAsync(CancellationToken.None);
-        }
-        if (await db.Users.AllAsync(x => !x.IsAnonymous, ct))
-        {
-            _logger.LogInformation("Create anon user");
-            var user = new UserEntity()
-            {
-                Roles = new List<string>() { UserRoleTypes.User },
-                Login = "Anon",
-                PasswordHash = "",
-                Plan = await db.UserPlans.FirstAsync(x => x.Name == RatesPlanTypes.AnonUserPlan, ct),
-                IsAnonymous = true
             };
             db.Users.Add(user);
             await db.SaveChangesAsync(CancellationToken.None);

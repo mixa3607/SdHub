@@ -111,7 +111,7 @@ public class GridController : ControllerBase
 
         return new PaginationResponse<GridModel>()
         {
-            Items = gridModels,
+            Values = gridModels,
             Total = total,
             Skip = req.Skip,
             Take = req.Take,

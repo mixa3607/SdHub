@@ -5,5 +5,5 @@ public enum SearchModelInFieldType : byte
     Name,
     FullHash,
     V1Hash,
-    KnownNames
+    V2Hash,
 }

@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using SdHub.ApiTokenAuth;
 using SdHub.Options;
 using SdHub.RequestFeatures;
+using SdHub.Services.Refresh;
 using SdHub.Services.Tokens;
 
 namespace SdHub.Extensions;

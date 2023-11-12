@@ -1,17 +1,13 @@
 ﻿using System.Collections.Generic;
-using SdHub.Database.Entities.Tags;
-using SdHub.Models.Bins;
 
 namespace SdHub.Database.Entities.Bins;
 
 public class ModelEntity
 {
     public long Id { get; set; }
-    public string? Name { get; set; }
+    public string Name { get; set; } = null!;
     public string? About { get; set; }
-    public SdVersion SdVersion { get; set; }
-    public string? Author { get; set; }
 
-    public List<ModelVersionEntity>? Versions { get; set; }
-    public List<ModelTagEntity>? ModelTags { get; set; }
+    public List<GenerationSampleEntity>? Samples { get; set; }
+    public List<ModelFileEntity>? Files { get; set; }
 }

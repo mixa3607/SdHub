@@ -82,7 +82,7 @@ public class FilesController : ControllerBase
 
         return new PaginationResponse<FileModel>()
         {
-            Items = fileModels,
+            Values = fileModels,
             Total = total,
             Skip = req.Skip,
             Take = req.Take,

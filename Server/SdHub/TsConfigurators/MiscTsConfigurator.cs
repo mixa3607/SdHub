@@ -40,7 +40,6 @@ public class MiscTsConfigurator : ITsConfigurator
         {
             typeof(AudienceType),
             typeof(CaptchaType),
-            typeof(SdVersion),
         }, c => c.ExportTo(outFile));
         builder.ExportAsClasses(new Type[]
             {

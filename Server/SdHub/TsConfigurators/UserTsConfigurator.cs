@@ -25,8 +25,6 @@ public class UserTsConfigurator : ITsConfigurator
                 typeof(LoginResponse),
                 typeof(RegisterRequest),
                 typeof(RegisterResponse),
-                typeof(GetMeRequest),
-                typeof(GetMeResponse),
                 typeof(SendEmailConfirmationEmailRequest),
                 typeof(SendEmailConfirmationEmailResponse),
                 typeof(EditUserRequest),

@@ -5,14 +5,14 @@ using SdHub.Database.Entities.Users;
 
 namespace SdHub.Database.Entities.Albums;
 
-public class AlbumEntity
+public class AlbumEntity : IEntityWithDeletingFlag
 {
     public long Id { get; set; }
 
     public string? ShortToken { get; set; }
 
     public DateTimeOffset? DeletedAt { get; set; }
-    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset CreatedAt { get; set; }
 
     public string? Name { get; set; }
     public string? Description { get; set; }

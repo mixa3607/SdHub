@@ -13,7 +13,6 @@ using SdHub.Constants;
 using SdHub.Database;
 using SdHub.Database.Entities.Images;
 using SdHub.Database.Extensions;
-using SdHub.Extensions;
 using SdHub.Models;
 using SdHub.Models.Image;
 using SdHub.Services.User;
@@ -40,8 +39,6 @@ public class ImageController : ControllerBase
     [AllowAnonymous]
     public async Task<PaginationResponse<ImageModel>> Search([FromBody] SearchImageRequest req, CancellationToken ct = default)
     {
-        ModelState.ThrowIfNotValid();
-
         var emptyQuery = _db.Images.AsQueryable();
         var query = emptyQuery;
 
@@ -100,8 +97,6 @@ public class ImageController : ControllerBase
             query = query.Where(x => x.AlbumImages!.Any(y => y.Album!.ShortToken == req.Album));
         }
 
-        //var str = query.ToQueryString();
-
         if (req.Softwares.Count > 0)
         {
             var sw = req.Softwares.Where(x => x != SoftwareGeneratedTypes.Unknown).ToArray();
@@ -141,8 +136,7 @@ public class ImageController : ControllerBase
             .Include(x => x.ThumbImage)
             .Include(x => x.Owner);
 
-        query = query.ApplyFilter(anonymousUser: req.OnlyFromRegisteredUsers ? false : null,
-            inGrid: req.AlsoFromGrids ? null : false);
+        query = query.ApplyFilter(inGrid: req.AlsoFromGrids ? null : false);
 
         var total = await query.CountAsync(ct);
         var images = await query.Skip(req.Skip).Take(req.Take).ToArrayAsync(ct);
@@ -151,32 +145,10 @@ public class ImageController : ControllerBase
 
         return new PaginationResponse<ImageModel>()
         {
-            Items = imageModels,
+            Values = imageModels,
             Total = total,
             Skip = req.Skip,
             Take = req.Take,
-        };
-    }
-
-    [HttpGet("[action]")]
-    [AllowAnonymous]
-    public async Task<CheckManageTokenResponse> CheckManageToken([FromQuery] CheckManageTokenRequest req,
-        CancellationToken ct = default)
-    {
-        ModelState.ThrowIfNotValid();
-
-        var imageEnt = await _db.Images
-            .Include(x => x.Owner)
-            .ApplyFilter(shortCode: req.ShortToken!.Trim())
-            .FirstOrDefaultAsync(ct);
-        if (imageEnt == null)
-            ModelState.AddError(ModelStateErrors.ImageNotFound).ThrowIfNotValid();
-
-        return new CheckManageTokenResponse()
-        {
-            IsValid = imageEnt!.Owner!.IsAnonymous && imageEnt.ManageToken == req.ManageToken,
-            ManageToken = req.ManageToken,
-            ShortToken = req.ShortToken
         };
     }
 
@@ -192,7 +164,7 @@ public class ImageController : ControllerBase
             .Include(x => x.CompressedImage)
             .Include(x => x.ThumbImage)
             .Include(x => x.Owner)
-            .ApplyFilter(shortCode: req.ShortToken!.Trim(), anonymousUser: null)
+            .ApplyFilter(shortCode: req.ShortToken!.Trim())
             .FirstOrDefaultAsync(ct);
         if (imageEnt == null)
             ModelState.AddError(ModelStateErrors.ImageNotFound).ThrowIfNotValid();
@@ -204,11 +176,8 @@ public class ImageController : ControllerBase
     }
 
     [HttpPost("[action]")]
-    [AllowAnonymous]
     public async Task<DeleteImageResponse> Delete([FromBody] DeleteImageRequest req, CancellationToken ct = default)
     {
-        ModelState.ThrowIfNotValid();
-
         var userJwt = _fromTokenService.Get();
 
         var imageEnt = await _db.Images
@@ -221,10 +190,10 @@ public class ImageController : ControllerBase
             ModelState.AddError(ModelStateErrors.ImageNotFound).ThrowIfNotValid();
         if (imageEnt!.GridImage != null) 
             ModelState.AddError(ModelStateErrors.ImageIsPartOfGrid).ThrowIfNotValid();
-        if (!CanManage(imageEnt!, userJwt, req.ManageToken, ModelState))
+        if (imageEnt.Owner!.Guid != userJwt!.Guid)
             ModelState.Throw();
 
-        imageEnt!.DeletedAt = DateTimeOffset.UtcNow;
+        imageEnt.DeletedAt = DateTimeOffset.UtcNow;
         await _db.SaveChangesAsync(CancellationToken.None);
         return new DeleteImageResponse()
         {
@@ -233,12 +202,9 @@ public class ImageController : ControllerBase
     }
 
     [HttpPost("[action]")]
-    [AllowAnonymous]
     public async Task<EditImageResponse> Edit([FromBody] EditImageRequest req, CancellationToken ct = default)
     {
-        ModelState.ThrowIfNotValid();
-
-        var userJwt = _fromTokenService.Get();
+        var userJwt = _fromTokenService.Get()!;
 
         var imageEnt = await _db.Images
             .Include(x => x.ParsedMetadata).ThenInclude(x => x!.Tags)
@@ -252,7 +218,7 @@ public class ImageController : ControllerBase
         if (imageEnt == null)
             ModelState.AddError(ModelStateErrors.ImageNotFound).ThrowIfNotValid();
 
-        if (!CanManage(imageEnt!, userJwt, req.ManageToken, ModelState))
+        if (imageEnt!.Owner!.Guid != userJwt!.Guid)
             ModelState.Throw();
 
         if (req.Image!.Description != null)
@@ -266,29 +232,5 @@ public class ImageController : ControllerBase
             Success = true,
             Image = _mapper.Map<ImageModel>(imageEnt)
         };
-    }
-
-    private bool CanManage(ImageEntity image, UserModel? user, string? manageCode,
-        ModelStateDictionary? modelState = null)
-    {
-        if (image.Owner!.IsAnonymous && image.ManageToken != manageCode)
-        {
-            modelState?.AddError("Manage token is wrong for image");
-            return false;
-        }
-
-        if (!image.Owner!.IsAnonymous && user == null)
-        {
-            modelState?.AddError("Image uploaded by registered user. Please login");
-            return false;
-        }
-
-        if (!image.Owner!.IsAnonymous && user?.Guid != image.Owner.Guid)
-        {
-            modelState?.AddError("Image uploaded by another user. Please re login");
-            return false;
-        }
-
-        return true;
     }
 }

@@ -4,10 +4,10 @@ using SdHub.Database.Entities.Bins;
 
 namespace SdHub.Database.Configurators.Bins;
 
-public class ModelVersionFileConfigurator : IEntityTypeConfiguration<ModelVersionFileEntity>
+public class ModelFileConfigurator : IEntityTypeConfiguration<ModelFileEntity>
 {
-    public void Configure(EntityTypeBuilder<ModelVersionFileEntity> builder)
+    public void Configure(EntityTypeBuilder<ModelFileEntity> builder)
     {
-        builder.HasKey(x => new { x.FileId, x.ModelVersionId });
+        builder.HasKey(x => new { x.FileId, x.ModelId });
     }
 }

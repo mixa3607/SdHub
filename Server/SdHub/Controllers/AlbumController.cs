@@ -114,7 +114,7 @@ public class AlbumController : ControllerBase
 
         return new PaginationResponse<AlbumModel>()
         {
-            Items = albumModels,
+            Values = albumModels,
             Total = total,
             Skip = req.Skip,
             Take = req.Take,

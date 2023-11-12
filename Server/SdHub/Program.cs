@@ -45,7 +45,7 @@ using SdHub.Services.FileProc.Extractor;
 using SdHub.Services.FileProc.Metadata;
 using SdHub.Services.Mailing;
 using SdHub.Services.Storage;
-using SdHub.Services.Tokens;
+using SdHub.Services.TempCodes;
 using SdHub.Services.User;
 using SdHub.Shared.AspAutomapper;
 using SdHub.Shared.AspErrorHandling;
@@ -106,12 +106,9 @@ builder.Services
 
 //controllers
 builder.Services
-    .Configure<ApiBehaviorOptions>(opts =>
-    {
-        opts.InvalidModelStateResponseFactory = context => throw new BadHttpRequestModelStateException(context.ModelState);
-    })
+    .Configure<ApiBehaviorOptions>(opts => { opts.SuppressModelStateInvalidFilter = true; })
     .AddRbErrorHandlersBuiltin()
-    .AddControllers()
+    .AddControllers(c => c.Filters.Add<BadModelStateActionFilter>())
     .AddNewtonsoftJson()
     ;
 

@@ -9,15 +9,15 @@ public class GenerationSampleEntity
     public long ImageId { get; set; }
     public ImageEntity? Image { get; set; }
 
-    public long? ModelVersionId { get; set; }
-    public ModelVersionEntity? ModelVersion { get; set; }
+    public long? ModelId { get; set; }
+    public ModelEntity? Model { get; set; }
 
-    public long? HypernetVersionId { get; set; }
-    public HypernetVersionEntity? HypernetVersion { get; set; }
+    public long? HypernetId { get; set; }
+    public HypernetEntity? Hypernet { get; set; }
 
-    public long? VaeVersionId { get; set; }
-    public VaeVersionEntity? VaeVersion { get; set; }
+    public long? VaeId { get; set; }
+    public VaeEntity? Vae { get; set; }
 
-    public long? EmbeddingVersionId { get; set; }
-    public EmbeddingVersionEntity? EmbeddingVersion { get; set; }
+    public long? EmbeddingId { get; set; }
+    public EmbeddingEntity? Embedding { get; set; }
 }

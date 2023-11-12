@@ -57,7 +57,6 @@ public class UploadController : ControllerBase
         ModelState.ThrowIfNotValid();
         if (_appInfo.DisableImageUploadAuth) 
             ModelState.AddError("Uploading disabled by administrator").ThrowIfNotValid();
-        var uploader = await GetUploaderAsync(ct);
 
         var jwtUser = _userFromToken.Get();
         var user = await _db.Users
@@ -87,42 +86,12 @@ public class UploadController : ControllerBase
             .Where(x => x.CreatedAt > DateTimeOffset.UtcNow.AddHours(-1))
             .CountAsync(ct);
 
-        return await UploadAsync(req, uploadedLastHour, user, uploader, albumId, ct);
-    }
-
-
-    [HttpPost]
-    [DisableRequestSizeLimit]
-    [RequestFormLimits(MultipartBodyLengthLimit = 1024*1024*1024*10L)]
-    [AllowAnonymous]
-    public async Task<UploadResponse> Upload([FromForm] UploadRequest req, CancellationToken ct = default)
-    {
-        ModelState.ThrowIfNotValid();
-        if (_appInfo.DisableImageUploadAnon)
-            ModelState.AddError("Uploading disabled by administrator").ThrowIfNotValid();
-        var uploader = await GetUploaderAsync(ct);
-
-        if (!string.IsNullOrWhiteSpace(req.AlbumShortToken))
-            ModelState.AddError("Registration required for upload to album").ThrowIfNotValid();
-
-        var user = await _db.Users
-            .Include(x => x.Plan)
-            .ApplyFilter(anonymous: true)
-            .FirstAsync(ct);
-
-        var uploadedLastHour = await _db.Images
-            .ApplyFilter(inGrid: false)
-            .Where(x => x.UploaderId == uploader.Id && x.CreatedAt > DateTimeOffset.UtcNow.AddHours(-1))
-            .CountAsync(ct);
-
-        return await UploadAsync(req, uploadedLastHour, user, uploader, 0, ct);
+        return await UploadAsync(req, uploadedLastHour, user, albumId, ct);
     }
 
     // TODO когда нибудь я разберу эту махину, но не сегодня
-    private async Task<UploadResponse> UploadAsync(UploadRequest req, int uploadedLastHour, UserEntity user,
-        ImageUploaderEntity uploader, long albumId, CancellationToken ct = default)
+    private async Task<UploadResponse> UploadAsync(UploadRequest req, int uploadedLastHour, UserEntity user, long albumId, CancellationToken ct = default)
     {
-        var manageToken = user.IsAnonymous ? $"mg_{Guid.NewGuid():N}" : "";
         var handledFiles = new List<UploadedFileModel>();
         var savedImages = new List<ImageEntity>();
 
@@ -149,11 +118,11 @@ public class UploadController : ControllerBase
                     continue;
                 }
 
-                if (i >= user.Plan.ImagesPerUpload)
+                if (i >= user.Plan.MaxImagesPerUpload)
                 {
                     uplFile.Uploaded = false;
                     uplFile.Reason =
-                        $"Max image count per upload is {user.Plan.ImagesPerUpload}. Register account for extend quota.";
+                        $"Max image count per upload is {user.Plan.MaxImagesPerUpload}. Register account for extend quota.";
                     continue;
                 }
 
@@ -191,8 +160,6 @@ public class UploadController : ControllerBase
                     Description = "",
                     Owner = user,
                     ShortToken = GenerateShortToken(),
-                    ManageToken = manageToken,
-                    UploaderId = uploader.Id,
                     RawMetadata = new ImageRawMetadataEntity()
                     {
                         Directories = extractMetaResult.RawDirectories.Skip(2).ToList()
@@ -203,7 +170,7 @@ public class UploadController : ControllerBase
                         Height = extractMetaResult.Height,
                         Width = extractMetaResult.Width,
                     },
-                    OriginalImage = file
+                    OriginalImage = file,
                 };
                 if (albumId != 0)
                 {
@@ -213,8 +180,7 @@ public class UploadController : ControllerBase
                         Image = imageEntity
                     });
                 }
-
-                uplFile.ManageToken = manageToken;
+                
                 uplFile.Uploaded = true;
                 uplFile.Reason = "OK";
                 uplFile.Image = _mapper.Map<ImageModel>(imageEntity);
@@ -244,24 +210,6 @@ public class UploadController : ControllerBase
         {
             Files = handledFiles
         };
-    }
-
-
-    private async Task<ImageUploaderEntity> GetUploaderAsync(CancellationToken ct = default)
-    {
-        var ip = HttpContext.Connection.RemoteIpAddress!.ToString();
-        var uploader = await _db.ImageUploaders.FirstOrDefaultAsync(x => x.IpAddress == ip, ct);
-        if (uploader == null)
-        {
-            uploader = new ImageUploaderEntity()
-            {
-                IpAddress = ip
-            };
-            _db.ImageUploaders.Add(uploader);
-            await _db.SaveChangesAsync(CancellationToken.None);
-        }
-
-        return uploader;
     }
 
     private string GenerateShortToken()

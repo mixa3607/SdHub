@@ -6,7 +6,7 @@ using SdHub.Database;
 using SdHub.Database.Entities.Users;
 using SimpleBase;
 
-namespace SdHub.Services.Tokens;
+namespace SdHub.Services.TempCodes;
 
 public class TempCodesService : ITempCodesService
 {
@@ -17,18 +17,20 @@ public class TempCodesService : ITempCodesService
         _db = db;
     }
 
-    public async Task<string> CreateAsync(string identifier, int attempts, TimeSpan lifetime, TempCodeType type,
-        CancellationToken ct = default)
+    public async Task<string> CreateAsync(string key, int attempts, TimeSpan lifetime, CancellationToken ct = default)
+    {
+        return await CreateAsync(key, attempts, DateTimeOffset.UtcNow.Add(-lifetime), ct);
+    }
+
+    public async Task<string> CreateAsync(string key, int attempts, DateTimeOffset lifetime, CancellationToken ct = default)
     {
         var entity = new TempCodeEntity()
         {
-            ExpiredAt = DateTimeOffset.UtcNow.Add(-lifetime),
+            ExpiredAt = lifetime.ToUniversalTime(),
             Code = GenerateShortToken(),
-            CodeType = type,
-            CurrAttempts = 0,
             CreatedAt = DateTimeOffset.UtcNow,
-            Identifier = identifier,
-            MaxAttempts = attempts
+            MaxAttempts = attempts,
+            Key = key,
         };
         _db.TempCodes.Add(entity);
         await _db.SaveChangesAsync(CancellationToken.None);
@@ -36,19 +38,21 @@ public class TempCodesService : ITempCodesService
         return entity.Code;
     }
 
-    public async Task<TempCodeActivateResult> ActivateAsync(string identifier, string code, bool encAttempts,
+    public async Task<TempCodeActivateResult> ActivateAsync(string key, string code, bool increaseAttempts,
         CancellationToken ct = default)
     {
-        var entity = await _db.TempCodes.FirstOrDefaultAsync(x => x.Identifier == identifier && x.Code == code && !x.Used, ct);
+        var entity = await _db.TempCodes.FirstOrDefaultAsync(x => x.Key == key && x.Code == code, ct);
         if (entity == null)
             return TempCodeActivateResult.NotFound;
+        if (entity.Used)
+            return TempCodeActivateResult.Used;
         if (entity.ExpiredAt > DateTimeOffset.UtcNow)
             return TempCodeActivateResult.Lifetime;
-        if (entity.MaxAttempts <= entity.CurrAttempts)
+        if (entity.MaxAttempts <= entity.UsedAttempts)
             return TempCodeActivateResult.MaxAttemptsReached;
 
-        if (encAttempts) 
-            entity.CurrAttempts++;
+        if (increaseAttempts)
+            entity.UsedAttempts++;
 
         entity.Used = true;
 
